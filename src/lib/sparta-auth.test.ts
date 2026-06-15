@@ -1,9 +1,13 @@
 import { describe, expect, it } from "vitest"
 
 import {
+  changeUserPassword,
   getAccessibleApps,
   loginToSparta,
+  requestPasswordResetOtp,
+  resetPasswordWithOtp,
   updateUserPassword,
+  verifyPasswordResetOtp,
   validateUserPassword,
 } from "./sparta-auth"
 
@@ -54,5 +58,90 @@ describe("SPARTA login flow", () => {
     expect(
       getAccessibleApps("raka.wijaya@sparta.local").map((app) => app.id)
     ).toEqual(["building", "maintenance", "energy"])
+  })
+
+  it("issues and verifies password reset OTP for registered email", () => {
+    const request = requestPasswordResetOtp("andi.halim@sparta.local")
+
+    expect(request.ok).toBe(true)
+    expect(request.ok && request.otp).toMatch(/^\d{6}$/)
+
+    expect(
+      request.ok &&
+        verifyPasswordResetOtp({
+          email: "andi.halim@sparta.local",
+          otp: request.otp,
+        })
+    ).toEqual({
+      ok: true,
+    })
+  })
+
+  it("resets password with OTP and consumes the OTP after success", () => {
+    const request = requestPasswordResetOtp("raka.wijaya@sparta.local")
+
+    expect(request.ok).toBe(true)
+
+    if (!request.ok) {
+      return
+    }
+
+    expect(
+      resetPasswordWithOtp({
+        email: "raka.wijaya@sparta.local",
+        otp: request.otp,
+        newPassword: "Raka-Sparta-2026",
+      })
+    ).toEqual({
+      ok: true,
+    })
+
+    expect(
+      validateUserPassword({
+        email: "raka.wijaya@sparta.local",
+        password: "Raka-Sparta-2026",
+      }).ok
+    ).toBe(true)
+
+    expect(
+      resetPasswordWithOtp({
+        email: "raka.wijaya@sparta.local",
+        otp: request.otp,
+        newPassword: "Raka-Sparta-2027",
+      })
+    ).toEqual({
+      ok: false,
+      message: "Kode OTP tidak valid atau sudah kedaluwarsa.",
+    })
+  })
+
+  it("changes password only when current password is valid", () => {
+    const update = updateUserPassword({
+      email: "andi.halim@sparta.local",
+      newPassword: "Andi-Sparta-2026",
+    })
+
+    expect(update.ok).toBe(true)
+
+    expect(
+      changeUserPassword({
+        email: "andi.halim@sparta.local",
+        currentPassword: "wrong-password",
+        newPassword: "Andi-Sparta-2027",
+      })
+    ).toEqual({
+      ok: false,
+      message: "Password saat ini tidak sesuai.",
+    })
+
+    expect(
+      changeUserPassword({
+        email: "andi.halim@sparta.local",
+        currentPassword: "Andi-Sparta-2026",
+        newPassword: "Andi-Sparta-2027",
+      })
+    ).toEqual({
+      ok: true,
+    })
   })
 })

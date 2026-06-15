@@ -6,10 +6,13 @@ import {
   getSpartaSession,
   saveSpartaSession,
 } from "@/lib/sparta-session"
+import { PublicAuthShell } from "@/components/public-auth-shell"
+import { ForgotPasswordPage } from "@/pages/forgot-password-page"
 import { LoginPage } from "@/pages/login-page"
 import { ModuleLauncherPage } from "@/pages/module-launcher-page"
 import { PasswordResetPage } from "@/pages/password-reset-page"
 import { AboutSpartaPage } from "@/pages/tentang-sparta-page"
+import { TanyaArtaPage } from "@/pages/tanya-arta-page"
 import { getCurrentRoute, navigateTo, ROUTES } from "@/routes"
 
 export function App() {
@@ -55,12 +58,26 @@ export function App() {
     navigateTo(ROUTES.login)
   }
 
+  const handleForgotPasswordReset = () => {
+    clearSpartaSession()
+    setSession(null)
+    navigateTo(ROUTES.login)
+  }
+
   if (route === ROUTES.about) {
     return <AboutSpartaPage session={session} onLogout={handleLogout} />
   }
 
-  if (!session) {
-    return <LoginPage onAuthenticated={handleAuthenticated} />
+  if (route === ROUTES.forgotPassword || !session) {
+    return (
+      <PublicAuthShell contentKey={route}>
+        {route === ROUTES.forgotPassword ? (
+          <ForgotPasswordPage onPasswordReset={handleForgotPasswordReset} />
+        ) : (
+          <LoginPage onAuthenticated={handleAuthenticated} />
+        )}
+      </PublicAuthShell>
+    )
   }
 
   if (session.mustChangePassword) {
@@ -71,6 +88,10 @@ export function App() {
         onLogout={handleLogout}
       />
     )
+  }
+
+  if (route === ROUTES.arta) {
+    return <TanyaArtaPage session={session} onLogout={handleLogout} />
   }
 
   return <ModuleLauncherPage session={session} onLogout={handleLogout} />

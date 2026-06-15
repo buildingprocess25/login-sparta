@@ -2,7 +2,9 @@ export const ROUTES = {
   login: "#/",
   modules: "#/modules",
   resetPassword: "#/reset-password",
+  forgotPassword: "#/forgot-password",
   about: "#/tentang-sparta",
+  arta: "#/tanya-arta",
 } as const
 
 export type AppRoute = (typeof ROUTES)[keyof typeof ROUTES]

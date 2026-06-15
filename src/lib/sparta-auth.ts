@@ -37,6 +37,10 @@ export type PasswordUpdateInput = {
   newPassword: string
 }
 
+export type PasswordChangeInput = PasswordUpdateInput & {
+  currentPassword: string
+}
+
 export type PasswordUpdateResult =
   | {
       ok: true
@@ -45,6 +49,27 @@ export type PasswordUpdateResult =
       ok: false
       message: string
     }
+
+export type PasswordResetOtpResult =
+  | {
+      ok: true
+      email: string
+      otp: string
+      expiresAt: number
+    }
+  | {
+      ok: false
+      message: string
+    }
+
+export type PasswordResetOtpInput = {
+  email: string
+  otp: string
+}
+
+export type PasswordResetWithOtpInput = PasswordResetOtpInput & {
+  newPassword: string
+}
 
 type SpartaUser = {
   email: string
@@ -55,6 +80,14 @@ type SpartaUser = {
 }
 
 const appOrder: SpartaAppId[] = ["building", "maintenance", "energy"]
+const PASSWORD_RESET_OTP_DURATION_MS = 10 * 60 * 1000
+const passwordResetOtpStore = new Map<
+  string,
+  {
+    otp: string
+    expiresAt: number
+  }
+>()
 
 export const SPARTA_APPS: Record<SpartaAppId, SpartaApp> = {
   building: {
@@ -127,6 +160,10 @@ function getBranchPassword(user: SpartaUser) {
 
 function getOrderedAccess(access: SpartaAppId[]) {
   return appOrder.filter((appId) => access.includes(appId))
+}
+
+function generateOtp() {
+  return Math.floor(100000 + Math.random() * 900000).toString()
 }
 
 function createSession(user: SpartaUser): SpartaSession {
@@ -241,6 +278,112 @@ export function updateUserPassword(
   }
 
   user.passwordHash = manualHash(newPassword)
+
+  return {
+    ok: true,
+  }
+}
+
+export function changeUserPassword(
+  input: PasswordChangeInput
+): PasswordUpdateResult {
+  const currentPasswordResult = validateUserPassword({
+    email: input.email,
+    password: input.currentPassword,
+  })
+
+  if (!currentPasswordResult.ok) {
+    return {
+      ok: false,
+      message: "Password saat ini tidak sesuai.",
+    }
+  }
+
+  return updateUserPassword({
+    email: input.email,
+    newPassword: input.newPassword,
+  })
+}
+
+export function requestPasswordResetOtp(email: string): PasswordResetOtpResult {
+  const user = getUserByEmail(email)
+
+  if (!user) {
+    return {
+      ok: false,
+      message: "Email tidak terdaftar pada SPARTA.",
+    }
+  }
+
+  const otp = generateOtp()
+  const expiresAt = Date.now() + PASSWORD_RESET_OTP_DURATION_MS
+
+  passwordResetOtpStore.set(user.email, {
+    otp,
+    expiresAt,
+  })
+
+  return {
+    ok: true,
+    email: user.email,
+    otp,
+    expiresAt,
+  }
+}
+
+export function verifyPasswordResetOtp(
+  input: PasswordResetOtpInput
+): PasswordUpdateResult {
+  const normalizedEmail = normalizeEmail(input.email)
+  const otpRecord = passwordResetOtpStore.get(normalizedEmail)
+
+  if (!otpRecord) {
+    return {
+      ok: false,
+      message: "Kode OTP tidak valid atau sudah kedaluwarsa.",
+    }
+  }
+
+  if (Date.now() > otpRecord.expiresAt) {
+    passwordResetOtpStore.delete(normalizedEmail)
+
+    return {
+      ok: false,
+      message: "Kode OTP tidak valid atau sudah kedaluwarsa.",
+    }
+  }
+
+  if (otpRecord.otp !== input.otp.trim()) {
+    return {
+      ok: false,
+      message: "Kode OTP tidak valid atau sudah kedaluwarsa.",
+    }
+  }
+
+  return {
+    ok: true,
+  }
+}
+
+export function resetPasswordWithOtp(
+  input: PasswordResetWithOtpInput
+): PasswordUpdateResult {
+  const otpResult = verifyPasswordResetOtp(input)
+
+  if (!otpResult.ok) {
+    return otpResult
+  }
+
+  const updateResult = updateUserPassword({
+    email: input.email,
+    newPassword: input.newPassword,
+  })
+
+  if (!updateResult.ok) {
+    return updateResult
+  }
+
+  passwordResetOtpStore.delete(normalizeEmail(input.email))
 
   return {
     ok: true,

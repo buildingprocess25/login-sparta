@@ -13,7 +13,7 @@ const primaryDevelopmentTeam = [
   {
     name: "Bima Arya Bhagaskara",
     role: "Building, Maintenance & Energy System Specialist",
-    image: "",
+    image: "/team/bima.webp",
   },
   {
     name: "Syahid Jaya Dilaga",
@@ -31,37 +31,37 @@ const otherDevelopmentTeam = [
   {
     name: "Daniel Bernard Yonathan",
     role: "Project Leader (1st Gen)",
-    image: "",
+    image: "/team/daniel.jpg",
   },
   {
     name: "Ananda Dwi Rizkyta",
     role: "Project Assistant (1st Gen)",
-    image: "",
+    image: "/team/ananda.webp",
   },
   {
     name: "Nathanael Bernike",
     role: "Project Assistant (1st Gen)",
-    image: "",
+    image: "/team/nathan.jpg",
   },
   {
     name: "I Putu Dharma Puspa",
     role: "Project Assistant (1st Gen)",
-    image: "",
+    image: "/team/putu.jpg",
   },
   {
     name: "Dimas Abidzar Fadly",
     role: "Frontend Developer (2nd Gen)",
-    image: "",
+    image: "/team/dimas.webp",
   },
   {
     name: "Charderra Bagas Eka Sanjaya",
     role: "Backend Developer (2nd Gen)",
-    image: "",
+    image: "/team/bagas.webp",
   },
   {
     name: "Akmal Zaidan Hibatullah",
     role: "Fullstack Developer (2nd Gen)",
-    image: "",
+    image: "/team/akmal.jpg",
   },
   {
     name: "Ardhan Anggana Prasetya",
