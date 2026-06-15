@@ -1,21 +1,79 @@
-import { Button } from "@/components/ui/button"
+import * as React from "react"
+
+import type { SpartaSession } from "@/lib/sparta-auth"
+import {
+  clearSpartaSession,
+  getSpartaSession,
+  saveSpartaSession,
+} from "@/lib/sparta-session"
+import { LoginPage } from "@/pages/login-page"
+import { ModuleLauncherPage } from "@/pages/module-launcher-page"
+import { PasswordResetPage } from "@/pages/password-reset-page"
+import { AboutSpartaPage } from "@/pages/tentang-sparta-page"
+import { getCurrentRoute, navigateTo, ROUTES } from "@/routes"
 
 export function App() {
-  return (
-    <div className="flex min-h-svh p-6">
-      <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-        <div>
-          <h1 className="font-medium">Project ready!</h1>
-          <p>You may now add components and start building.</p>
-          <p>We&apos;ve already added the button component for you.</p>
-          <Button className="mt-2">Button</Button>
-        </div>
-        <div className="font-mono text-xs text-muted-foreground">
-          (Press <kbd>d</kbd> to toggle dark mode)
-        </div>
-      </div>
-    </div>
+  const [route, setRoute] = React.useState(getCurrentRoute)
+  const [session, setSession] = React.useState<SpartaSession | null>(() =>
+    getSpartaSession()
   )
+
+  React.useEffect(() => {
+    const handleHashChange = () => {
+      setRoute(getCurrentRoute())
+      setSession(getSpartaSession())
+    }
+
+    window.addEventListener("hashchange", handleHashChange)
+
+    return () => {
+      window.removeEventListener("hashchange", handleHashChange)
+    }
+  }, [])
+
+  const handleAuthenticated = (nextSession: SpartaSession) => {
+    saveSpartaSession(nextSession)
+    setSession(nextSession)
+
+    if (nextSession.mustChangePassword) {
+      navigateTo(ROUTES.resetPassword)
+      return
+    }
+
+    navigateTo(ROUTES.modules)
+  }
+
+  const handlePasswordChanged = (nextSession: SpartaSession) => {
+    saveSpartaSession(nextSession)
+    setSession(nextSession)
+    navigateTo(ROUTES.modules)
+  }
+
+  const handleLogout = () => {
+    clearSpartaSession()
+    setSession(null)
+    navigateTo(ROUTES.login)
+  }
+
+  if (route === ROUTES.about) {
+    return <AboutSpartaPage session={session} onLogout={handleLogout} />
+  }
+
+  if (!session) {
+    return <LoginPage onAuthenticated={handleAuthenticated} />
+  }
+
+  if (session.mustChangePassword) {
+    return (
+      <PasswordResetPage
+        session={session}
+        onPasswordChanged={handlePasswordChanged}
+        onLogout={handleLogout}
+      />
+    )
+  }
+
+  return <ModuleLauncherPage session={session} onLogout={handleLogout} />
 }
 
 export default App
