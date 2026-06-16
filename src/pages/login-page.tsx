@@ -95,7 +95,10 @@ function LoginPage({ onAuthenticated }: LoginPageProps) {
             </Field>
 
             <Field data-invalid={Boolean(status)}>
-              <FieldLabel htmlFor="password" className="justify-between">
+              <FieldLabel
+                htmlFor="password"
+                className="flex-wrap justify-between gap-1"
+              >
                 Password SPARTA
                 <Button variant="link" size="xs" asChild>
                   <a href={ROUTES.forgotPassword}>Lupa password?</a>
@@ -145,8 +148,8 @@ function LoginPage({ onAuthenticated }: LoginPageProps) {
         </form>
       </CardContent>
 
-      <CardFooter className="flex-col gap-1">
-        <p className="text-xs text-muted-foreground">
+      <CardFooter className="flex-col items-center gap-1 text-center">
+        <p className="hidden text-xs text-muted-foreground sm:block">
           © 2026 PT Sumber Alfaria Trijaya, Tbk. Seluruh Hak Cipta.
         </p>
         <p className="text-xs text-muted-foreground">

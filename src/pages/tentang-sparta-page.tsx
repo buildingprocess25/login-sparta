@@ -89,10 +89,12 @@ function TeamMemberFrame({
 function TeamMemberCaption({ member }: { member: SpartaTeamMember }) {
   return (
     <div className="flex flex-col gap-1">
-      <h3 className="font-heading text-lg font-medium lg:text-xl">
+      <h3 className="font-heading text-sm font-medium sm:text-lg lg:text-xl">
         {member.name}
       </h3>
-      <p className="text-sm leading-6 text-muted-foreground">{member.role}</p>
+      <p className="text-xs leading-4 text-muted-foreground sm:text-sm sm:leading-6">
+        {member.role}
+      </p>
     </div>
   )
 }
@@ -100,12 +102,13 @@ function TeamMemberCaption({ member }: { member: SpartaTeamMember }) {
 function AboutSpartaPage({ session, onLogout }: AboutSpartaPageProps) {
   return (
     <AppShell session={session} onLogout={onLogout}>
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-6 sm:gap-8">
         {!session ? (
-          <div className="sticky top-4 z-20 flex items-center">
+          <div className="sticky top-4 z-20 flex items-center justify-start">
             <Button
               className="bg-background/90 shadow-sm backdrop-blur"
               variant="outline"
+              size="sm"
               asChild
             >
               <a href={ROUTES.login}>
@@ -116,13 +119,13 @@ function AboutSpartaPage({ session, onLogout }: AboutSpartaPageProps) {
           </div>
         ) : null}
 
-        <section className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-          <div className="flex flex-col gap-5">
+        <section className="grid gap-5 sm:gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+          <div className="flex flex-col gap-5 text-center lg:text-left">
             <div className="flex flex-col gap-4">
-              <h1 className="font-heading text-4xl font-medium text-balance sm:text-5xl">
+              <h1 className="font-heading text-3xl font-medium text-balance sm:text-5xl">
                 Platform digital untuk menghubungkan proses kerja BME.
               </h1>
-              <p className="max-w-2xl text-base leading-7 text-muted-foreground">
+              <p className="mx-auto max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7 lg:mx-0">
                 SPARTA merupakan program untuk mendigitalisasi proses bisnis
                 yang ada pada Building Maintenance Energy. Melalui satu platform
                 digital, sistem ini terintegrasi dan dirancang untuk
@@ -140,14 +143,14 @@ function AboutSpartaPage({ session, onLogout }: AboutSpartaPageProps) {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid items-center justify-items-center gap-3 sm:grid-cols-3">
+              <div className="grid grid-cols-3 items-center justify-items-center gap-2 sm:gap-3">
                 {spartaFocus.map((focus) => {
                   const Icon = focus.icon
 
                   return (
                     <div
                       key={focus.title}
-                      className="flex items-center justify-center gap-2 text-center text-sm font-medium"
+                      className="flex min-w-0 flex-col items-center justify-center gap-1 text-center text-[11px] leading-tight font-medium sm:flex-row sm:gap-2 sm:text-sm"
                     >
                       <Icon className="text-primary" />
                       <span>{focus.title}</span>
@@ -159,15 +162,15 @@ function AboutSpartaPage({ session, onLogout }: AboutSpartaPageProps) {
           </Card>
         </section>
 
-        <section id="modul-sparta" className="grid gap-4 md:grid-cols-3">
+        <section id="modul-sparta" className="grid gap-3 md:grid-cols-3">
           {modules.map((module) => (
             <Card key={module.name} size="sm">
               <CardHeader>
-                <div className="flex items-start gap-4">
+                <div className="flex items-start gap-3 sm:gap-4">
                   <img
                     src={module.logo}
                     alt=""
-                    className="size-12 shrink-0 object-contain"
+                    className="size-10 shrink-0 object-contain sm:size-12"
                   />
                   <div className="flex min-w-0 flex-col gap-1.5">
                     <CardTitle>{module.name}</CardTitle>
@@ -181,18 +184,18 @@ function AboutSpartaPage({ session, onLogout }: AboutSpartaPageProps) {
 
         <Separator />
 
-        <section className="flex flex-col gap-6">
-          <div className="flex flex-col items-start justify-between gap-3 text-sm font-medium sm:flex-row lg:text-xl">
-            <h2 className="font-heading">Development Team SPARTA</h2>
+        <section className="flex flex-col gap-5 sm:gap-6">
+          <div className="flex flex-col items-center justify-between gap-3 font-medium sm:flex-row sm:items-start">
+            <h2 className="font-heading text-xl">Development Team SPARTA</h2>
           </div>
 
-          <div className="grid items-start gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-2 items-start gap-3 sm:gap-4 lg:grid-cols-4">
             {developmentTeam.map((member) => (
               <article
                 key={member.name}
-                className="flex min-w-0 flex-col gap-3"
+                className="flex min-w-0 flex-col gap-2 sm:gap-3"
               >
-                <TeamMemberFrame member={member} className="h-72" />
+                <TeamMemberFrame member={member} className="h-40 sm:h-72" />
                 <TeamMemberCaption member={member} />
               </article>
             ))}

@@ -197,15 +197,33 @@ function ForgotPasswordPage({ onPasswordReset }: ForgotPasswordPageProps) {
                     aria-invalid={Boolean(status)}
                   >
                     <InputOTPGroup className="grid flex-1 grid-cols-3">
-                      <InputOTPSlot className="size-auto h-10" index={0} />
-                      <InputOTPSlot className="size-auto h-10" index={1} />
-                      <InputOTPSlot className="size-auto h-10" index={2} />
+                      <InputOTPSlot
+                        className="size-auto h-9 sm:h-10"
+                        index={0}
+                      />
+                      <InputOTPSlot
+                        className="size-auto h-9 sm:h-10"
+                        index={1}
+                      />
+                      <InputOTPSlot
+                        className="size-auto h-9 sm:h-10"
+                        index={2}
+                      />
                     </InputOTPGroup>
                     <InputOTPSeparator />
                     <InputOTPGroup className="grid flex-1 grid-cols-3">
-                      <InputOTPSlot className="size-auto h-10" index={3} />
-                      <InputOTPSlot className="size-auto h-10" index={4} />
-                      <InputOTPSlot className="size-auto h-10" index={5} />
+                      <InputOTPSlot
+                        className="size-auto h-9 sm:h-10"
+                        index={3}
+                      />
+                      <InputOTPSlot
+                        className="size-auto h-9 sm:h-10"
+                        index={4}
+                      />
+                      <InputOTPSlot
+                        className="size-auto h-9 sm:h-10"
+                        index={5}
+                      />
                     </InputOTPGroup>
                   </InputOTP>
                   <FieldDescription>

@@ -65,7 +65,7 @@ function PasswordResetPage({
 
   return (
     <AppShell session={session} onLogout={onLogout}>
-      <div className="flex flex-1 items-center justify-center">
+      <div className="flex flex-1 items-center justify-center py-4 sm:py-0">
         <Card className="w-full max-w-xl">
           <CardHeader>
             <CardTitle>Perbarui password SPARTA</CardTitle>

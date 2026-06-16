@@ -40,13 +40,13 @@ type ModuleLauncherPageProps = {
 function ModuleLauncherPage({ session, onLogout }: ModuleLauncherPageProps) {
   return (
     <AppShell session={session} onLogout={onLogout}>
-      <section className="grid flex-1 gap-8 lg:grid-cols-[0.78fr_1.22fr] lg:items-center">
-        <div className="flex flex-col gap-4">
+      <section className="flex flex-1 flex-col justify-center gap-5 lg:grid lg:grid-cols-[0.78fr_1.22fr] lg:items-center lg:gap-8">
+        <div className="flex flex-col gap-4 text-center sm:text-left">
           <div className="flex flex-col gap-3">
-            <h1 className="max-w-md font-heading text-3xl font-medium text-balance md:text-5xl">
+            <h1 className="mx-auto max-w-md font-heading text-2xl font-medium text-balance sm:mx-0 sm:text-3xl md:text-5xl">
               Pilih modul SPARTA anda.
             </h1>
-            <p className="max-w-sm text-sm leading-6 text-muted-foreground">
+            <p className="mx-auto max-w-sm text-xs leading-5 text-muted-foreground sm:mx-0 sm:text-sm sm:leading-6">
               Buka modul Building, Maintenance, atau Energy sesuai akses yang
               terhubung dengan akun internal Anda.
             </p>
@@ -59,20 +59,20 @@ function ModuleLauncherPage({ session, onLogout }: ModuleLauncherPageProps) {
             const hasAccess = session.access.includes(appId)
             const tile = (
               <Card
-                className="relative aspect-16/11 overflow-hidden rounded-lg bg-primary/10 p-0 transition-colors group-hover:bg-primary group-hover:ring-primary/40"
+                className="relative min-h-[132px] overflow-hidden rounded-lg bg-primary/10 p-0 transition-colors group-hover:bg-primary group-hover:ring-primary/40 sm:aspect-16/11 sm:min-h-0"
                 style={moduleThemeStyles[appId]}
               >
                 <img
                   src={SPARTA_APP_LOGOS[appId]}
                   alt=""
-                  className="absolute top-[40%] left-1/2 size-20 -translate-x-1/2 -translate-y-1/2 object-contain md:size-24"
+                  className="absolute top-1/2 left-4 size-14 -translate-y-1/2 object-contain sm:top-[40%] sm:left-1/2 sm:size-20 sm:-translate-x-1/2 md:size-24"
                 />
-                <CardContent className="absolute inset-0 flex flex-col justify-end p-3">
+                <CardContent className="absolute inset-y-0 right-0 left-24 flex flex-col justify-center p-3 sm:inset-0 sm:justify-end">
                   <div className="flex flex-col gap-1">
                     <div className="text-sm font-semibold text-foreground transition-colors group-hover:text-white">
                       {app.name}
                     </div>
-                    <div className="text-xs leading-5 text-muted-foreground transition-colors group-hover:text-white/80">
+                    <div className="line-clamp-2 text-xs leading-4 text-muted-foreground transition-colors group-hover:text-white/80 sm:leading-5">
                       {hasAccess
                         ? app.description
                         : "Anda tidak memiliki akses ke modul ini."}

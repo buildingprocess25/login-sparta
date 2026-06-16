@@ -70,7 +70,7 @@ export function App() {
 
   if (route === ROUTES.forgotPassword || !session) {
     return (
-      <PublicAuthShell contentKey={route}>
+      <PublicAuthShell key={route} contentKey={route}>
         {route === ROUTES.forgotPassword ? (
           <ForgotPasswordPage onPasswordReset={handleForgotPasswordReset} />
         ) : (

@@ -128,7 +128,7 @@ function ChangePasswordDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent>
+      <DialogContent className="max-h-[calc(100svh-2rem)] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Ganti password SPARTA</DialogTitle>
           <DialogDescription>
@@ -153,7 +153,11 @@ function ChangePasswordDialog({
             </Field>
 
             <DialogFooter>
-              <Button type="button" onClick={handleRequestOtp}>
+              <Button
+                type="button"
+                className="w-full sm:w-auto"
+                onClick={handleRequestOtp}
+              >
                 Kirim OTP
                 <ArrowRight data-icon="inline-end" />
               </Button>
@@ -178,15 +182,15 @@ function ChangePasswordDialog({
                   aria-invalid={Boolean(status)}
                 >
                   <InputOTPGroup className="grid flex-1 grid-cols-3">
-                    <InputOTPSlot className="size-auto h-10" index={0} />
-                    <InputOTPSlot className="size-auto h-10" index={1} />
-                    <InputOTPSlot className="size-auto h-10" index={2} />
+                    <InputOTPSlot className="size-auto h-9 sm:h-10" index={0} />
+                    <InputOTPSlot className="size-auto h-9 sm:h-10" index={1} />
+                    <InputOTPSlot className="size-auto h-9 sm:h-10" index={2} />
                   </InputOTPGroup>
                   <InputOTPSeparator />
                   <InputOTPGroup className="grid flex-1 grid-cols-3">
-                    <InputOTPSlot className="size-auto h-10" index={3} />
-                    <InputOTPSlot className="size-auto h-10" index={4} />
-                    <InputOTPSlot className="size-auto h-10" index={5} />
+                    <InputOTPSlot className="size-auto h-9 sm:h-10" index={3} />
+                    <InputOTPSlot className="size-auto h-9 sm:h-10" index={4} />
+                    <InputOTPSlot className="size-auto h-9 sm:h-10" index={5} />
                   </InputOTPGroup>
                 </InputOTP>
                 <FieldDescription>
