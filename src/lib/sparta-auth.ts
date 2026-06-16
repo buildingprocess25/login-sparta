@@ -228,7 +228,7 @@ export function validateUserPassword(input: LoginInput): LoginResult {
   if (password !== getBranchPassword(user)) {
     return {
       ok: false,
-      message: "Password awal harus menggunakan nama cabang huruf kapital.",
+      message: "Email atau password SPARTA tidak sesuai.",
     }
   }
 
@@ -273,7 +273,7 @@ export function updateUserPassword(
   if (newPassword === getBranchPassword(user)) {
     return {
       ok: false,
-      message: "Password baru tidak boleh sama dengan nama cabang.",
+      message: "Password baru belum memenuhi kebijakan keamanan.",
     }
   }
 

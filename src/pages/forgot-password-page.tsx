@@ -297,7 +297,7 @@ function ForgotPasswordPage({ onPasswordReset }: ForgotPasswordPageProps) {
                     </InputGroupAddon>
                   </InputGroup>
                   <FieldDescription>
-                    Minimal 8 karakter dan tidak boleh sama dengan nama cabang.
+                    Gunakan minimal 8 karakter untuk password baru.
                   </FieldDescription>
                   {status ? <FieldError>{status.message}</FieldError> : null}
                 </Field>

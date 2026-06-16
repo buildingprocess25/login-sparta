@@ -8,7 +8,7 @@ const primaryDevelopmentTeam = [
   {
     name: "Andy Mulyono",
     role: "Building, Maintenance & Energy System Manager",
-    image: "",
+    image: "/team/andy-m.jpg",
   },
   {
     name: "Bima Arya Bhagaskara",
@@ -18,12 +18,12 @@ const primaryDevelopmentTeam = [
   {
     name: "Syahid Jaya Dilaga",
     role: "Building, Maintenance & Energy System Specialist",
-    image: "",
+    image: "/team/jaya.jpg",
   },
   {
     name: "M. Iqbal Humris",
     role: "Building, Maintenance & Energy System Specialist",
-    image: "",
+    image: "/team/m-iqbal.jpg",
   },
 ] satisfies SpartaTeamMember[]
 
@@ -61,22 +61,22 @@ const otherDevelopmentTeam = [
   {
     name: "Akmal Zaidan Hibatullah",
     role: "Fullstack Developer (2nd Gen)",
-    image: "/team/akmal.jpg",
+    image: "/team/akmal.webp",
   },
   {
     name: "Ardhan Anggana Prasetya",
     role: "IoT Engineer (2nd Gen)",
-    image: "",
+    image: "/team/ardhan.jpg",
   },
   {
     name: "Wildan Fadillah",
     role: "Fullstack Developer (3rd Gen)",
-    image: "",
+    image: "/team/wildan.jpg",
   },
   {
     name: "Wardan Nugraha Ahmad",
     role: "Fullstack Developer (3rd Gen)",
-    image: "",
+    image: "/team/wardan.jpg",
   },
 ] satisfies SpartaTeamMember[]
 

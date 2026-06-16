@@ -1,14 +1,7 @@
 import * as React from "react"
-import {
-  AlertTriangle,
-  ArrowRight,
-  Eye,
-  EyeOff,
-  LockKeyhole,
-  Mail,
-} from "lucide-react"
+import { ArrowRight, Eye, EyeOff, LockKeyhole, Mail } from "lucide-react"
+import { toast } from "sonner"
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -20,7 +13,6 @@ import {
 } from "@/components/ui/card"
 import {
   Field,
-  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -55,6 +47,9 @@ function LoginPage({ onAuthenticated }: LoginPageProps) {
 
     if (!result.ok) {
       setStatus({ message: result.message })
+      toast.error("Login SPARTA belum berhasil", {
+        description: result.message,
+      })
       return
     }
 
@@ -118,7 +113,7 @@ function LoginPage({ onAuthenticated }: LoginPageProps) {
                     setPassword(event.target.value)
                     setStatus(null)
                   }}
-                  placeholder="NAMA CABANG"
+                  placeholder="Masukkan password"
                   autoComplete="current-password"
                   aria-invalid={Boolean(status)}
                 />
@@ -138,21 +133,9 @@ function LoginPage({ onAuthenticated }: LoginPageProps) {
                   </InputGroupButton>
                 </InputGroupAddon>
               </InputGroup>
-              <FieldDescription className="text-xs">
-                Setelah berhasil masuk dengan password awal, Anda akan diminta
-                membuat password baru untuk akun SPARTA.
-              </FieldDescription>
 
               {status ? <FieldError>{status.message}</FieldError> : null}
             </Field>
-
-            {status ? (
-              <Alert variant="destructive">
-                <AlertTriangle />
-                <AlertTitle>Login SPARTA belum berhasil</AlertTitle>
-                <AlertDescription>{status.message}</AlertDescription>
-              </Alert>
-            ) : null}
 
             <Button type="submit" disabled={!canSubmit}>
               Masuk ke SPARTA

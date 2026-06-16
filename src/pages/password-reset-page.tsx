@@ -1,8 +1,8 @@
 import * as React from "react"
 import { Eye, EyeOff, LockKeyhole } from "lucide-react"
+import { toast } from "sonner"
 
 import { AppShell } from "@/components/app-shell"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -50,9 +50,13 @@ function PasswordResetPage({
 
     if (!result.ok) {
       setError(result.message)
+      toast.error("Password belum bisa diperbarui", {
+        description: result.message,
+      })
       return
     }
 
+    toast.success("Password SPARTA berhasil diperbarui")
     onPasswordChanged({
       ...session,
       mustChangePassword: false,
@@ -66,8 +70,8 @@ function PasswordResetPage({
           <CardHeader>
             <CardTitle>Perbarui password SPARTA</CardTitle>
             <CardDescription>
-              Password Anda masih menggunakan nama cabang. Buat password baru
-              sebelum membuka modul SPARTA.
+              Untuk melanjutkan, buat password baru sebelum membuka modul
+              SPARTA.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -109,13 +113,6 @@ function PasswordResetPage({
                   </InputGroup>
                   {error ? <FieldError>{error}</FieldError> : null}
                 </Field>
-
-                {error ? (
-                  <Alert variant="destructive">
-                    <AlertTitle>Password belum bisa diperbarui</AlertTitle>
-                    <AlertDescription>{error}</AlertDescription>
-                  </Alert>
-                ) : null}
 
                 <Button type="submit" disabled={!password.trim()}>
                   Simpan password baru

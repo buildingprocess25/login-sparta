@@ -35,7 +35,7 @@ describe("SPARTA login flow", () => {
 
     expect(result).toEqual({
       ok: false,
-      message: "Password awal harus menggunakan nama cabang huruf kapital.",
+      message: "Email atau password SPARTA tidak sesuai.",
     })
   })
 
