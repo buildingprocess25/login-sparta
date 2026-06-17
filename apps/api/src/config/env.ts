@@ -42,11 +42,10 @@ const envSchema = z.object({
         .map((origin) => origin.trim())
         .filter(Boolean)
     ),
-  SMTP_HOST: z.string().min(1, "SMTP_HOST is required"),
-  SMTP_PORT: z.coerce.number().int().min(1).max(65535).default(587),
-  SMTP_USER: z.string().default(""),
-  SMTP_PASS: z.string().default(""),
-  SMTP_FROM: z.string().min(1, "SMTP_FROM is required"),
+  GOOGLE_CLIENT_ID: z.string().min(1, "GOOGLE_CLIENT_ID is required"),
+  GOOGLE_CLIENT_SECRET: z.string().min(1, "GOOGLE_CLIENT_SECRET is required"),
+  GOOGLE_REFRESH_TOKEN: z.string().min(1, "GOOGLE_REFRESH_TOKEN is required"),
+  GMAIL_USER: z.string().email("GMAIL_USER must be a valid email"),
   SPARTA_BUILDING_CALLBACK_URL: z
     .string()
     .url("SPARTA_BUILDING_CALLBACK_URL must be a valid URL"),

@@ -18,11 +18,10 @@ const testEnv = {
   SESSION_SECRET: "test-session-secret-minimum-32-characters",
   OTP_PEPPER: "test-otp-pepper-minimum-32-characters",
   CORS_ORIGINS: ["http://localhost:5173"],
-  SMTP_HOST: "localhost",
-  SMTP_PORT: 1025,
-  SMTP_USER: "",
-  SMTP_PASS: "",
-  SMTP_FROM: "SPARTA <no-reply@sparta.local>",
+  GOOGLE_CLIENT_ID: "google-client-id",
+  GOOGLE_CLIENT_SECRET: "google-client-secret",
+  GOOGLE_REFRESH_TOKEN: "google-refresh-token",
+  GMAIL_USER: "no-reply@sparta.local",
   SPARTA_BUILDING_CALLBACK_URL:
     "https://building.sparta.local/auth/sso/callback",
   SPARTA_MAINTENANCE_CALLBACK_URL:

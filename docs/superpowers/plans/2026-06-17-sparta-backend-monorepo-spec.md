@@ -183,7 +183,7 @@ login-sparta/
         services/
           email/
             email.service.ts
-            smtp-email.provider.ts
+            gmail-email.provider.ts
             console-email.provider.ts
           security/
             password-hash.ts
@@ -233,7 +233,7 @@ Responsibility boundaries:
 - `express-rate-limit`: throttle endpoint sensitif.
 - `pino` dan `pino-http`: structured logging cepat.
 - `@node-rs/argon2`: Argon2id password hashing dengan performa native cepat.
-- `nodemailer`: SMTP provider-agnostic untuk OTP email internal.
+- `nodemailer`: pengiriman OTP email internal melalui Gmail OAuth2.
 
 ### Backend Dev Dependencies
 
@@ -275,11 +275,10 @@ Responsibility boundaries:
   - `OTP_PEPPER=<minimum-32-byte-secret>`
   - `CORS_ORIGINS=https://<vercel-domain>,https://<custom-frontend-domain>`
   - `COOKIE_DOMAIN=<empty for onrender/vercel split, .sparta-domain for shared custom domain>`
-  - `SMTP_HOST=...`
-  - `SMTP_PORT=587`
-  - `SMTP_USER=...`
-  - `SMTP_PASS=...`
-  - `SMTP_FROM="SPARTA <no-reply@...>"`
+  - `GOOGLE_CLIENT_ID=...`
+  - `GOOGLE_CLIENT_SECRET=...`
+  - `GOOGLE_REFRESH_TOKEN=...`
+  - `GMAIL_USER=...`
   - `SPARTA_BUILDING_CALLBACK_URL=https://.../auth/sso/callback`
   - `SPARTA_MAINTENANCE_CALLBACK_URL=https://.../auth/sso/callback`
   - `SPARTA_ENERGY_CALLBACK_URL=https://.../auth/sso/callback`
@@ -885,7 +884,7 @@ export function createApp() {
 
 - [ ] **Step 2: Add env validation**
 
-Use Zod to validate `DATABASE_URL`, `SESSION_SECRET`, `OTP_PEPPER`, `CORS_ORIGINS`, and SMTP env. Fail fast during boot when env is invalid.
+Use Zod to validate `DATABASE_URL`, `SESSION_SECRET`, `OTP_PEPPER`, `CORS_ORIGINS`, and Gmail OAuth2 env. Fail fast during boot when env is invalid.
 
 - [ ] **Step 3: Add initial Prisma schema**
 
@@ -1044,7 +1043,7 @@ git commit -m "feat: add server side sparta authentication"
 - Create: `apps/api/src/modules/password/password.test.ts`
 - Create: `apps/api/src/services/security/otp.ts`
 - Create: `apps/api/src/services/email/email.service.ts`
-- Create: `apps/api/src/services/email/smtp-email.provider.ts`
+- Create: `apps/api/src/services/email/gmail-email.provider.ts`
 - Create: `apps/api/src/services/email/console-email.provider.ts`
 
 - [ ] **Step 1: Write password flow tests**
@@ -1073,7 +1072,7 @@ codeHash = HMAC_SHA256(OTP_PEPPER, `${email}:${purpose}:${otp}`)
 
 - [ ] **Step 3: Implement email provider abstraction**
 
-Use `console-email.provider.ts` in local development and `smtp-email.provider.ts` in production.
+Use `console-email.provider.ts` in local development and `gmail-email.provider.ts` in production.
 
 - [ ] **Step 4: Run password tests**
 
@@ -1400,11 +1399,10 @@ DATABASE_URL=postgresql://postgres:postgres@localhost:5432/sparta_login
 SESSION_SECRET=replace-with-32-byte-secret
 OTP_PEPPER=replace-with-32-byte-secret
 CORS_ORIGINS=http://localhost:5173
-SMTP_HOST=localhost
-SMTP_PORT=1025
-SMTP_USER=
-SMTP_PASS=
-SMTP_FROM=SPARTA <no-reply@sparta.local>
+GOOGLE_CLIENT_ID=replace-with-google-client-id
+GOOGLE_CLIENT_SECRET=replace-with-google-client-secret
+GOOGLE_REFRESH_TOKEN=replace-with-google-refresh-token
+GMAIL_USER=replace-with-gmail-user@example.com
 SPARTA_BUILDING_CALLBACK_URL=https://building.sparta.local/auth/sso/callback
 SPARTA_MAINTENANCE_CALLBACK_URL=https://maintenance.sparta.local/auth/sso/callback
 SPARTA_ENERGY_CALLBACK_URL=https://energy.sparta.local/auth/sso/callback
@@ -1508,7 +1506,7 @@ These decisions should be answered before Task 4 reaches production data:
 - Exact production frontend domain.
 - Exact production backend domain.
 - Whether PostgreSQL is Render Postgres or another managed PostgreSQL provider.
-- SMTP provider and sender domain.
+- Gmail OAuth2 credential ownership and sender account.
 - Callback URLs for SPARTA Building, Maintenance, and Energy.
 - Exact module-side user table names and whether they already have stable email fields.
 - Whether each module has role names that must be synchronized into `UserModuleAccess.role`.
