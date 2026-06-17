@@ -2,6 +2,7 @@ import { Router } from "express"
 
 import type { AppEnv } from "../../config/env"
 import { requireSession } from "../../middleware/require-session"
+import { loginRateLimit } from "../../middleware/rate-limit"
 import { SPARTA_SESSION_COOKIE } from "../../services/security/session-token"
 import {
   type AuthRepository,
@@ -32,7 +33,7 @@ export function createAuthRouter(env: AppEnv, options: AuthRouterOptions = {}) {
   )
   const sessionMiddleware = requireSession(authService)
 
-  router.post("/login", async (request, response, next) => {
+  router.post("/login", loginRateLimit, async (request, response, next) => {
     try {
       const payload = loginSchema.safeParse(request.body)
 

@@ -107,6 +107,7 @@ function createBranchDefaultUser(
     branchName: "Jakarta Pusat",
     passwordHash: null,
     passwordState: "BRANCH_DEFAULT",
+    role: "USER",
     status: "ACTIVE",
     failedLoginCount: 0,
     lockedUntil: null,

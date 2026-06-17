@@ -10,6 +10,8 @@ import { ApiClientError, apiFetch } from "@/lib/api-client"
 
 export { apiFetch }
 
+export type ModulesResponse = ApiSuccess<{ modules: SpartaModuleDto[] }>
+
 export type SpartaAppId = SpartaModuleId
 
 export type SpartaApp = SpartaModuleDto & {
@@ -293,9 +295,9 @@ export async function confirmChangePasswordWithOtp(
 }
 
 export async function getAccessibleApps(): Promise<SpartaApp[]> {
-  const result = await apiFetch<ApiSuccess<SpartaModuleDto[]>>("/v1/modules")
+  const result = await apiFetch<ModulesResponse>("/v1/modules")
 
-  return result.data.map(mergeModule)
+  return result.data.modules.map(mergeModule)
 }
 
 export async function launchSpartaModule(moduleId: SpartaAppId) {

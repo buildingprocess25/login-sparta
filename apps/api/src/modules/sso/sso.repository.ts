@@ -29,12 +29,13 @@ type PrismaSsoLaunch = ModuleLaunch & {
     branch: { name: string }
     passwordHash: string | null
     passwordState: AuthUserRecord["passwordState"]
+    role: AuthUserRecord["role"]
     status: AuthUserRecord["status"]
     failedLoginCount: number
     lockedUntil: Date | null
     lastLoginAt: Date | null
     accesses: Array<{
-      moduleId: keyof typeof publicModuleIdByPrismaId
+      moduleId: "BUILDING" | "MAINTENANCE" | "ENERGY"
       module: { isActive: boolean; sortOrder: number }
     }>
   }
@@ -48,6 +49,7 @@ function mapUser(user: PrismaSsoLaunch["user"]): AuthUserRecord {
     branchName: user.branch.name,
     passwordHash: user.passwordHash,
     passwordState: user.passwordState,
+    role: user.role,
     status: user.status,
     failedLoginCount: user.failedLoginCount,
     lockedUntil: user.lockedUntil,

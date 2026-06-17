@@ -13,9 +13,9 @@ export type EmailProvider = {
 }
 
 export function createEmailProvider(env: AppEnv): EmailProvider {
-  if (env.NODE_ENV === "production") {
-    return new GmailEmailProvider(env)
+  if (env.NODE_ENV === "test") {
+    return new ConsoleEmailProvider()
   }
 
-  return new ConsoleEmailProvider()
+  return new GmailEmailProvider(env)
 }

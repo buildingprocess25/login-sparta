@@ -5,6 +5,7 @@ import type { Response } from "express"
 
 import type { AppEnv } from "../../config/env"
 import { requireSession } from "../../middleware/require-session"
+import { moduleLaunchRateLimit } from "../../middleware/rate-limit"
 import {
   type AuthRepository,
   PrismaAuthRepository,
@@ -65,6 +66,7 @@ export function createModulesRouter(
   router.post(
     "/:moduleId/launch",
     sessionMiddleware,
+    moduleLaunchRateLimit,
     async (request, response, next) => {
       try {
         const moduleId = request.params.moduleId

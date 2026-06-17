@@ -67,6 +67,7 @@ function mapUserRecord(user: PrismaPasswordUser): AuthUserRecord {
     branchName: user.branch.name,
     passwordHash: user.passwordHash,
     passwordState: user.passwordState,
+    role: user.role,
     status: user.status,
     failedLoginCount: user.failedLoginCount,
     lockedUntil: user.lockedUntil,

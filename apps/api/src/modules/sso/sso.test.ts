@@ -65,6 +65,7 @@ function createUser(): AuthUserRecord {
     branchName: "Jakarta Pusat",
     passwordHash: null,
     passwordState: "USER_SET",
+    role: "USER",
     status: "ACTIVE",
     failedLoginCount: 0,
     lockedUntil: null,

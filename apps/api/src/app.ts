@@ -25,11 +25,16 @@ import {
   createSsoRouter,
   type SsoRouterOptions,
 } from "./modules/sso/sso.routes"
+import {
+  createUsersRouter,
+  type UsersRouterOptions,
+} from "./modules/users/users.routes"
 
 export type AppOptions = AuthRouterOptions &
   PasswordRouterOptions &
   ModulesRouterOptions &
-  SsoRouterOptions
+  SsoRouterOptions &
+  UsersRouterOptions
 
 export function createApp(env: AppEnv = loadEnv(), options: AppOptions = {}) {
   const app = express()
@@ -50,6 +55,7 @@ export function createApp(env: AppEnv = loadEnv(), options: AppOptions = {}) {
   app.use("/v1/password", createPasswordRouter(env, options))
   app.use("/v1/modules", createModulesRouter(env, options))
   app.use("/v1/sso", createSsoRouter(env, options))
+  app.use("/v1/admin/users", createUsersRouter(env, options))
 
   app.use(notFoundHandler)
   app.use(errorHandler)

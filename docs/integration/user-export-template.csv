@@ -1,0 +1,7 @@
+email,fullName,employeeId,branchCode,branchName,moduleId,moduleRole,isActive
+andi.halim@sparta.local,Andi Halim,EMP001,JKT-PST,Jakarta Pusat,building,USER,true
+andi.halim@sparta.local,Andi Halim,EMP001,JKT-PST,Jakarta Pusat,maintenance,USER,true
+dina.putri@sparta.local,Dina Putri,EMP002,SBY,Surabaya,energy,USER,true
+raka.wijaya@sparta.local,Raka Wijaya,EMP003,BDG,Bandung,building,ADMIN,true
+raka.wijaya@sparta.local,Raka Wijaya,EMP003,BDG,Bandung,maintenance,MANAGER,true
+raka.wijaya@sparta.local,Raka Wijaya,EMP003,BDG,Bandung,energy,USER,true

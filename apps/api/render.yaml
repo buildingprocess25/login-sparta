@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: sparta-login-api
+    runtime: node
+    rootDir: apps/api
+    buildCommand: pnpm install --frozen-lockfile && pnpm prisma:generate && pnpm build
+    startCommand: pnpm start
+    preDeployCommand: pnpm prisma:migrate:deploy
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL
+        sync: false
+      - key: SESSION_SECRET
+        sync: false
+      - key: OTP_PEPPER
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_REFRESH_TOKEN
+        sync: false
+      - key: GMAIL_USER
+        sync: false
+      - key: SPARTA_BUILDING_CALLBACK_URL
+        sync: false
+      - key: SPARTA_MAINTENANCE_CALLBACK_URL
+        sync: false
+      - key: SPARTA_ENERGY_CALLBACK_URL
+        sync: false

@@ -5,6 +5,10 @@ import type { z } from "zod"
 import type { AppEnv } from "../../config/env"
 import { requireSession } from "../../middleware/require-session"
 import {
+  otpRequestRateLimit,
+  otpVerifyRateLimit,
+} from "../../middleware/rate-limit"
+import {
   createEmailProvider,
   type EmailProvider,
 } from "../../services/email/email.service"
@@ -104,7 +108,7 @@ export function createPasswordRouter(
   const { authService, passwordService } = createServices(env, options)
   const sessionMiddleware = requireSession(authService)
 
-  router.post("/forgot/request-otp", async (request, response, next) => {
+  router.post("/forgot/request-otp", otpRequestRateLimit, async (request, response, next) => {
     try {
       const payload = parseBody(forgotOtpRequestSchema, request.body)
 
@@ -126,7 +130,7 @@ export function createPasswordRouter(
     }
   })
 
-  router.post("/forgot/verify-otp", async (request, response, next) => {
+  router.post("/forgot/verify-otp", otpVerifyRateLimit, async (request, response, next) => {
     try {
       const payload = parseBody(forgotOtpVerifySchema, request.body)
 
@@ -142,7 +146,7 @@ export function createPasswordRouter(
     }
   })
 
-  router.post("/forgot/reset", async (request, response, next) => {
+  router.post("/forgot/reset", otpVerifyRateLimit, async (request, response, next) => {
     try {
       const payload = parseBody(forgotPasswordResetSchema, request.body)
 
@@ -161,6 +165,7 @@ export function createPasswordRouter(
   router.post(
     "/change/request-otp",
     sessionMiddleware,
+    otpRequestRateLimit,
     async (request, response, next) => {
       try {
         if (!request.spartaSession) {
@@ -187,6 +192,7 @@ export function createPasswordRouter(
   router.post(
     "/change/confirm",
     sessionMiddleware,
+    otpVerifyRateLimit,
     async (request, response, next) => {
       try {
         const payload = parseBody(changePasswordConfirmSchema, request.body)

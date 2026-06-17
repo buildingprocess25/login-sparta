@@ -1,6 +1,7 @@
 import {
   PasswordState,
   SpartaModuleId,
+  UserRole,
   UserStatus,
 } from "@prisma/client"
 import type { PrismaClient } from "@prisma/client"
@@ -16,6 +17,7 @@ export type AuthUserRecord = {
   branchName: string
   passwordHash: string | null
   passwordState: keyof typeof PasswordState
+  role: keyof typeof UserRole
   status: keyof typeof UserStatus
   failedLoginCount: number
   lockedUntil: Date | null
@@ -68,6 +70,7 @@ function mapUserRecord(user: PrismaAuthUser): AuthUserRecord {
     branchName: user.branch.name,
     passwordHash: user.passwordHash,
     passwordState: user.passwordState,
+    role: user.role,
     status: user.status,
     failedLoginCount: user.failedLoginCount,
     lockedUntil: user.lockedUntil,

@@ -2,6 +2,7 @@ import {
   PasswordState,
   PrismaClient,
   SpartaModuleId,
+  UserRole,
   UserStatus,
 } from "@prisma/client"
 
@@ -43,37 +44,28 @@ const moduleSeeds = [
 ]
 
 const branchSeeds = [
-  { code: "JKT-PST", name: "Jakarta Pusat" },
-  { code: "SBY", name: "Surabaya" },
-  { code: "BDG", name: "Bandung" },
+  { code: "HEAD", name: "HEAD OFFICE" },
 ]
 
 const userSeeds = [
   {
-    email: "andi.halim@sparta.local",
-    employeeId: "EMP001",
-    fullName: "Andi Halim",
-    branchCode: "JKT-PST",
-    modules: [SpartaModuleId.BUILDING, SpartaModuleId.MAINTENANCE],
-  },
-  {
-    email: "dina.putri@sparta.local",
-    employeeId: "EMP002",
-    fullName: "Dina Putri",
-    branchCode: "SBY",
-    modules: [SpartaModuleId.ENERGY],
-  },
-  {
-    email: "raka.wijaya@sparta.local",
-    employeeId: "EMP003",
-    fullName: "Raka Wijaya",
-    branchCode: "BDG",
+    email: "akmalzaidan960@gmail.com",
+    employeeId: "96000001",
+    fullName: "Akmal Zaidan Hibatullah",
+    branchCode: "HEAD",
+    role: UserRole.SYSTEM_ADMIN,
     modules: [
       SpartaModuleId.BUILDING,
       SpartaModuleId.MAINTENANCE,
       SpartaModuleId.ENERGY,
     ],
   },
+]
+
+const legacySeedEmails = [
+  "andi.halim@sparta.local",
+  "dina.putri@sparta.local",
+  "raka.wijaya@sparta.local",
 ]
 
 async function seedModules() {
@@ -111,6 +103,12 @@ async function seedBranches() {
 }
 
 async function seedUsers(branchIdsByCode: Map<string, string>) {
+  await prisma.user.deleteMany({
+    where: {
+      email: { in: legacySeedEmails },
+    },
+  })
+
   for (const userSeed of userSeeds) {
     const branchId = branchIdsByCode.get(userSeed.branchCode)
 
@@ -135,6 +133,7 @@ async function seedUsers(branchIdsByCode: Map<string, string>) {
         employeeId: userSeed.employeeId,
         fullName: userSeed.fullName,
         branchId,
+        role: userSeed.role ?? UserRole.USER,
         passwordState: PasswordState.BRANCH_DEFAULT,
         status: UserStatus.ACTIVE,
       },
