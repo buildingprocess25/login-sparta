@@ -39,8 +39,8 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp"
 import {
-  requestPasswordResetOtp,
-  resetPasswordWithOtp,
+  confirmChangePasswordWithOtp,
+  requestChangePasswordOtp,
   type SpartaSession,
 } from "@/lib/sparta-auth"
 
@@ -63,18 +63,18 @@ function ChangePasswordDialog({
 }: ChangePasswordDialogProps) {
   const [step, setStep] = React.useState<ChangePasswordStep>("request-otp")
   const [otp, setOtp] = React.useState("")
-  const [demoOtp, setDemoOtp] = React.useState<string | null>(null)
   const [newPassword, setNewPassword] = React.useState("")
   const [showNewPassword, setShowNewPassword] = React.useState(false)
   const [status, setStatus] = React.useState<ChangePasswordStatus>(null)
+  const [isSubmitting, setIsSubmitting] = React.useState(false)
 
   const resetDialogState = () => {
     setStep("request-otp")
     setOtp("")
-    setDemoOtp(null)
     setNewPassword("")
     setShowNewPassword(false)
     setStatus(null)
+    setIsSubmitting(false)
   }
 
   const handleOpenChange = (nextOpen: boolean) => {
@@ -85,8 +85,10 @@ function ChangePasswordDialog({
     }
   }
 
-  const handleRequestOtp = () => {
-    const result = requestPasswordResetOtp(session.email)
+  const handleRequestOtp = async () => {
+    setIsSubmitting(true)
+    const result = await requestChangePasswordOtp()
+    setIsSubmitting(false)
 
     if (!result.ok) {
       setStatus({ message: result.message })
@@ -97,22 +99,22 @@ function ChangePasswordDialog({
     }
 
     setOtp("")
-    setDemoOtp(result.otp)
     setStep("reset-password")
     setStatus(null)
-    toast.success("OTP ganti password dibuat", {
-      description: `Kode OTP demo: ${result.otp}`,
+    toast.success("OTP ganti password dikirim", {
+      description: "Periksa email Anda untuk melanjutkan ganti password.",
     })
   }
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
-    const result = resetPasswordWithOtp({
-      email: session.email,
+    setIsSubmitting(true)
+    const result = await confirmChangePasswordWithOtp({
       otp,
       newPassword,
     })
+    setIsSubmitting(false)
 
     if (!result.ok) {
       setStatus({ message: result.message })
@@ -156,9 +158,10 @@ function ChangePasswordDialog({
               <Button
                 type="button"
                 className="w-full sm:w-auto"
+                disabled={isSubmitting}
                 onClick={handleRequestOtp}
               >
-                Kirim OTP
+                {isSubmitting ? "Mengirim..." : "Kirim OTP"}
                 <ArrowRight data-icon="inline-end" />
               </Button>
             </DialogFooter>
@@ -194,9 +197,7 @@ function ChangePasswordDialog({
                   </InputOTPGroup>
                 </InputOTP>
                 <FieldDescription>
-                  {demoOtp
-                    ? `Kode OTP demo: ${demoOtp}. Berlaku selama 10 menit.`
-                    : "Kode OTP berlaku selama 10 menit."}
+                  Kode OTP dikirim ke email dan berlaku selama 10 menit.
                 </FieldDescription>
                 {status ? <FieldError>{status.message}</FieldError> : null}
               </Field>
@@ -247,6 +248,7 @@ function ChangePasswordDialog({
                   <Button
                     type="button"
                     variant="outline"
+                    disabled={isSubmitting}
                     onClick={handleRequestOtp}
                   >
                     <RefreshCw data-icon="inline-start" />
@@ -254,9 +256,11 @@ function ChangePasswordDialog({
                   </Button>
                   <Button
                     type="submit"
-                    disabled={otp.length !== 6 || !newPassword.trim()}
+                    disabled={
+                      otp.length !== 6 || !newPassword.trim() || isSubmitting
+                    }
                   >
-                    Simpan
+                    {isSubmitting ? "Menyimpan..." : "Simpan"}
                   </Button>
                 </div>
                 <Button

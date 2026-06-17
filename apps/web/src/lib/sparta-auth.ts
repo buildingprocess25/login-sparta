@@ -1,21 +1,22 @@
-export type SpartaAppId = "building" | "maintenance" | "energy"
+import type {
+  ApiSuccess,
+  SpartaModuleDto,
+  SpartaModuleId,
+  SpartaModuleLaunchDto,
+  SpartaSessionDto,
+} from "@sparta/shared"
 
-export type SpartaApp = {
-  id: SpartaAppId
-  name: string
-  shortName: string
-  description: string
+import { ApiClientError, apiFetch } from "@/lib/api-client"
+
+export { apiFetch }
+
+export type SpartaAppId = SpartaModuleId
+
+export type SpartaApp = SpartaModuleDto & {
   passwordRule: string
-  url: string
 }
 
-export type SpartaSession = {
-  email: string
-  fullName: string
-  branch: string
-  access: SpartaAppId[]
-  mustChangePassword: boolean
-}
+export type SpartaSession = SpartaSessionDto
 
 export type LoginInput = {
   email: string
@@ -33,12 +34,7 @@ export type LoginResult =
     }
 
 export type PasswordUpdateInput = {
-  email: string
   newPassword: string
-}
-
-export type PasswordChangeInput = PasswordUpdateInput & {
-  currentPassword: string
 }
 
 export type PasswordUpdateResult =
@@ -54,8 +50,7 @@ export type PasswordResetOtpResult =
   | {
       ok: true
       email: string
-      otp: string
-      expiresAt: number
+      expiresAt: string
     }
   | {
       ok: false
@@ -71,23 +66,12 @@ export type PasswordResetWithOtpInput = PasswordResetOtpInput & {
   newPassword: string
 }
 
-type SpartaUser = {
-  email: string
-  fullName: string
-  branch: string
-  access: SpartaAppId[]
-  passwordHash?: string
+export type ChangePasswordWithOtpInput = {
+  otp: string
+  newPassword: string
 }
 
-const appOrder: SpartaAppId[] = ["building", "maintenance", "energy"]
-const PASSWORD_RESET_OTP_DURATION_MS = 10 * 60 * 1000
-const passwordResetOtpStore = new Map<
-  string,
-  {
-    otp: string
-    expiresAt: number
-  }
->()
+const DEFAULT_ERROR_MESSAGE = "Request SPARTA gagal."
 
 export const SPARTA_APPS: Record<SpartaAppId, SpartaApp> = {
   building: {
@@ -96,8 +80,9 @@ export const SPARTA_APPS: Record<SpartaAppId, SpartaApp> = {
     shortName: "Building",
     description:
       "Pengelolaan proyek pembangunan dari rencana hingga serah terima.",
+    colorHex: "#e6000b",
+    hasAccess: false,
     passwordRule: "Masukkan password SPARTA Anda.",
-    url: "https://building.sparta.local",
   },
   maintenance: {
     id: "maintenance",
@@ -105,287 +90,221 @@ export const SPARTA_APPS: Record<SpartaAppId, SpartaApp> = {
     shortName: "Maintenance",
     description:
       "Pemeliharaan toko, laporan perbaikan, dan pertanggungjawaban operasional.",
+    colorHex: "#0069a7",
+    hasAccess: false,
     passwordRule: "Masukkan password SPARTA Anda.",
-    url: "https://maintenance.sparta.local",
   },
   energy: {
     id: "energy",
     name: "SPARTA Energy",
     shortName: "Energy",
     description: "Audit peralatan dan estimasi kebutuhan energi toko.",
+    colorHex: "#007a55",
+    hasAccess: false,
     passwordRule: "Masukkan password SPARTA Anda.",
-    url: "https://energy.sparta.local",
   },
 }
 
-function manualHash(value: string) {
-  let hash = 2166136261
-
-  for (let index = 0; index < value.length; index += 1) {
-    hash ^= value.charCodeAt(index)
-    hash = Math.imul(hash, 16777619)
+function getErrorMessage(error: unknown) {
+  if (error instanceof Error) {
+    return error.message
   }
 
-  return (hash >>> 0).toString(16).padStart(8, "0")
+  return DEFAULT_ERROR_MESSAGE
 }
 
-const SPARTA_USERS: SpartaUser[] = [
-  {
-    email: "andi.halim@sparta.local",
-    fullName: "Andi Halim",
-    branch: "Jakarta Pusat",
-    access: ["maintenance", "building"],
-  },
-  {
-    email: "dina.putri@sparta.local",
-    fullName: "Dina Putri",
-    branch: "Surabaya",
-    access: ["energy"],
-  },
-  {
-    email: "raka.wijaya@sparta.local",
-    fullName: "Raka Wijaya",
-    branch: "Bandung",
-    access: ["maintenance", "building", "energy"],
-  },
-]
-
-function normalizeEmail(email: string) {
-  return email.trim().toLowerCase()
-}
-
-function getBranchPassword(user: SpartaUser) {
-  return user.branch.toUpperCase()
-}
-
-function getOrderedAccess(access: SpartaAppId[]) {
-  return appOrder.filter((appId) => access.includes(appId))
-}
-
-function generateOtp() {
-  return Math.floor(100000 + Math.random() * 900000).toString()
-}
-
-function createSession(user: SpartaUser): SpartaSession {
+function mergeModule(module: SpartaModuleDto): SpartaApp {
   return {
-    email: user.email,
-    fullName: user.fullName,
-    branch: user.branch,
-    access: getOrderedAccess(user.access),
-    mustChangePassword: !user.passwordHash,
+    ...SPARTA_APPS[module.id],
+    ...module,
   }
 }
 
-export function getUserByEmail(email: string) {
-  const normalizedEmail = normalizeEmail(email)
+export async function getCurrentSpartaSession() {
+  try {
+    const result =
+      await apiFetch<ApiSuccess<{ session: SpartaSession }>>("/v1/auth/me")
 
-  return SPARTA_USERS.find((user) => user.email === normalizedEmail) ?? null
-}
-
-export function getAccessibleApps(email: string): SpartaApp[] {
-  const user = getUserByEmail(email)
-
-  if (!user) {
-    return []
-  }
-
-  return getOrderedAccess(user.access).map((appId) => SPARTA_APPS[appId])
-}
-
-export function validateUserPassword(input: LoginInput): LoginResult {
-  const user = getUserByEmail(input.email)
-
-  if (!user) {
-    return {
-      ok: false,
-      message: "Email tidak terdaftar pada SPARTA.",
+    return result.data.session
+  } catch (error) {
+    if (error instanceof ApiClientError && error.status === 401) {
+      return null
     }
+
+    throw error
   }
+}
 
-  const password = input.password.trim()
-
-  if (!password) {
-    return {
-      ok: false,
-      message: "Password wajib diisi.",
-    }
-  }
-
-  if (user.passwordHash) {
-    if (manualHash(password) !== user.passwordHash) {
-      return {
-        ok: false,
-        message: "Password SPARTA tidak sesuai.",
+export async function loginToSparta(input: LoginInput): Promise<LoginResult> {
+  try {
+    const result = await apiFetch<ApiSuccess<{ session: SpartaSession }>>(
+      "/v1/auth/login",
+      {
+        method: "POST",
+        body: JSON.stringify(input),
       }
-    }
+    )
 
     return {
       ok: true,
-      session: createSession(user),
+      session: result.data.session,
     }
-  }
-
-  if (password !== getBranchPassword(user)) {
+  } catch (error) {
     return {
       ok: false,
-      message: "Email atau password SPARTA tidak sesuai.",
+      message: getErrorMessage(error),
     }
   }
-
-  return {
-    ok: true,
-    session: createSession(user),
-  }
 }
 
-export function loginToSparta(input: LoginInput): LoginResult {
-  return validateUserPassword(input)
+export async function logoutFromSparta() {
+  await apiFetch<ApiSuccess<{ ok: true }>>("/v1/auth/logout", {
+    method: "POST",
+  })
 }
 
-export function updateUserPassword(
+export async function updateUserPassword(
   input: PasswordUpdateInput
-): PasswordUpdateResult {
-  const user = getUserByEmail(input.email)
+): Promise<PasswordUpdateResult> {
+  try {
+    await apiFetch<ApiSuccess<{ ok: true }>>("/v1/auth/first-password", {
+      method: "POST",
+      body: JSON.stringify(input),
+    })
 
-  if (!user) {
+    return {
+      ok: true,
+    }
+  } catch (error) {
     return {
       ok: false,
-      message: "Email tidak terdaftar pada SPARTA.",
+      message: getErrorMessage(error),
     }
-  }
-
-  const newPassword = input.newPassword.trim()
-
-  if (!newPassword) {
-    return {
-      ok: false,
-      message: "Password baru wajib diisi.",
-    }
-  }
-
-  if (newPassword.length < 8) {
-    return {
-      ok: false,
-      message: "Password baru minimal 8 karakter.",
-    }
-  }
-
-  if (newPassword === getBranchPassword(user)) {
-    return {
-      ok: false,
-      message: "Password baru belum memenuhi kebijakan keamanan.",
-    }
-  }
-
-  user.passwordHash = manualHash(newPassword)
-
-  return {
-    ok: true,
   }
 }
 
-export function changeUserPassword(
-  input: PasswordChangeInput
-): PasswordUpdateResult {
-  const currentPasswordResult = validateUserPassword({
-    email: input.email,
-    password: input.currentPassword,
-  })
+export async function requestPasswordResetOtp(
+  email: string
+): Promise<PasswordResetOtpResult> {
+  try {
+    const result = await apiFetch<
+      ApiSuccess<{
+        email: string
+        expiresAt: string
+      }>
+    >("/v1/password/forgot/request-otp", {
+      method: "POST",
+      body: JSON.stringify({ email }),
+    })
 
-  if (!currentPasswordResult.ok) {
+    return {
+      ok: true,
+      ...result.data,
+    }
+  } catch (error) {
     return {
       ok: false,
-      message: "Password saat ini tidak sesuai.",
+      message: getErrorMessage(error),
     }
-  }
-
-  return updateUserPassword({
-    email: input.email,
-    newPassword: input.newPassword,
-  })
-}
-
-export function requestPasswordResetOtp(email: string): PasswordResetOtpResult {
-  const user = getUserByEmail(email)
-
-  if (!user) {
-    return {
-      ok: false,
-      message: "Email tidak terdaftar pada SPARTA.",
-    }
-  }
-
-  const otp = generateOtp()
-  const expiresAt = Date.now() + PASSWORD_RESET_OTP_DURATION_MS
-
-  passwordResetOtpStore.set(user.email, {
-    otp,
-    expiresAt,
-  })
-
-  return {
-    ok: true,
-    email: user.email,
-    otp,
-    expiresAt,
   }
 }
 
-export function verifyPasswordResetOtp(
+export async function verifyPasswordResetOtp(
   input: PasswordResetOtpInput
-): PasswordUpdateResult {
-  const normalizedEmail = normalizeEmail(input.email)
-  const otpRecord = passwordResetOtpStore.get(normalizedEmail)
-
-  if (!otpRecord) {
-    return {
-      ok: false,
-      message: "Kode OTP tidak valid atau sudah kedaluwarsa.",
-    }
-  }
-
-  if (Date.now() > otpRecord.expiresAt) {
-    passwordResetOtpStore.delete(normalizedEmail)
+): Promise<PasswordUpdateResult> {
+  try {
+    await apiFetch<ApiSuccess<{ ok: true }>>("/v1/password/forgot/verify-otp", {
+      method: "POST",
+      body: JSON.stringify(input),
+    })
 
     return {
-      ok: false,
-      message: "Kode OTP tidak valid atau sudah kedaluwarsa.",
+      ok: true,
     }
-  }
-
-  if (otpRecord.otp !== input.otp.trim()) {
+  } catch (error) {
     return {
       ok: false,
-      message: "Kode OTP tidak valid atau sudah kedaluwarsa.",
+      message: getErrorMessage(error),
     }
-  }
-
-  return {
-    ok: true,
   }
 }
 
-export function resetPasswordWithOtp(
+export async function resetPasswordWithOtp(
   input: PasswordResetWithOtpInput
-): PasswordUpdateResult {
-  const otpResult = verifyPasswordResetOtp(input)
+): Promise<PasswordUpdateResult> {
+  try {
+    await apiFetch<ApiSuccess<{ ok: true }>>("/v1/password/forgot/reset", {
+      method: "POST",
+      body: JSON.stringify(input),
+    })
 
-  if (!otpResult.ok) {
-    return otpResult
+    return {
+      ok: true,
+    }
+  } catch (error) {
+    return {
+      ok: false,
+      message: getErrorMessage(error),
+    }
   }
+}
 
-  const updateResult = updateUserPassword({
-    email: input.email,
-    newPassword: input.newPassword,
-  })
+export async function requestChangePasswordOtp(): Promise<PasswordResetOtpResult> {
+  try {
+    const result = await apiFetch<
+      ApiSuccess<{
+        email: string
+        expiresAt: string
+      }>
+    >("/v1/password/change/request-otp", {
+      method: "POST",
+    })
 
-  if (!updateResult.ok) {
-    return updateResult
+    return {
+      ok: true,
+      ...result.data,
+    }
+  } catch (error) {
+    return {
+      ok: false,
+      message: getErrorMessage(error),
+    }
   }
+}
 
-  passwordResetOtpStore.delete(normalizeEmail(input.email))
+export async function confirmChangePasswordWithOtp(
+  input: ChangePasswordWithOtpInput
+): Promise<PasswordUpdateResult> {
+  try {
+    await apiFetch<ApiSuccess<{ ok: true }>>("/v1/password/change/confirm", {
+      method: "POST",
+      body: JSON.stringify(input),
+    })
 
-  return {
-    ok: true,
+    return {
+      ok: true,
+    }
+  } catch (error) {
+    return {
+      ok: false,
+      message: getErrorMessage(error),
+    }
   }
+}
+
+export async function getAccessibleApps(): Promise<SpartaApp[]> {
+  const result = await apiFetch<ApiSuccess<SpartaModuleDto[]>>("/v1/modules")
+
+  return result.data.map(mergeModule)
+}
+
+export async function launchSpartaModule(moduleId: SpartaAppId) {
+  const result = await apiFetch<ApiSuccess<SpartaModuleLaunchDto>>(
+    `/v1/modules/${moduleId}/launch`,
+    {
+      method: "POST",
+    }
+  )
+
+  return result.data
 }

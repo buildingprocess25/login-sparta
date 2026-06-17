@@ -39,11 +39,14 @@ function LoginPage({ onAuthenticated }: LoginPageProps) {
   const [password, setPassword] = React.useState("")
   const [showPassword, setShowPassword] = React.useState(false)
   const [status, setStatus] = React.useState<LoginStatus>(null)
+  const [isSubmitting, setIsSubmitting] = React.useState(false)
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
-    const result = loginToSparta({ email, password })
+    setIsSubmitting(true)
+    const result = await loginToSparta({ email, password })
+    setIsSubmitting(false)
 
     if (!result.ok) {
       setStatus({ message: result.message })
@@ -140,8 +143,8 @@ function LoginPage({ onAuthenticated }: LoginPageProps) {
               {status ? <FieldError>{status.message}</FieldError> : null}
             </Field>
 
-            <Button type="submit" disabled={!canSubmit}>
-              Masuk ke SPARTA
+            <Button type="submit" disabled={!canSubmit || isSubmitting}>
+              {isSubmitting ? "Memproses..." : "Masuk ke SPARTA"}
               <ArrowRight data-icon="inline-end" />
             </Button>
           </FieldGroup>

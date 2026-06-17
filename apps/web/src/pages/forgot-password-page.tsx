@@ -58,15 +58,17 @@ function ForgotPasswordPage({ onPasswordReset }: ForgotPasswordPageProps) {
   const [step, setStep] = React.useState<ResetStep>("email")
   const [email, setEmail] = React.useState("")
   const [otp, setOtp] = React.useState("")
-  const [demoOtp, setDemoOtp] = React.useState<string | null>(null)
   const [password, setPassword] = React.useState("")
   const [showPassword, setShowPassword] = React.useState(false)
   const [status, setStatus] = React.useState<ResetStatus>(null)
+  const [isSubmitting, setIsSubmitting] = React.useState(false)
 
-  const handleRequestOtp = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleRequestOtp = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
-    const result = requestPasswordResetOtp(email)
+    setIsSubmitting(true)
+    const result = await requestPasswordResetOtp(email)
+    setIsSubmitting(false)
 
     if (!result.ok) {
       setStatus({ message: result.message })
@@ -78,21 +80,22 @@ function ForgotPasswordPage({ onPasswordReset }: ForgotPasswordPageProps) {
 
     setEmail(result.email)
     setOtp("")
-    setDemoOtp(result.otp)
     setStep("otp")
     setStatus(null)
-    toast.success("OTP reset password dibuat", {
-      description: `Kode OTP demo: ${result.otp}`,
+    toast.success("OTP reset password dikirim", {
+      description: "Periksa email Anda untuk melanjutkan reset password.",
     })
   }
 
-  const handleVerifyOtp = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleVerifyOtp = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
-    const result = verifyPasswordResetOtp({
+    setIsSubmitting(true)
+    const result = await verifyPasswordResetOtp({
       email,
       otp,
     })
+    setIsSubmitting(false)
 
     if (!result.ok) {
       setStatus({ message: result.message })
@@ -107,14 +110,18 @@ function ForgotPasswordPage({ onPasswordReset }: ForgotPasswordPageProps) {
     toast.success("OTP berhasil diverifikasi")
   }
 
-  const handleResetPassword = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleResetPassword = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
     event.preventDefault()
 
-    const result = resetPasswordWithOtp({
+    setIsSubmitting(true)
+    const result = await resetPasswordWithOtp({
       email,
       otp,
       newPassword: password,
     })
+    setIsSubmitting(false)
 
     if (!result.ok) {
       setStatus({ message: result.message })
@@ -166,8 +173,11 @@ function ForgotPasswordPage({ onPasswordReset }: ForgotPasswordPageProps) {
                 </Field>
 
                 <div className="flex flex-col gap-2">
-                  <Button type="submit" disabled={!email.trim()}>
-                    Kirim OTP
+                  <Button
+                    type="submit"
+                    disabled={!email.trim() || isSubmitting}
+                  >
+                    {isSubmitting ? "Mengirim..." : "Kirim OTP"}
                   </Button>
                   <Button variant="secondary" asChild>
                     <a href={ROUTES.login}>
@@ -227,9 +237,7 @@ function ForgotPasswordPage({ onPasswordReset }: ForgotPasswordPageProps) {
                     </InputOTPGroup>
                   </InputOTP>
                   <FieldDescription>
-                    {demoOtp
-                      ? `Kode OTP demo: ${demoOtp}. Berlaku selama 10 menit.`
-                      : "Kode OTP berlaku selama 10 menit."}
+                    Kode OTP dikirim ke email dan berlaku selama 10 menit.
                   </FieldDescription>
                   {status ? <FieldError>{status.message}</FieldError> : null}
                 </Field>
@@ -238,8 +246,11 @@ function ForgotPasswordPage({ onPasswordReset }: ForgotPasswordPageProps) {
                     <Button
                       type="button"
                       variant="outline"
-                      onClick={() => {
-                        const result = requestPasswordResetOtp(email)
+                      disabled={isSubmitting}
+                      onClick={async () => {
+                        setIsSubmitting(true)
+                        const result = await requestPasswordResetOtp(email)
+                        setIsSubmitting(false)
 
                         if (!result.ok) {
                           setStatus({ message: result.message })
@@ -250,18 +261,20 @@ function ForgotPasswordPage({ onPasswordReset }: ForgotPasswordPageProps) {
                         }
 
                         setOtp("")
-                        setDemoOtp(result.otp)
                         setStatus(null)
-                        toast.success("OTP baru dibuat", {
-                          description: `Kode OTP demo: ${result.otp}`,
+                        toast.success("OTP baru dikirim", {
+                          description: "Periksa email Anda untuk kode terbaru.",
                         })
                       }}
                     >
                       <RefreshCw data-icon="inline-start" />
                       Kirim ulang
                     </Button>
-                    <Button type="submit" disabled={otp.length !== 6}>
-                      Verifikasi OTP
+                    <Button
+                      type="submit"
+                      disabled={otp.length !== 6 || isSubmitting}
+                    >
+                      {isSubmitting ? "Memeriksa..." : "Verifikasi OTP"}
                     </Button>
                   </div>
                   <Button variant="secondary" asChild>
@@ -321,8 +334,11 @@ function ForgotPasswordPage({ onPasswordReset }: ForgotPasswordPageProps) {
                 </Field>
 
                 <div className="flex flex-col gap-2">
-                  <Button type="submit" disabled={!password.trim()}>
-                    Simpan password baru
+                  <Button
+                    type="submit"
+                    disabled={!password.trim() || isSubmitting}
+                  >
+                    {isSubmitting ? "Menyimpan..." : "Simpan password baru"}
                   </Button>
                   <Button variant="secondary" asChild>
                     <a href={ROUTES.login}>

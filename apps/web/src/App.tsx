@@ -1,11 +1,10 @@
 import * as React from "react"
 
-import type { SpartaSession } from "@/lib/sparta-auth"
 import {
-  clearSpartaSession,
-  getSpartaSession,
-  saveSpartaSession,
-} from "@/lib/sparta-session"
+  getCurrentSpartaSession,
+  logoutFromSparta,
+  type SpartaSession,
+} from "@/lib/sparta-auth"
 import { PublicAuthShell } from "@/components/public-auth-shell"
 import { ForgotPasswordPage } from "@/pages/forgot-password-page"
 import { LoginPage } from "@/pages/login-page"
@@ -17,14 +16,12 @@ import { getCurrentRoute, navigateTo, ROUTES } from "@/routes"
 
 export function App() {
   const [route, setRoute] = React.useState(getCurrentRoute)
-  const [session, setSession] = React.useState<SpartaSession | null>(() =>
-    getSpartaSession()
-  )
+  const [session, setSession] = React.useState<SpartaSession | null>(null)
+  const [isSessionLoading, setIsSessionLoading] = React.useState(true)
 
   React.useEffect(() => {
     const handleHashChange = () => {
       setRoute(getCurrentRoute())
-      setSession(getSpartaSession())
     }
 
     window.addEventListener("hashchange", handleHashChange)
@@ -34,8 +31,35 @@ export function App() {
     }
   }, [])
 
+  React.useEffect(() => {
+    let isMounted = true
+
+    async function loadSession() {
+      try {
+        const nextSession = await getCurrentSpartaSession()
+
+        if (isMounted) {
+          setSession(nextSession)
+        }
+      } catch {
+        if (isMounted) {
+          setSession(null)
+        }
+      } finally {
+        if (isMounted) {
+          setIsSessionLoading(false)
+        }
+      }
+    }
+
+    void loadSession()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
   const handleAuthenticated = (nextSession: SpartaSession) => {
-    saveSpartaSession(nextSession)
     setSession(nextSession)
 
     if (nextSession.mustChangePassword) {
@@ -47,25 +71,33 @@ export function App() {
   }
 
   const handlePasswordChanged = (nextSession: SpartaSession) => {
-    saveSpartaSession(nextSession)
     setSession(nextSession)
     navigateTo(ROUTES.modules)
   }
 
-  const handleLogout = () => {
-    clearSpartaSession()
+  const handleLogout = async () => {
+    await logoutFromSparta().catch(() => undefined)
     setSession(null)
     navigateTo(ROUTES.login)
   }
 
   const handleForgotPasswordReset = () => {
-    clearSpartaSession()
     setSession(null)
     navigateTo(ROUTES.login)
   }
 
   if (route === ROUTES.about) {
     return <AboutSpartaPage session={session} onLogout={handleLogout} />
+  }
+
+  if (isSessionLoading && route !== ROUTES.forgotPassword) {
+    return (
+      <PublicAuthShell key="loading-session" contentKey="loading-session">
+        <div className="text-center text-sm text-muted-foreground">
+          Memuat sesi SPARTA...
+        </div>
+      </PublicAuthShell>
+    )
   }
 
   if (route === ROUTES.forgotPassword || !session) {

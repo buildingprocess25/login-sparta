@@ -39,14 +39,16 @@ function PasswordResetPage({
   const [password, setPassword] = React.useState("")
   const [showPassword, setShowPassword] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = React.useState(false)
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
-    const result = updateUserPassword({
-      email: session.email,
+    setIsSubmitting(true)
+    const result = await updateUserPassword({
       newPassword: password,
     })
+    setIsSubmitting(false)
 
     if (!result.ok) {
       setError(result.message)
@@ -114,8 +116,11 @@ function PasswordResetPage({
                   {error ? <FieldError>{error}</FieldError> : null}
                 </Field>
 
-                <Button type="submit" disabled={!password.trim()}>
-                  Simpan password baru
+                <Button
+                  type="submit"
+                  disabled={!password.trim() || isSubmitting}
+                >
+                  {isSubmitting ? "Menyimpan..." : "Simpan password baru"}
                 </Button>
               </FieldGroup>
             </form>

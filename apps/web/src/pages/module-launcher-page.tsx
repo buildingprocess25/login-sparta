@@ -1,10 +1,14 @@
-import type * as React from "react"
+import * as React from "react"
 import { ArrowUpRight } from "lucide-react"
+import { toast } from "sonner"
 
 import { AppShell } from "@/components/app-shell"
 import { Card, CardContent } from "@/components/ui/card"
 import {
+  getAccessibleApps,
+  launchSpartaModule,
   SPARTA_APPS,
+  type SpartaApp,
   type SpartaAppId,
   type SpartaSession,
 } from "@/lib/sparta-auth"
@@ -37,7 +41,70 @@ type ModuleLauncherPageProps = {
   onLogout: () => void
 }
 
+function sortApps(apps: SpartaApp[]) {
+  return [...apps].sort(
+    (firstApp, secondApp) =>
+      appOrder.indexOf(firstApp.id) - appOrder.indexOf(secondApp.id)
+  )
+}
+
+function getFallbackApps(session: SpartaSession) {
+  return appOrder.map((appId) => ({
+    ...SPARTA_APPS[appId],
+    hasAccess: session.access.includes(appId),
+  }))
+}
+
 function ModuleLauncherPage({ session, onLogout }: ModuleLauncherPageProps) {
+  const [apps, setApps] = React.useState<SpartaApp[]>(() =>
+    getFallbackApps(session)
+  )
+  const [launchingAppId, setLaunchingAppId] =
+    React.useState<SpartaAppId | null>(null)
+
+  React.useEffect(() => {
+    let isMounted = true
+
+    async function loadApps() {
+      try {
+        const nextApps = await getAccessibleApps()
+
+        if (isMounted) {
+          setApps(sortApps(nextApps))
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          toast.error("Modul SPARTA belum bisa dimuat", {
+            description: error.message,
+          })
+        }
+      }
+    }
+
+    void loadApps()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
+  const handleLaunchModule = async (appId: SpartaAppId) => {
+    setLaunchingAppId(appId)
+
+    try {
+      const launch = await launchSpartaModule(appId)
+
+      window.location.assign(launch.redirectUrl)
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error("Modul SPARTA belum bisa dibuka", {
+          description: error.message,
+        })
+      }
+      setLaunchingAppId(null)
+    }
+  }
+
   return (
     <AppShell session={session} onLogout={onLogout}>
       <section className="flex flex-1 flex-col justify-center gap-5 lg:grid lg:grid-cols-[0.78fr_1.22fr] lg:items-center lg:gap-8">
@@ -54,16 +121,16 @@ function ModuleLauncherPage({ session, onLogout }: ModuleLauncherPageProps) {
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2">
-          {appOrder.map((appId) => {
-            const app = SPARTA_APPS[appId]
-            const hasAccess = session.access.includes(appId)
+          {apps.map((app) => {
+            const hasAccess = app.hasAccess
+            const isLaunching = launchingAppId === app.id
             const tile = (
               <Card
                 className="relative min-h-[132px] overflow-hidden rounded-lg bg-primary/10 p-0 transition-colors group-hover:bg-primary group-hover:ring-primary/40 sm:aspect-16/11 sm:min-h-0"
-                style={moduleThemeStyles[appId]}
+                style={moduleThemeStyles[app.id]}
               >
                 <img
-                  src={SPARTA_APP_LOGOS[appId]}
+                  src={SPARTA_APP_LOGOS[app.id]}
                   alt=""
                   className="absolute top-1/2 left-4 size-14 -translate-y-1/2 object-contain sm:top-[40%] sm:left-1/2 sm:size-20 sm:-translate-x-1/2 md:size-24"
                 />
@@ -73,9 +140,11 @@ function ModuleLauncherPage({ session, onLogout }: ModuleLauncherPageProps) {
                       {app.name}
                     </div>
                     <div className="line-clamp-2 text-xs leading-4 text-muted-foreground transition-colors group-hover:text-white/80 sm:leading-5">
-                      {hasAccess
-                        ? app.description
-                        : "Anda tidak memiliki akses ke modul ini."}
+                      {isLaunching
+                        ? "Menyiapkan akses SSO..."
+                        : hasAccess
+                          ? app.description
+                          : "Anda tidak memiliki akses ke modul ini."}
                     </div>
                   </div>
                 </CardContent>
@@ -84,13 +153,17 @@ function ModuleLauncherPage({ session, onLogout }: ModuleLauncherPageProps) {
             )
 
             return hasAccess ? (
-              <a
+              <button
                 key={app.id}
-                href={app.url}
-                className="group block overflow-hidden rounded-lg"
+                type="button"
+                className="group block overflow-hidden rounded-lg text-left disabled:cursor-wait"
+                disabled={Boolean(launchingAppId)}
+                onClick={() => {
+                  void handleLaunchModule(app.id)
+                }}
               >
                 {tile}
-              </a>
+              </button>
             ) : (
               <div
                 key={app.id}
