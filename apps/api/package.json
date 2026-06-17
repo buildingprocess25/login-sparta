@@ -13,6 +13,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@node-rs/argon2": "^2.0.2",
     "@prisma/client": "^6.19.0",
     "@sparta/shared": "workspace:*",
     "cookie-parser": "^1.4.7",

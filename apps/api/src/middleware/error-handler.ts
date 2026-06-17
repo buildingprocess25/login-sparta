@@ -1,5 +1,7 @@
 import type { ErrorRequestHandler, RequestHandler } from "express"
 
+import { AuthError } from "../modules/auth/auth.service"
+
 export const notFoundHandler: RequestHandler = (_request, response) => {
   response.status(404).json({
     error: {
@@ -15,6 +17,16 @@ export const errorHandler: ErrorRequestHandler = (
   response,
   _next
 ) => {
+  if (error instanceof AuthError) {
+    response.status(error.statusCode).json({
+      error: {
+        code: error.code,
+        message: error.message,
+      },
+    })
+    return
+  }
+
   const message =
     error instanceof Error ? error.message : "Request SPARTA API gagal."
 

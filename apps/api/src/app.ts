@@ -8,8 +8,14 @@ import { createCorsOptions } from "./config/cors"
 import { loadEnv, type AppEnv } from "./config/env"
 import { errorHandler, notFoundHandler } from "./middleware/error-handler"
 import { requestContext } from "./middleware/request-context"
+import {
+  createAuthRouter,
+  type AuthRouterOptions,
+} from "./modules/auth/auth.routes"
 
-export function createApp(env: AppEnv = loadEnv()) {
+export type AppOptions = AuthRouterOptions
+
+export function createApp(env: AppEnv = loadEnv(), options: AppOptions = {}) {
   const app = express()
 
   app.use(requestContext)
@@ -22,6 +28,8 @@ export function createApp(env: AppEnv = loadEnv()) {
   app.get("/healthz", (_request, response) => {
     response.json({ status: "ok" })
   })
+
+  app.use("/v1/auth", createAuthRouter(env, options))
 
   app.use(notFoundHandler)
   app.use(errorHandler)
