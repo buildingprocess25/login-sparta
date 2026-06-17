@@ -19,5 +19,5 @@
       "@sparta/shared/*": ["../shared/src/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src", "prisma", "prisma.config.ts"]
 }

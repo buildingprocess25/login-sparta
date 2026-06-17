@@ -5,7 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/server.ts",
+    "prisma": "prisma",
     "prisma:generate": "prisma generate",
+    "prisma:migrate:deploy": "prisma migrate deploy",
+    "db:seed": "prisma db seed",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
