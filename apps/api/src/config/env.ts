@@ -1,4 +1,27 @@
+import { existsSync } from "node:fs"
+import path from "node:path"
+
+import { config } from "dotenv"
 import { z } from "zod"
+
+function loadEnvironmentFile() {
+  if (process.env.NODE_ENV === "test") {
+    return
+  }
+
+  const envFile =
+    process.env.SPARTA_API_ENV_FILE ??
+    (process.env.NODE_ENV === "production"
+      ? ".env.production"
+      : ".env.development")
+  const envPath = path.resolve(process.cwd(), envFile)
+
+  if (existsSync(envPath)) {
+    config({ path: envPath, override: false })
+  }
+}
+
+loadEnvironmentFile()
 
 const envSchema = z.object({
   NODE_ENV: z
@@ -24,6 +47,15 @@ const envSchema = z.object({
   SMTP_USER: z.string().default(""),
   SMTP_PASS: z.string().default(""),
   SMTP_FROM: z.string().min(1, "SMTP_FROM is required"),
+  SPARTA_BUILDING_CALLBACK_URL: z
+    .string()
+    .url("SPARTA_BUILDING_CALLBACK_URL must be a valid URL"),
+  SPARTA_MAINTENANCE_CALLBACK_URL: z
+    .string()
+    .url("SPARTA_MAINTENANCE_CALLBACK_URL must be a valid URL"),
+  SPARTA_ENERGY_CALLBACK_URL: z
+    .string()
+    .url("SPARTA_ENERGY_CALLBACK_URL must be a valid URL"),
 })
 
 export type AppEnv = z.infer<typeof envSchema>

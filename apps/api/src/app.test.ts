@@ -16,6 +16,11 @@ const testEnv = {
   SMTP_USER: "",
   SMTP_PASS: "",
   SMTP_FROM: "SPARTA <no-reply@sparta.local>",
+  SPARTA_BUILDING_CALLBACK_URL:
+    "https://building.sparta.local/auth/sso/callback",
+  SPARTA_MAINTENANCE_CALLBACK_URL:
+    "https://maintenance.sparta.local/auth/sso/callback",
+  SPARTA_ENERGY_CALLBACK_URL: "https://energy.sparta.local/auth/sso/callback",
 } satisfies AppEnv
 
 describe("SPARTA API app", () => {
