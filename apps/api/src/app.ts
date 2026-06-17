@@ -12,8 +12,13 @@ import {
   createAuthRouter,
   type AuthRouterOptions,
 } from "./modules/auth/auth.routes"
+import {
+  createFirstPasswordRouter,
+  createPasswordRouter,
+  type PasswordRouterOptions,
+} from "./modules/password/password.routes"
 
-export type AppOptions = AuthRouterOptions
+export type AppOptions = AuthRouterOptions & PasswordRouterOptions
 
 export function createApp(env: AppEnv = loadEnv(), options: AppOptions = {}) {
   const app = express()
@@ -30,6 +35,8 @@ export function createApp(env: AppEnv = loadEnv(), options: AppOptions = {}) {
   })
 
   app.use("/v1/auth", createAuthRouter(env, options))
+  app.use("/v1/auth", createFirstPasswordRouter(env, options))
+  app.use("/v1/password", createPasswordRouter(env, options))
 
   app.use(notFoundHandler)
   app.use(errorHandler)
