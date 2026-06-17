@@ -1,0 +1,176 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum SpartaModuleId {
+  BUILDING
+  MAINTENANCE
+  ENERGY
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  LOCKED
+}
+
+enum PasswordState {
+  BRANCH_DEFAULT
+  USER_SET
+  RESET_REQUIRED
+}
+
+enum OtpPurpose {
+  FORGOT_PASSWORD
+  CHANGE_PASSWORD
+}
+
+enum OtpStatus {
+  ACTIVE
+  CONSUMED
+  EXPIRED
+  BLOCKED
+}
+
+model Branch {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  name      String
+  users     User[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  id               String             @id @default(cuid())
+  email            String             @unique
+  employeeId       String?            @unique
+  fullName         String
+  branchId         String
+  branch           Branch             @relation(fields: [branchId], references: [id])
+  passwordHash     String?
+  passwordState    PasswordState      @default(BRANCH_DEFAULT)
+  status           UserStatus         @default(ACTIVE)
+  failedLoginCount Int                @default(0)
+  lockedUntil      DateTime?
+  lastLoginAt      DateTime?
+  accesses         UserModuleAccess[]
+  sessions         Session[]
+  otpChallenges    OtpChallenge[]
+  moduleLaunches   ModuleLaunch[]
+  auditEvents      AuditEvent[]
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+
+  @@index([branchId])
+  @@index([status])
+}
+
+model AppModule {
+  id          SpartaModuleId    @id
+  name        String
+  shortName   String
+  description String
+  callbackUrl String
+  colorHex    String
+  isActive    Boolean           @default(true)
+  sortOrder   Int
+  accesses    UserModuleAccess[]
+  launches    ModuleLaunch[]
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@index([isActive, sortOrder])
+}
+
+model UserModuleAccess {
+  id              String         @id @default(cuid())
+  userId          String
+  moduleId        SpartaModuleId
+  role            String         @default("USER")
+  isActive        Boolean        @default(true)
+  grantedByUserId String?
+  grantedAt       DateTime       @default(now())
+  revokedAt       DateTime?
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  module          AppModule      @relation(fields: [moduleId], references: [id])
+
+  @@unique([userId, moduleId])
+  @@index([moduleId, isActive])
+  @@index([userId, isActive])
+}
+
+model Session {
+  id         String    @id @default(cuid())
+  userId     String
+  tokenHash  String    @unique
+  userAgent  String?
+  ipAddress  String?
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  lastSeenAt DateTime  @default(now())
+  createdAt  DateTime  @default(now())
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, revokedAt, expiresAt])
+}
+
+model OtpChallenge {
+  id          String     @id @default(cuid())
+  userId      String?
+  email       String
+  codeHash    String
+  purpose     OtpPurpose
+  status      OtpStatus  @default(ACTIVE)
+  attempts    Int        @default(0)
+  maxAttempts Int        @default(5)
+  resendCount Int        @default(0)
+  expiresAt   DateTime
+  consumedAt  DateTime?
+  createdAt   DateTime   @default(now())
+  user        User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([email, purpose, status])
+  @@index([userId, purpose, status])
+  @@index([expiresAt])
+}
+
+model ModuleLaunch {
+  id              String         @id @default(cuid())
+  userId          String
+  moduleId        SpartaModuleId
+  launchTokenHash String?        @unique
+  redirectUrl     String
+  ipAddress       String?
+  userAgent       String?
+  expiresAt       DateTime?
+  consumedAt      DateTime?
+  createdAt       DateTime       @default(now())
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  module          AppModule      @relation(fields: [moduleId], references: [id])
+
+  @@index([userId, createdAt])
+  @@index([moduleId, createdAt])
+}
+
+model AuditEvent {
+  id          String   @id @default(cuid())
+  actorUserId String?
+  action      String
+  entityType  String
+  entityId    String?
+  metadata    Json?
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+  actor       User?    @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([actorUserId, createdAt])
+  @@index([action, createdAt])
+  @@index([entityType, entityId])
+}
