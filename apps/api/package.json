@@ -3,5 +3,13 @@
   "private": true,
   "version": "0.0.1",
   "type": "module",
-  "scripts": {}
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@sparta/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "~6"
+  }
 }
