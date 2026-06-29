@@ -60,6 +60,7 @@ const developmentTeam = [...primaryDevelopmentTeam, ...otherDevelopmentTeam]
 type AboutSpartaPageProps = {
   session?: SpartaSession | null
   onLogout?: () => void
+  showHeader?: boolean
 }
 
 function TeamMemberFrame({
@@ -99,11 +100,15 @@ function TeamMemberCaption({ member }: { member: SpartaTeamMember }) {
   )
 }
 
-function AboutSpartaPage({ session, onLogout }: AboutSpartaPageProps) {
+function AboutSpartaPage({
+  session,
+  onLogout,
+  showHeader,
+}: AboutSpartaPageProps) {
   return (
-    <AppShell session={session} onLogout={onLogout}>
+    <AppShell session={session} onLogout={onLogout} showHeader={showHeader}>
       <div className="flex flex-col gap-6 sm:gap-8">
-        {!session ? (
+        {!session && !showHeader ? (
           <div className="sticky top-4 z-20 flex items-center justify-start">
             <Button
               className="bg-background/90 shadow-sm backdrop-blur"

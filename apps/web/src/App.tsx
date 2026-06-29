@@ -2,6 +2,7 @@ import * as React from "react"
 
 import {
   getCurrentSpartaSession,
+  isSpartaSsoEnabled,
   logoutFromSparta,
   type SpartaSession,
 } from "@/lib/sparta-auth"
@@ -11,13 +12,13 @@ import { LoginPage } from "@/pages/login-page"
 import { ModuleLauncherPage } from "@/pages/module-launcher-page"
 import { PasswordResetPage } from "@/pages/password-reset-page"
 import { AboutSpartaPage } from "@/pages/tentang-sparta-page"
-import { TanyaArtaPage } from "@/pages/tanya-arta-page"
-import { getCurrentRoute, navigateTo, ROUTES } from "@/routes"
+import { getCurrentRoute, getDefaultRoute, navigateTo, ROUTES } from "@/routes"
 
 export function App() {
+  const ssoEnabled = isSpartaSsoEnabled()
   const [route, setRoute] = React.useState(getCurrentRoute)
   const [session, setSession] = React.useState<SpartaSession | null>(null)
-  const [isSessionLoading, setIsSessionLoading] = React.useState(true)
+  const [isSessionLoading, setIsSessionLoading] = React.useState(ssoEnabled)
 
   React.useEffect(() => {
     const handleHashChange = () => {
@@ -32,6 +33,10 @@ export function App() {
   }, [])
 
   React.useEffect(() => {
+    if (!ssoEnabled) {
+      return
+    }
+
     let isMounted = true
 
     async function loadSession() {
@@ -57,7 +62,15 @@ export function App() {
     return () => {
       isMounted = false
     }
-  }, [])
+  }, [ssoEnabled])
+
+  React.useEffect(() => {
+    const defaultRoute = getDefaultRoute(ssoEnabled)
+
+    if (!ssoEnabled && route === ROUTES.login) {
+      navigateTo(defaultRoute)
+    }
+  }, [route, ssoEnabled])
 
   const handleAuthenticated = (nextSession: SpartaSession) => {
     setSession(nextSession)
@@ -87,7 +100,17 @@ export function App() {
   }
 
   if (route === ROUTES.about) {
-    return <AboutSpartaPage session={session} onLogout={handleLogout} />
+    return (
+      <AboutSpartaPage
+        session={session}
+        onLogout={handleLogout}
+        showHeader={!ssoEnabled}
+      />
+    )
+  }
+
+  if (!ssoEnabled) {
+    return <ModuleLauncherPage session={null} onLogout={undefined} />
   }
 
   if (isSessionLoading && route !== ROUTES.forgotPassword) {
@@ -120,10 +143,6 @@ export function App() {
         onLogout={handleLogout}
       />
     )
-  }
-
-  if (route === ROUTES.arta) {
-    return <TanyaArtaPage session={session} onLogout={handleLogout} />
   }
 
   return <ModuleLauncherPage session={session} onLogout={handleLogout} />

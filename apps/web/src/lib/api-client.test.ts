@@ -1,6 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-import { apiFetch, launchSpartaModule, loginToSparta } from "@/lib/sparta-auth"
+import {
+  apiFetch,
+  getModuleLoginUrl,
+  isSpartaSsoEnabled,
+  launchSpartaModule,
+  loginToSparta,
+} from "@/lib/sparta-auth"
 
 const fetchMock = vi.fn()
 
@@ -22,6 +28,7 @@ describe("SPARTA API client", () => {
 
   afterEach(() => {
     vi.unstubAllGlobals()
+    vi.unstubAllEnvs()
   })
 
   it("sends credentialed requests to the API", async () => {
@@ -116,6 +123,25 @@ describe("SPARTA API client", () => {
         credentials: "include",
         method: "POST",
       })
+    )
+  })
+
+  it("keeps SSO enabled unless explicitly disabled", () => {
+    expect(isSpartaSsoEnabled()).toBe(true)
+
+    vi.stubEnv("VITE_SPARTA_SSO_ENABLED", "false")
+
+    expect(isSpartaSsoEnabled()).toBe(false)
+  })
+
+  it("reads direct module login URLs from frontend env", () => {
+    vi.stubEnv(
+      "VITE_SPARTA_BUILDING_LOGIN_URL",
+      "https://building.sparta.test/login"
+    )
+
+    expect(getModuleLoginUrl("building")).toBe(
+      "https://building.sparta.test/login"
     )
   })
 })

@@ -74,6 +74,11 @@ export type ChangePasswordWithOtpInput = {
 }
 
 const DEFAULT_ERROR_MESSAGE = "Request SPARTA gagal."
+const defaultModuleLoginUrls = {
+  building: "http://localhost:5174/login",
+  maintenance: "http://localhost:5175/login",
+  energy: "http://localhost:5176/login",
+} satisfies Record<SpartaAppId, string>
 
 export const SPARTA_APPS: Record<SpartaAppId, SpartaApp> = {
   building: {
@@ -120,6 +125,19 @@ function mergeModule(module: SpartaModuleDto): SpartaApp {
     ...SPARTA_APPS[module.id],
     ...module,
   }
+}
+
+export function isSpartaSsoEnabled() {
+  return import.meta.env.VITE_SPARTA_SSO_ENABLED !== "false"
+}
+
+export function getModuleLoginUrl(moduleId: SpartaAppId) {
+  const envKey = `VITE_SPARTA_${moduleId.toUpperCase()}_LOGIN_URL`
+  const envUrl = import.meta.env[envKey]
+
+  return typeof envUrl === "string" && envUrl.trim()
+    ? envUrl
+    : defaultModuleLoginUrls[moduleId]
 }
 
 export async function getCurrentSpartaSession() {

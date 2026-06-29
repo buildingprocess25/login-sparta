@@ -33,6 +33,7 @@ type AppShellProps = {
   children: React.ReactNode
   session?: SpartaSession | null
   onLogout?: () => void
+  showHeader?: boolean
 }
 
 function getInitials(name: string) {
@@ -45,7 +46,12 @@ function getInitials(name: string) {
     .toUpperCase()
 }
 
-function AppShell({ children, session, onLogout }: AppShellProps) {
+function AppShell({
+  children,
+  session,
+  onLogout,
+  showHeader,
+}: AppShellProps) {
   const [isMobileProfileMenuOpen, setIsMobileProfileMenuOpen] =
     React.useState(false)
   const [isProfileMenuOpen, setIsProfileMenuOpen] = React.useState(false)
@@ -68,64 +74,66 @@ function AppShell({ children, session, onLogout }: AppShellProps) {
   return (
     <main className="min-h-svh bg-background text-foreground">
       <div className="mx-auto flex min-h-svh w-full max-w-7xl flex-col">
-        {session ? (
+        {session || showHeader ? (
           <header className="border-b p-4 sm:p-6">
             <div className="flex items-center justify-between lg:hidden">
               <Logo />
-              <DropdownMenu
-                open={isMobileProfileMenuOpen}
-                onOpenChange={setIsMobileProfileMenuOpen}
-              >
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    className="size-10 p-0"
-                    aria-label={`Profil ${session.fullName}`}
-                  >
-                    <Avatar className="size-8">
-                      <AvatarFallback>
-                        {getInitials(session.fullName)}
-                      </AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-64">
-                  <DropdownMenuLabel>
-                    <span className="flex items-center justify-between gap-2">
-                      <span className="font-medium text-foreground">
-                        {session.fullName}
-                      </span>
-                      <Badge>{session.branch}</Badge>
-                    </span>
-                    <span className="block">{session.email}</span>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuGroup>
-                    <DropdownMenuItem
-                      onSelect={() => {
-                        setIsMobileProfileMenuOpen(false)
-                        setIsChangePasswordOpen(true)
-                      }}
+              {session ? (
+                <DropdownMenu
+                  open={isMobileProfileMenuOpen}
+                  onOpenChange={setIsMobileProfileMenuOpen}
+                >
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      className="size-10 p-0"
+                      aria-label={`Profil ${session.fullName}`}
                     >
-                      <KeyRound />
-                      Ganti Password
-                    </DropdownMenuItem>
-                    {onLogout ? (
+                      <Avatar className="size-8">
+                        <AvatarFallback>
+                          {getInitials(session.fullName)}
+                        </AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-64">
+                    <DropdownMenuLabel>
+                      <span className="flex items-center justify-between gap-2">
+                        <span className="font-medium text-foreground">
+                          {session.fullName}
+                        </span>
+                        <Badge>{session.branch}</Badge>
+                      </span>
+                      <span className="block">{session.email}</span>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuGroup>
                       <DropdownMenuItem
-                        variant="destructive"
                         onSelect={() => {
                           setIsMobileProfileMenuOpen(false)
-                          setIsLogoutConfirmOpen(true)
+                          setIsChangePasswordOpen(true)
                         }}
                       >
-                        <LogOut />
-                        Logout
+                        <KeyRound />
+                        Ganti Password
                       </DropdownMenuItem>
-                    ) : null}
-                  </DropdownMenuGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                      {onLogout ? (
+                        <DropdownMenuItem
+                          variant="destructive"
+                          onSelect={() => {
+                            setIsMobileProfileMenuOpen(false)
+                            setIsLogoutConfirmOpen(true)
+                          }}
+                        >
+                          <LogOut />
+                          Logout
+                        </DropdownMenuItem>
+                      ) : null}
+                    </DropdownMenuGroup>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : null}
             </div>
             <nav className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-3 lg:hidden">
               <a
@@ -153,18 +161,6 @@ function AppShell({ children, session, onLogout }: AppShellProps) {
                 )}
               >
                 Tentang SPARTA
-              </a>
-              <a
-                href={ROUTES.arta}
-                aria-current={activeRoute === ROUTES.arta ? "page" : undefined}
-                className={cn(
-                  "relative py-1 text-xs font-medium whitespace-nowrap transition-colors after:absolute after:bottom-[-2px] after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-[width] after:duration-500 after:ease-out hover:text-foreground hover:after:w-full focus-visible:outline-none focus-visible:after:w-full sm:text-sm",
-                  activeRoute === ROUTES.arta
-                    ? "text-foreground after:w-full"
-                    : "text-muted-foreground"
-                )}
-              >
-                Tanya ARTA
               </a>
             </nav>
             <div className="hidden items-center justify-between gap-4 lg:flex">
@@ -198,83 +194,73 @@ function AppShell({ children, session, onLogout }: AppShellProps) {
                 >
                   Tentang SPARTA
                 </a>
-                <a
-                  href={ROUTES.arta}
-                  aria-current={
-                    activeRoute === ROUTES.arta ? "page" : undefined
-                  }
-                  className={cn(
-                    "relative py-1 text-sm font-medium transition-colors after:absolute after:bottom-[-2px] after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-[width] after:duration-500 after:ease-out hover:text-foreground hover:after:w-full focus-visible:outline-none focus-visible:after:w-full",
-                    activeRoute === ROUTES.arta
-                      ? "text-foreground after:w-full"
-                      : "text-muted-foreground"
-                  )}
-                >
-                  Tanya ARTA
-                </a>
-                <DropdownMenu
-                  open={isProfileMenuOpen}
-                  onOpenChange={setIsProfileMenuOpen}
-                >
-                  <DropdownMenuTrigger asChild>
-                    <Button type="button" variant="ghost">
-                      <Avatar size="sm">
-                        <AvatarFallback>
-                          {getInitials(session.fullName)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <span>{session.fullName}</span>
-                      {isProfileMenuOpen ? (
-                        <ChevronUp data-icon="inline-end" />
-                      ) : (
-                        <ChevronDown data-icon="inline-end" />
-                      )}
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-64">
-                    <DropdownMenuLabel>
-                      <span className="flex items-center justify-between gap-2">
-                        <span className="font-medium text-foreground">
-                          {session.fullName}
+                {session ? (
+                  <DropdownMenu
+                    open={isProfileMenuOpen}
+                    onOpenChange={setIsProfileMenuOpen}
+                  >
+                    <DropdownMenuTrigger asChild>
+                      <Button type="button" variant="ghost">
+                        <Avatar size="sm">
+                          <AvatarFallback>
+                            {getInitials(session.fullName)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span>{session.fullName}</span>
+                        {isProfileMenuOpen ? (
+                          <ChevronUp data-icon="inline-end" />
+                        ) : (
+                          <ChevronDown data-icon="inline-end" />
+                        )}
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-64">
+                      <DropdownMenuLabel>
+                        <span className="flex items-center justify-between gap-2">
+                          <span className="font-medium text-foreground">
+                            {session.fullName}
+                          </span>
+                          <Badge>{session.branch}</Badge>
                         </span>
-                        <Badge>{session.branch}</Badge>
-                      </span>
-                      <span className="block">{session.email}</span>
-                    </DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuGroup>
-                      <DropdownMenuItem
-                        onSelect={() => {
-                          setIsProfileMenuOpen(false)
-                          setIsChangePasswordOpen(true)
-                        }}
-                      >
-                        <KeyRound />
-                        Ganti Password
-                      </DropdownMenuItem>
-                      {onLogout ? (
+                        <span className="block">{session.email}</span>
+                      </DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuGroup>
                         <DropdownMenuItem
-                          variant="destructive"
                           onSelect={() => {
                             setIsProfileMenuOpen(false)
-                            setIsLogoutConfirmOpen(true)
+                            setIsChangePasswordOpen(true)
                           }}
                         >
-                          <LogOut />
-                          Logout
+                          <KeyRound />
+                          Ganti Password
                         </DropdownMenuItem>
-                      ) : null}
-                    </DropdownMenuGroup>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                        {onLogout ? (
+                          <DropdownMenuItem
+                            variant="destructive"
+                            onSelect={() => {
+                              setIsProfileMenuOpen(false)
+                              setIsLogoutConfirmOpen(true)
+                            }}
+                          >
+                            <LogOut />
+                            Logout
+                          </DropdownMenuItem>
+                        ) : null}
+                      </DropdownMenuGroup>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : null}
               </nav>
             </div>
-            <ChangePasswordDialog
-              open={isChangePasswordOpen}
-              onOpenChange={setIsChangePasswordOpen}
-              session={session}
-            />
-            {onLogout ? (
+            {session ? (
+              <ChangePasswordDialog
+                open={isChangePasswordOpen}
+                onOpenChange={setIsChangePasswordOpen}
+                session={session}
+              />
+            ) : null}
+            {session && onLogout ? (
               <AlertDialog
                 open={isLogoutConfirmOpen}
                 onOpenChange={setIsLogoutConfirmOpen}

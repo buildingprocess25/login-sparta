@@ -9,6 +9,10 @@ export const ROUTES = {
 
 export type AppRoute = (typeof ROUTES)[keyof typeof ROUTES]
 
+export function getDefaultRoute(isSsoEnabled: boolean) {
+  return isSsoEnabled ? ROUTES.login : ROUTES.modules
+}
+
 export function getCurrentRoute() {
   if (typeof window === "undefined") {
     return ROUTES.login

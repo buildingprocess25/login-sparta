@@ -6,6 +6,8 @@ import { AppShell } from "@/components/app-shell"
 import { Card, CardContent } from "@/components/ui/card"
 import {
   getAccessibleApps,
+  getModuleLoginUrl,
+  isSpartaSsoEnabled,
   launchSpartaModule,
   SPARTA_APPS,
   type SpartaApp,
@@ -37,8 +39,8 @@ const moduleThemeStyles = {
 } satisfies Record<SpartaAppId, ModuleThemeStyle>
 
 type ModuleLauncherPageProps = {
-  session: SpartaSession
-  onLogout: () => void
+  session: SpartaSession | null
+  onLogout?: () => void
 }
 
 function sortApps(apps: SpartaApp[]) {
@@ -48,14 +50,15 @@ function sortApps(apps: SpartaApp[]) {
   )
 }
 
-function getFallbackApps(session: SpartaSession) {
+function getFallbackApps(session: SpartaSession | null) {
   return appOrder.map((appId) => ({
     ...SPARTA_APPS[appId],
-    hasAccess: session.access.includes(appId),
+    hasAccess: session ? session.access.includes(appId) : true,
   }))
 }
 
 function ModuleLauncherPage({ session, onLogout }: ModuleLauncherPageProps) {
+  const ssoEnabled = isSpartaSsoEnabled()
   const [apps, setApps] = React.useState<SpartaApp[]>(() =>
     getFallbackApps(session)
   )
@@ -63,6 +66,10 @@ function ModuleLauncherPage({ session, onLogout }: ModuleLauncherPageProps) {
     React.useState<SpartaAppId | null>(null)
 
   React.useEffect(() => {
+    if (!ssoEnabled) {
+      return
+    }
+
     let isMounted = true
 
     async function loadApps() {
@@ -86,9 +93,14 @@ function ModuleLauncherPage({ session, onLogout }: ModuleLauncherPageProps) {
     return () => {
       isMounted = false
     }
-  }, [])
+  }, [ssoEnabled])
 
   const handleLaunchModule = async (appId: SpartaAppId) => {
+    if (!ssoEnabled) {
+      window.location.assign(getModuleLoginUrl(appId))
+      return
+    }
+
     setLaunchingAppId(appId)
 
     try {
@@ -106,7 +118,7 @@ function ModuleLauncherPage({ session, onLogout }: ModuleLauncherPageProps) {
   }
 
   return (
-    <AppShell session={session} onLogout={onLogout}>
+    <AppShell session={session} onLogout={onLogout} showHeader={!ssoEnabled}>
       <section className="flex flex-1 flex-col justify-center gap-5 lg:grid lg:grid-cols-[0.78fr_1.22fr] lg:items-center lg:gap-8">
         <div className="flex flex-col gap-4 text-center sm:text-left">
           <div className="flex flex-col gap-3">
@@ -114,8 +126,9 @@ function ModuleLauncherPage({ session, onLogout }: ModuleLauncherPageProps) {
               Pilih modul SPARTA anda.
             </h1>
             <p className="mx-auto max-w-sm text-xs leading-5 text-muted-foreground sm:mx-0 sm:text-sm sm:leading-6">
-              Buka modul Building, Maintenance, atau Energy sesuai akses yang
-              terhubung dengan akun internal Anda.
+              {ssoEnabled
+                ? "Buka modul Building, Maintenance, atau Energy sesuai akses yang terhubung dengan akun internal Anda."
+                : "Pilih modul SPARTA untuk menuju halaman login aplikasi terkait."}
             </p>
           </div>
         </div>
