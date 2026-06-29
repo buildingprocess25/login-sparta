@@ -16,7 +16,12 @@ import {
 } from "@/lib/sparta-auth"
 import { SPARTA_APP_LOGOS } from "@/lib/sparta-assets"
 
-const appOrder: SpartaAppId[] = ["building", "maintenance", "energy"]
+const appOrder: SpartaAppId[] = [
+  "building",
+  "maintenance",
+  "energy",
+  "engineering",
+]
 
 type ModuleThemeStyle = React.CSSProperties & {
   "--primary": string
@@ -35,6 +40,10 @@ const moduleThemeStyles = {
   energy: {
     "--primary": "#007a55",
     "--ring": "#007a55",
+  },
+  engineering: {
+    "--primary": "#808080",
+    "--ring": "#808080",
   },
 } satisfies Record<SpartaAppId, ModuleThemeStyle>
 
@@ -135,11 +144,12 @@ function ModuleLauncherPage({ session, onLogout }: ModuleLauncherPageProps) {
 
         <div className="grid gap-3 sm:grid-cols-2">
           {apps.map((app) => {
-            const hasAccess = app.hasAccess
+            const isEngineering = app.id === "engineering"
+            const hasAccess = isEngineering ? false : app.hasAccess
             const isLaunching = launchingAppId === app.id
             const tile = (
               <Card
-                className="relative min-h-[132px] overflow-hidden rounded-lg bg-primary/10 p-0 transition-colors group-hover:bg-primary group-hover:ring-primary/40 sm:aspect-16/11 sm:min-h-0"
+                className="relative min-h-33 overflow-hidden rounded-lg bg-primary/10 p-0 transition-colors group-hover:bg-primary group-hover:ring-primary/40 sm:aspect-16/11 sm:min-h-0"
                 style={moduleThemeStyles[app.id]}
               >
                 <img
@@ -155,9 +165,11 @@ function ModuleLauncherPage({ session, onLogout }: ModuleLauncherPageProps) {
                     <div className="line-clamp-2 text-xs leading-4 text-muted-foreground transition-colors group-hover:text-white/80 sm:leading-5">
                       {isLaunching
                         ? "Menyiapkan akses SSO..."
-                        : hasAccess
-                          ? app.description
-                          : "Anda tidak memiliki akses ke modul ini."}
+                        : isEngineering
+                          ? "COMING SOON"
+                          : hasAccess
+                            ? app.description
+                            : "Anda tidak memiliki akses ke modul ini."}
                     </div>
                   </div>
                 </CardContent>
