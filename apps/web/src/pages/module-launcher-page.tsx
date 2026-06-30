@@ -20,6 +20,7 @@ const appOrder: SpartaAppId[] = [
   "building",
   "maintenance",
   "energy",
+  "engineering",
 ]
 
 type ModuleThemeStyle = React.CSSProperties & {
@@ -40,6 +41,10 @@ const moduleThemeStyles = {
     "--primary": "#007a55",
     "--ring": "#007a55",
   },
+  engineering: {
+    "--primary": "#808080",
+    "--ring": "#808080",
+  },
 } satisfies Record<SpartaAppId, ModuleThemeStyle>
 
 type ModuleLauncherPageProps = {
@@ -47,17 +52,12 @@ type ModuleLauncherPageProps = {
   onLogout?: () => void
 }
 
-function sortApps(apps: SpartaApp[]) {
-  return [...apps].sort(
-    (firstApp, secondApp) =>
-      appOrder.indexOf(firstApp.id) - appOrder.indexOf(secondApp.id)
-  )
-}
-
 function getFallbackApps(session: SpartaSession | null) {
   return appOrder.map((appId) => ({
     ...SPARTA_APPS[appId],
-    hasAccess: session ? session.access.includes(appId) : true,
+    hasAccess:
+      appId !== "engineering" &&
+      (session ? session.access.includes(appId) : true),
   }))
 }
 
@@ -81,7 +81,13 @@ function ModuleLauncherPage({ session, onLogout }: ModuleLauncherPageProps) {
         const nextApps = await getAccessibleApps()
 
         if (isMounted) {
-          setApps(sortApps(nextApps))
+          const loadedAppsById = new Map(nextApps.map((app) => [app.id, app]))
+
+          setApps(
+            getFallbackApps(session).map(
+              (app) => loadedAppsById.get(app.id) ?? app
+            )
+          )
         }
       } catch (error) {
         if (error instanceof Error) {
@@ -97,9 +103,13 @@ function ModuleLauncherPage({ session, onLogout }: ModuleLauncherPageProps) {
     return () => {
       isMounted = false
     }
-  }, [ssoEnabled])
+  }, [session, ssoEnabled])
 
   const handleLaunchModule = async (appId: SpartaAppId) => {
+    if (appId === "engineering") {
+      return
+    }
+
     if (!ssoEnabled) {
       window.location.assign(getModuleLoginUrl(appId))
       return
@@ -139,7 +149,8 @@ function ModuleLauncherPage({ session, onLogout }: ModuleLauncherPageProps) {
 
         <div className="grid gap-3 sm:grid-cols-2">
           {apps.map((app) => {
-            const hasAccess = app.hasAccess
+            const isEngineering = app.id === "engineering"
+            const hasAccess = isEngineering ? false : app.hasAccess
             const isLaunching = launchingAppId === app.id
             const tile = (
               <Card
@@ -159,9 +170,11 @@ function ModuleLauncherPage({ session, onLogout }: ModuleLauncherPageProps) {
                     <div className="line-clamp-2 text-xs leading-4 text-muted-foreground transition-colors group-hover:text-white/80 sm:leading-5">
                       {isLaunching
                         ? "Menyiapkan akses SSO..."
-                        : hasAccess
-                          ? app.description
-                          : "Anda tidak memiliki akses ke modul ini."}
+                        : isEngineering
+                          ? "COMING SOON"
+                          : hasAccess
+                            ? app.description
+                            : "Anda tidak memiliki akses ke modul ini."}
                     </div>
                   </div>
                 </CardContent>

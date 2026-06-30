@@ -1,8 +1,8 @@
-import { SPARTA_MODULE_IDS } from "@sparta/shared"
+import { SPARTA_LAUNCHABLE_MODULE_IDS } from "@sparta/shared"
 import { z } from "zod"
 
 export const ssoExchangeSchema = z.object({
-  moduleId: z.enum(SPARTA_MODULE_IDS),
+  moduleId: z.enum(SPARTA_LAUNCHABLE_MODULE_IDS),
   launchToken: z.string().min(20),
 })
 

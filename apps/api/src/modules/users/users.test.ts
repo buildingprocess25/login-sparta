@@ -1,4 +1,4 @@
-import type { SpartaModuleId } from "@sparta/shared"
+import type { SpartaLaunchableModuleId } from "@sparta/shared"
 import request from "supertest"
 import { beforeEach, describe, expect, it } from "vitest"
 
@@ -90,7 +90,8 @@ class InMemoryAuthRepository implements AuthRepository {
 
 class InMemoryUsersRepository implements UsersRepository {
   users = new Map<string, UserListRecord>()
-  auditEvents: Array<{ action: string; entityType: string; entityId: string }> = []
+  auditEvents: Array<{ action: string; entityType: string; entityId: string }> =
+    []
 
   async listUsers() {
     return [...this.users.values()]
@@ -129,7 +130,11 @@ class InMemoryUsersRepository implements UsersRepository {
     return user
   }
 
-  async updateUser(userId: string, input: UpdateUserInput, actorUserId: string) {
+  async updateUser(
+    userId: string,
+    input: UpdateUserInput,
+    actorUserId: string
+  ) {
     const user = this.users.get(userId)
     if (!user) return
 
@@ -144,7 +149,7 @@ class InMemoryUsersRepository implements UsersRepository {
 
   async grantModuleAccess(
     userId: string,
-    moduleId: SpartaModuleId,
+    moduleId: SpartaLaunchableModuleId,
     role: string,
     actorUserId: string
   ) {
@@ -169,11 +174,13 @@ class InMemoryUsersRepository implements UsersRepository {
 
   async revokeModuleAccess(
     userId: string,
-    moduleId: SpartaModuleId,
+    moduleId: SpartaLaunchableModuleId,
     actorUserId: string
   ) {
     const user = this.users.get(userId)
-    const existing = user?.modules.find((module) => module.moduleId === moduleId)
+    const existing = user?.modules.find(
+      (module) => module.moduleId === moduleId
+    )
     if (existing) existing.isActive = false
 
     await this.createAuditEvent({
@@ -288,7 +295,10 @@ describe("SPARTA admin users routes", () => {
       "auth-user-1"
     )
 
-    await agent.patch(`/v1/admin/users/${user.id}`).send({ status: "INACTIVE" }).expect(200)
+    await agent
+      .patch(`/v1/admin/users/${user.id}`)
+      .send({ status: "INACTIVE" })
+      .expect(200)
     expect(usersRepository.users.get(user.id)?.status).toBe("INACTIVE")
   })
 
@@ -307,7 +317,10 @@ describe("SPARTA admin users routes", () => {
       "auth-user-1"
     )
 
-    await agent.put(`/v1/admin/users/${user.id}/access/energy`).send({ role: "MANAGER" }).expect(200)
+    await agent
+      .put(`/v1/admin/users/${user.id}/access/energy`)
+      .send({ role: "MANAGER" })
+      .expect(200)
     expect(usersRepository.users.get(user.id)?.modules).toContainEqual({
       moduleId: "energy",
       role: "MANAGER",

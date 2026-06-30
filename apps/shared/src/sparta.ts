@@ -1,4 +1,16 @@
-export const SPARTA_MODULE_IDS = ["building", "maintenance", "energy"] as const
+export const SPARTA_LAUNCHABLE_MODULE_IDS = [
+  "building",
+  "maintenance",
+  "energy",
+] as const
+
+export const SPARTA_MODULE_IDS = [
+  ...SPARTA_LAUNCHABLE_MODULE_IDS,
+  "engineering",
+] as const
+
+export type SpartaLaunchableModuleId =
+  (typeof SPARTA_LAUNCHABLE_MODULE_IDS)[number]
 
 export type SpartaModuleId = (typeof SPARTA_MODULE_IDS)[number]
 
@@ -6,7 +18,7 @@ export type SpartaSessionDto = {
   email: string
   fullName: string
   branch: string
-  access: SpartaModuleId[]
+  access: SpartaLaunchableModuleId[]
   mustChangePassword: boolean
 }
 
@@ -20,7 +32,7 @@ export type SpartaModuleDto = {
 }
 
 export type SpartaModuleLaunchDto = {
-  moduleId: SpartaModuleId
+  moduleId: SpartaLaunchableModuleId
   redirectUrl: string
   expiresAt: string
 }

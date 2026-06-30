@@ -1,5 +1,5 @@
 import type { ModuleLaunch, PrismaClient } from "@prisma/client"
-import type { SpartaModuleId } from "@sparta/shared"
+import type { SpartaLaunchableModuleId } from "@sparta/shared"
 
 import { prisma } from "../../db/prisma"
 import type { AuthUserRecord } from "../auth/auth.repository"
@@ -8,7 +8,7 @@ import { publicModuleIdByPrismaId } from "../modules/modules.repository"
 export type SsoLaunchRecord = {
   id: string
   userId: string
-  moduleId: SpartaModuleId
+  moduleId: SpartaLaunchableModuleId
   launchTokenHash: string
   redirectUrl: string
   expiresAt: Date

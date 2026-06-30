@@ -1,4 +1,4 @@
-import type { SpartaModuleId } from "@sparta/shared"
+import type { SpartaLaunchableModuleId } from "@sparta/shared"
 import request from "supertest"
 import { beforeEach, describe, expect, it } from "vitest"
 
@@ -29,7 +29,7 @@ const testLaunchToken = "test-launch-token-with-sufficient-length"
 type LaunchRecord = {
   id: string
   userId: string
-  moduleId: SpartaModuleId
+  moduleId: SpartaLaunchableModuleId
   launchTokenHash: string
   redirectUrl: string
   expiresAt: Date

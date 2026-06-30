@@ -1,4 +1,4 @@
-import type { SpartaModuleId } from "@sparta/shared"
+import type { SpartaLaunchableModuleId } from "@sparta/shared"
 import request from "supertest"
 import { beforeEach, describe, expect, it } from "vitest"
 
@@ -30,7 +30,7 @@ const testEnv = {
 } satisfies AppEnv
 
 type ModuleRecord = {
-  id: SpartaModuleId
+  id: SpartaLaunchableModuleId
   name: string
   shortName: string
   description: string
@@ -42,7 +42,7 @@ type ModuleRecord = {
 
 type ModuleLaunchInput = {
   userId: string
-  moduleId: SpartaModuleId
+  moduleId: SpartaLaunchableModuleId
   launchTokenHash: string
   redirectUrl: string
   ipAddress: string | null
@@ -116,11 +116,14 @@ class InMemoryAuthRepository implements AuthRepository {
 }
 
 class InMemoryModuleRepository {
-  modules = new Map<SpartaModuleId, ModuleRecord>()
+  modules = new Map<SpartaLaunchableModuleId, ModuleRecord>()
   launches: Array<ModuleLaunchInput & { id: string; consumedAt: Date | null }> =
     []
-  auditEvents: Array<{ action: string; entityType: string; actorUserId: string }> =
-    []
+  auditEvents: Array<{
+    action: string
+    entityType: string
+    actorUserId: string
+  }> = []
 
   async listModules() {
     return [...this.modules.values()].sort(
@@ -170,7 +173,7 @@ function createBranchDefaultUser(
 }
 
 function createModule(
-  id: SpartaModuleId,
+  id: SpartaLaunchableModuleId,
   sortOrder: number,
   override: Partial<ModuleRecord> = {}
 ): ModuleRecord {
@@ -199,7 +202,10 @@ function createModule(
       callbackUrl: "https://energy.sparta.local/auth/sso/callback",
       colorHex: "#007a55",
     },
-  } satisfies Record<SpartaModuleId, Omit<ModuleRecord, "id" | "isActive" | "sortOrder">>
+  } satisfies Record<
+    SpartaLaunchableModuleId,
+    Omit<ModuleRecord, "id" | "isActive" | "sortOrder">
+  >
 
   return {
     id,
@@ -248,11 +254,9 @@ describe("SPARTA module routes", () => {
 
     const response = await agent.get("/v1/modules").expect(200)
 
-    expect(response.body.data.modules.map((module: ModuleRecord) => module.id)).toEqual([
-      "building",
-      "maintenance",
-      "energy",
-    ])
+    expect(
+      response.body.data.modules.map((module: ModuleRecord) => module.id)
+    ).toEqual(["building", "maintenance", "energy"])
   })
 
   it("marks access per current user", async () => {

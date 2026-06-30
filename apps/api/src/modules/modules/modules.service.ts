@@ -1,4 +1,4 @@
-import type { SpartaModuleDto, SpartaModuleId } from "@sparta/shared"
+import type { SpartaLaunchableModuleId, SpartaModuleDto } from "@sparta/shared"
 
 import type { AppEnv } from "../../config/env"
 import {
@@ -56,7 +56,7 @@ export class ModulesService {
 
   async launchModule(
     user: AuthUserRecord,
-    moduleId: SpartaModuleId,
+    moduleId: SpartaLaunchableModuleId,
     context: LaunchContext
   ) {
     const modules = await this.repository.listModules()

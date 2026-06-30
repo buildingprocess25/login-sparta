@@ -1,7 +1,11 @@
-import type { SpartaModuleId } from "@sparta/shared"
+import type { SpartaLaunchableModuleId } from "@sparta/shared"
 
 import { AuthError } from "../auth/auth.service"
-import type { CreateUserInput, UpdateUserInput, UsersRepository } from "./users.repository"
+import type {
+  CreateUserInput,
+  UpdateUserInput,
+  UsersRepository,
+} from "./users.repository"
 
 export type UsersServiceCreateInput = CreateUserInput
 export type UsersServiceUpdateInput = UpdateUserInput
@@ -21,7 +25,11 @@ export class UsersService {
     return this.repository.createUser(input, actorUserId)
   }
 
-  async updateUser(userId: string, input: UsersServiceUpdateInput, actorUserId: string) {
+  async updateUser(
+    userId: string,
+    input: UsersServiceUpdateInput,
+    actorUserId: string
+  ) {
     const user = await this.repository.findUserById(userId)
 
     if (!user) {
@@ -33,7 +41,7 @@ export class UsersService {
 
   async grantModuleAccess(
     userId: string,
-    moduleId: SpartaModuleId,
+    moduleId: SpartaLaunchableModuleId,
     role: string,
     actorUserId: string
   ) {
@@ -48,7 +56,7 @@ export class UsersService {
 
   async revokeModuleAccess(
     userId: string,
-    moduleId: SpartaModuleId,
+    moduleId: SpartaLaunchableModuleId,
     actorUserId: string
   ) {
     const user = await this.repository.findUserById(userId)

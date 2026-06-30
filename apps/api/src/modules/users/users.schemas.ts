@@ -1,8 +1,11 @@
-import { SPARTA_MODULE_IDS } from "@sparta/shared"
+import { SPARTA_LAUNCHABLE_MODULE_IDS } from "@sparta/shared"
 import { z } from "zod"
 
 export const createUserSchema = z.object({
-  email: z.string().email().transform((value) => value.toLowerCase()),
+  email: z
+    .string()
+    .email()
+    .transform((value) => value.toLowerCase()),
   employeeId: z.string().trim().min(1).nullable().default(null),
   fullName: z.string().trim().min(1),
   branchCode: z.string().trim().min(1),
@@ -11,7 +14,7 @@ export const createUserSchema = z.object({
   modules: z
     .array(
       z.object({
-        moduleId: z.enum(SPARTA_MODULE_IDS),
+        moduleId: z.enum(SPARTA_LAUNCHABLE_MODULE_IDS),
         role: z.string().trim().min(1).default("USER"),
       })
     )
@@ -19,7 +22,11 @@ export const createUserSchema = z.object({
 })
 
 export const updateUserSchema = z.object({
-  email: z.string().email().transform((value) => value.toLowerCase()).optional(),
+  email: z
+    .string()
+    .email()
+    .transform((value) => value.toLowerCase())
+    .optional(),
   employeeId: z.string().trim().min(1).nullable().optional(),
   fullName: z.string().trim().min(1).optional(),
   branchCode: z.string().trim().min(1).optional(),

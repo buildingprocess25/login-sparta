@@ -1,6 +1,11 @@
-import { PasswordState, SpartaModuleId, UserRole, UserStatus } from "@prisma/client"
+import {
+  PasswordState,
+  SpartaModuleId,
+  UserRole,
+  UserStatus,
+} from "@prisma/client"
 import type { Prisma, PrismaClient } from "@prisma/client"
-import type { SpartaModuleId as PublicModuleId } from "@sparta/shared"
+import type { SpartaLaunchableModuleId } from "@sparta/shared"
 
 import { prisma } from "../../db/prisma"
 import { publicModuleIdByPrismaId } from "../modules/modules.repository"
@@ -18,7 +23,7 @@ export type UserListRecord = {
   lastLoginAt: Date | null
   createdAt: Date
   modules: Array<{
-    moduleId: PublicModuleId
+    moduleId: SpartaLaunchableModuleId
     role: string
     isActive: boolean
   }>
@@ -32,7 +37,7 @@ export type CreateUserInput = {
   branchName: string
   role: keyof typeof UserRole
   modules: Array<{
-    moduleId: PublicModuleId
+    moduleId: SpartaLaunchableModuleId
     role: string
   }>
 }
@@ -50,14 +55,38 @@ export type UpdateUserInput = {
 export type UsersRepository = {
   listUsers(): Promise<UserListRecord[]>
   findUserById(userId: string): Promise<UserListRecord | null>
-  createUser(input: CreateUserInput, actorUserId: string): Promise<UserListRecord>
-  updateUser(userId: string, input: UpdateUserInput, actorUserId: string): Promise<void>
-  grantModuleAccess(userId: string, moduleId: PublicModuleId, role: string, actorUserId: string): Promise<void>
-  revokeModuleAccess(userId: string, moduleId: PublicModuleId, actorUserId: string): Promise<void>
-  createAuditEvent(input: { action: string; entityType: string; entityId: string; actorUserId: string; metadata?: Prisma.InputJsonValue }): Promise<void>
+  createUser(
+    input: CreateUserInput,
+    actorUserId: string
+  ): Promise<UserListRecord>
+  updateUser(
+    userId: string,
+    input: UpdateUserInput,
+    actorUserId: string
+  ): Promise<void>
+  grantModuleAccess(
+    userId: string,
+    moduleId: SpartaLaunchableModuleId,
+    role: string,
+    actorUserId: string
+  ): Promise<void>
+  revokeModuleAccess(
+    userId: string,
+    moduleId: SpartaLaunchableModuleId,
+    actorUserId: string
+  ): Promise<void>
+  createAuditEvent(input: {
+    action: string
+    entityType: string
+    entityId: string
+    actorUserId: string
+    metadata?: Prisma.InputJsonValue
+  }): Promise<void>
 }
 
-type PrismaUserRecord = NonNullable<Awaited<ReturnType<PrismaUsersRepository["findPrismaUserById"]>>>
+type PrismaUserRecord = NonNullable<
+  Awaited<ReturnType<PrismaUsersRepository["findPrismaUserById"]>>
+>
 
 function mapUserRecord(user: PrismaUserRecord): UserListRecord {
   return {
@@ -139,7 +168,10 @@ export class PrismaUsersRepository implements UsersRepository {
         status: UserStatus.ACTIVE,
         accesses: {
           create: input.modules.map((mod) => ({
-            moduleId: SpartaModuleId[mod.moduleId.toUpperCase() as keyof typeof SpartaModuleId],
+            moduleId:
+              SpartaModuleId[
+                mod.moduleId.toUpperCase() as keyof typeof SpartaModuleId
+              ],
             role: mod.role,
             isActive: true,
             grantedByUserId: actorUserId,
@@ -163,7 +195,11 @@ export class PrismaUsersRepository implements UsersRepository {
     return mapUserRecord(user)
   }
 
-  async updateUser(userId: string, input: UpdateUserInput, actorUserId: string) {
+  async updateUser(
+    userId: string,
+    input: UpdateUserInput,
+    actorUserId: string
+  ) {
     const data: Prisma.UserUpdateInput = {}
 
     if (input.email !== undefined) data.email = input.email
@@ -203,12 +239,20 @@ export class PrismaUsersRepository implements UsersRepository {
     })
   }
 
-  async grantModuleAccess(userId: string, moduleId: PublicModuleId, role: string, actorUserId: string) {
+  async grantModuleAccess(
+    userId: string,
+    moduleId: SpartaLaunchableModuleId,
+    role: string,
+    actorUserId: string
+  ) {
     await this.client.userModuleAccess.upsert({
       where: {
         userId_moduleId: {
           userId,
-          moduleId: SpartaModuleId[moduleId.toUpperCase() as keyof typeof SpartaModuleId],
+          moduleId:
+            SpartaModuleId[
+              moduleId.toUpperCase() as keyof typeof SpartaModuleId
+            ],
         },
       },
       update: {
@@ -220,7 +264,8 @@ export class PrismaUsersRepository implements UsersRepository {
       },
       create: {
         userId,
-        moduleId: SpartaModuleId[moduleId.toUpperCase() as keyof typeof SpartaModuleId],
+        moduleId:
+          SpartaModuleId[moduleId.toUpperCase() as keyof typeof SpartaModuleId],
         role,
         isActive: true,
         grantedByUserId: actorUserId,
@@ -236,11 +281,16 @@ export class PrismaUsersRepository implements UsersRepository {
     })
   }
 
-  async revokeModuleAccess(userId: string, moduleId: PublicModuleId, actorUserId: string) {
+  async revokeModuleAccess(
+    userId: string,
+    moduleId: SpartaLaunchableModuleId,
+    actorUserId: string
+  ) {
     await this.client.userModuleAccess.updateMany({
       where: {
         userId,
-        moduleId: SpartaModuleId[moduleId.toUpperCase() as keyof typeof SpartaModuleId],
+        moduleId:
+          SpartaModuleId[moduleId.toUpperCase() as keyof typeof SpartaModuleId],
       },
       data: {
         isActive: false,
@@ -257,7 +307,13 @@ export class PrismaUsersRepository implements UsersRepository {
     })
   }
 
-  async createAuditEvent(input: { action: string; entityType: string; entityId: string; actorUserId: string; metadata?: Prisma.InputJsonValue }) {
+  async createAuditEvent(input: {
+    action: string
+    entityType: string
+    entityId: string
+    actorUserId: string
+    metadata?: Prisma.InputJsonValue
+  }) {
     await this.client.auditEvent.create({
       data: {
         action: input.action,

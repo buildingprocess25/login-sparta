@@ -1,5 +1,5 @@
-import { SPARTA_MODULE_IDS } from "@sparta/shared"
-import type { SpartaModuleId } from "@sparta/shared"
+import { SPARTA_LAUNCHABLE_MODULE_IDS } from "@sparta/shared"
+import type { SpartaLaunchableModuleId } from "@sparta/shared"
 import { Router } from "express"
 import type { Response } from "express"
 
@@ -22,8 +22,10 @@ export type ModulesRouterOptions = {
   moduleRepository?: ModuleRepository
 }
 
-function isModuleId(value: string): value is SpartaModuleId {
-  return SPARTA_MODULE_IDS.includes(value as SpartaModuleId)
+function isModuleId(value: string): value is SpartaLaunchableModuleId {
+  return SPARTA_LAUNCHABLE_MODULE_IDS.includes(
+    value as SpartaLaunchableModuleId
+  )
 }
 
 function invalidModule(response: Response) {

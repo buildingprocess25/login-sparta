@@ -6,6 +6,7 @@ import {
   isSpartaSsoEnabled,
   launchSpartaModule,
   loginToSparta,
+  SPARTA_APPS,
 } from "@/lib/sparta-auth"
 
 const fetchMock = vi.fn()
@@ -143,5 +144,13 @@ describe("SPARTA API client", () => {
     expect(getModuleLoginUrl("building")).toBe(
       "https://building.sparta.test/login"
     )
+  })
+
+  it("keeps Engineering as a coming soon module", () => {
+    expect(SPARTA_APPS.engineering).toMatchObject({
+      name: "SPARTA Engineering",
+      description: "COMING SOON",
+      hasAccess: false,
+    })
   })
 })

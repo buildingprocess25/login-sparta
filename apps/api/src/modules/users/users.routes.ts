@@ -1,4 +1,4 @@
-import { isSpartaModuleId } from "@sparta/shared"
+import { isSpartaLaunchableModuleId } from "@sparta/shared"
 import { Router } from "express"
 import type { Response } from "express"
 import type { z } from "zod"
@@ -11,10 +11,7 @@ import {
   PrismaAuthRepository,
 } from "../auth/auth.repository"
 import { AuthService } from "../auth/auth.service"
-import {
-  type UsersRepository,
-  PrismaUsersRepository,
-} from "./users.repository"
+import { type UsersRepository, PrismaUsersRepository } from "./users.repository"
 import { createUserSchema, updateUserSchema } from "./users.schemas"
 import { UsersService } from "./users.service"
 
@@ -25,8 +22,7 @@ export type UsersRouterOptions = {
 
 function createServices(env: AppEnv, options: UsersRouterOptions) {
   const authRepository = options.authRepository ?? new PrismaAuthRepository()
-  const usersRepository =
-    options.usersRepository ?? new PrismaUsersRepository()
+  const usersRepository = options.usersRepository ?? new PrismaUsersRepository()
 
   return {
     authService: new AuthService(authRepository, env),
@@ -151,7 +147,7 @@ export function createUsersRouter(
           Array.isArray(userId) ||
           !moduleId ||
           Array.isArray(moduleId) ||
-          !isSpartaModuleId(moduleId) ||
+          !isSpartaLaunchableModuleId(moduleId) ||
           !request.spartaSession
         ) {
           invalidPayload(response)
@@ -188,7 +184,7 @@ export function createUsersRouter(
           Array.isArray(userId) ||
           !moduleId ||
           Array.isArray(moduleId) ||
-          !isSpartaModuleId(moduleId) ||
+          !isSpartaLaunchableModuleId(moduleId) ||
           !request.spartaSession
         ) {
           invalidPayload(response)
