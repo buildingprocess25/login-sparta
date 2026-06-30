@@ -20,7 +20,6 @@ const appOrder: SpartaAppId[] = [
   "building",
   "maintenance",
   "energy",
-  "engineering",
 ]
 
 type ModuleThemeStyle = React.CSSProperties & {
@@ -40,10 +39,6 @@ const moduleThemeStyles = {
   energy: {
     "--primary": "#007a55",
     "--ring": "#007a55",
-  },
-  engineering: {
-    "--primary": "#808080",
-    "--ring": "#808080",
   },
 } satisfies Record<SpartaAppId, ModuleThemeStyle>
 
@@ -144,8 +139,7 @@ function ModuleLauncherPage({ session, onLogout }: ModuleLauncherPageProps) {
 
         <div className="grid gap-3 sm:grid-cols-2">
           {apps.map((app) => {
-            const isEngineering = app.id === "engineering"
-            const hasAccess = isEngineering ? false : app.hasAccess
+            const hasAccess = app.hasAccess
             const isLaunching = launchingAppId === app.id
             const tile = (
               <Card
@@ -165,11 +159,9 @@ function ModuleLauncherPage({ session, onLogout }: ModuleLauncherPageProps) {
                     <div className="line-clamp-2 text-xs leading-4 text-muted-foreground transition-colors group-hover:text-white/80 sm:leading-5">
                       {isLaunching
                         ? "Menyiapkan akses SSO..."
-                        : isEngineering
-                          ? "COMING SOON"
-                          : hasAccess
-                            ? app.description
-                            : "Anda tidak memiliki akses ke modul ini."}
+                        : hasAccess
+                          ? app.description
+                          : "Anda tidak memiliki akses ke modul ini."}
                     </div>
                   </div>
                 </CardContent>

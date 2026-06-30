@@ -1,4 +1,4 @@
-export const SPARTA_MODULE_IDS = ["building", "maintenance", "energy", "engineering"] as const
+export const SPARTA_MODULE_IDS = ["building", "maintenance", "energy"] as const
 
 export type SpartaModuleId = (typeof SPARTA_MODULE_IDS)[number]
 

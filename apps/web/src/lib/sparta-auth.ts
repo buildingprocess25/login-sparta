@@ -78,7 +78,6 @@ const defaultModuleLoginUrls = {
   building: "http://localhost:5174/login",
   maintenance: "http://localhost:5175/login",
   energy: "http://localhost:5176/login",
-  engineering: "http://localhost:5177/login",
 } satisfies Record<SpartaAppId, string>
 
 export const SPARTA_APPS: Record<SpartaAppId, SpartaApp> = {
@@ -108,15 +107,6 @@ export const SPARTA_APPS: Record<SpartaAppId, SpartaApp> = {
     shortName: "Energy",
     description: "Audit peralatan dan estimasi kebutuhan energi toko.",
     colorHex: "#007a55",
-    hasAccess: false,
-    passwordRule: "Masukkan password SPARTA Anda.",
-  },
-  engineering: {
-    id: "engineering",
-    name: "SPARTA Engineering",
-    shortName: "Engineering",
-    description: "COMING SOON",
-    colorHex: "#808080",
     hasAccess: false,
     passwordRule: "Masukkan password SPARTA Anda.",
   },
