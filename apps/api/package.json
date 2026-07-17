@@ -37,6 +37,7 @@
     "@types/node": "^24.0.0",
     "@types/nodemailer": "^8.0.1",
     "@types/supertest": "^6.0.3",
+    "csv-parser": "^3.2.1",
     "prisma": "^6.19.0",
     "supertest": "^7.1.4",
     "tsx": "^4.21.0",
