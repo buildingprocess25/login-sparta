@@ -1,0 +1,21 @@
+services:
+  api:
+    image: ghcr.io/${GITHUB_REPOSITORY,,}-api:latest
+    container_name: sparta-api
+    restart: always
+    ports:
+      - "10000:10000"
+    environment:
+      # Database connection string will be provided by Dokploy Environment Variables
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - NODE_ENV=production
+
+  web:
+    image: ghcr.io/${GITHUB_REPOSITORY,,}-web:latest
+    container_name: sparta-web
+    restart: always
+    ports:
+      - "80:80"
+    # depends_on:
+    #   - api
