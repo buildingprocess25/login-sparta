@@ -48,6 +48,13 @@ jobs:
           tags: ghcr.io/${{ env.REPO }}-web:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          build-args: |
+            VITE_API_BASE_URL=https://api-login.sparta-alfamart.web.id
+            VITE_APP_ENV=production
+            VITE_SPARTA_SSO_ENABLED=false
+            VITE_SPARTA_BUILDING_LOGIN_URL=https://building.sparta-alfamart.web.id
+            VITE_SPARTA_MAINTENANCE_LOGIN_URL=https://maintenance.sparta-alfamart.web.id
+            VITE_SPARTA_ENERGY_LOGIN_URL=https://energy.sparta-alfamart.web.id
 
       - name: Trigger Dokploy Webhooks
         run: |
