@@ -15,7 +15,7 @@ COPY . .
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
 # Generate Prisma Client
-RUN pnpm --filter @sparta/api prisma:generate
+RUN DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy" pnpm --filter @sparta/api prisma:generate
 
 WORKDIR /app/apps/api
 
