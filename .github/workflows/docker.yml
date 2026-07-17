@@ -49,5 +49,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Trigger Dokploy Webhook
-        run: curl -X POST ${{ secrets.DOKPLOY_WEBHOOK }}
+      - name: Trigger Dokploy Webhooks
+        run: |
+          curl -X POST ${{ secrets.DOKPLOY_WEBHOOK_API }}
+          curl -X POST ${{ secrets.DOKPLOY_WEBHOOK_WEB }}
