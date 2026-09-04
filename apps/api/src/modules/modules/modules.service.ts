@@ -71,7 +71,14 @@ export class ModulesService {
     }
 
     const launchToken = createSessionToken()
-    const redirectUrl = appendLaunchToken(module.callbackUrl, launchToken)
+    
+    // Override callback URL for local testing without modifying production DB
+    let targetCallbackUrl = module.callbackUrl;
+    if (moduleId === "building") targetCallbackUrl = this.env.SPARTA_BUILDING_CALLBACK_URL;
+    else if (moduleId === "maintenance") targetCallbackUrl = this.env.SPARTA_MAINTENANCE_CALLBACK_URL;
+    else if (moduleId === "energy") targetCallbackUrl = this.env.SPARTA_ENERGY_CALLBACK_URL;
+
+    const redirectUrl = appendLaunchToken(targetCallbackUrl, launchToken)
     const expiresAt = new Date(Date.now() + LAUNCH_TOKEN_TTL_MS)
     const launch = await this.repository.createLaunch({
       userId: user.id,
