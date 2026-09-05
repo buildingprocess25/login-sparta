@@ -323,6 +323,29 @@ export async function confirmChangePasswordWithOtp(
   }
 }
 
+export async function changeEmail(
+  input: { newEmail: string; password: string }
+): Promise<ApiResult<{ ok: true }>> {
+  try {
+    await apiFetch<ApiSuccess<{ ok: true }>>("/v1/admin/users/change-email", {
+      method: "POST",
+      body: JSON.stringify(input),
+    })
+
+    return { ok: true }
+  } catch (error) {
+    if (error instanceof ApiClientError) {
+      return { ok: false, code: error.code, message: error.message }
+    }
+
+    return {
+      ok: false,
+      code: "UNKNOWN_ERROR",
+      message: "Terjadi kesalahan tidak terduga saat mengganti email.",
+    }
+  }
+}
+
 export async function getAccessibleApps(): Promise<SpartaApp[]> {
   const result = await apiFetch<ModulesResponse>("/v1/modules")
 

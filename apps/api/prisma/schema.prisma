@@ -58,6 +58,7 @@ model User {
   fullName         String
   branchId         String
   branch           Branch             @relation(fields: [branchId], references: [id])
+  validBranchNames String[]           @default([])
   passwordHash     String?
   passwordState    PasswordState      @default(BRANCH_DEFAULT)
   role             UserRole           @default(USER)

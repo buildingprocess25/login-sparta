@@ -42,3 +42,31 @@ export const accessUpdateSchema = z.object({
 export type CreateUserInput = z.infer<typeof createUserSchema>
 export type UpdateUserInput = z.infer<typeof updateUserSchema>
 export type AccessUpdateInput = z.infer<typeof accessUpdateSchema>
+
+export const syncDeleteUserSchema = z.object({
+  email: z.string().email(),
+  moduleId: z.enum(SPARTA_LAUNCHABLE_MODULE_IDS),
+})
+
+export const syncUserSchema = z.object({
+  email: z
+    .string()
+    .email()
+    .transform((value) => value.toLowerCase()),
+  employeeId: z.string().trim().min(1).nullable().default(null),
+  fullName: z.string().trim().min(1),
+  branchCode: z.string().trim().min(1),
+  branchName: z.string().trim().min(1),
+  role: z.string().trim().min(1).default("USER"),
+  moduleId: z.enum(SPARTA_LAUNCHABLE_MODULE_IDS),
+})
+
+export type SyncUserInput = z.infer<typeof syncUserSchema>
+export type SyncDeleteUserInput = z.infer<typeof syncDeleteUserSchema>
+
+export const changeEmailSchema = z.object({
+  newEmail: z.string().email().transform((value) => value.toLowerCase()),
+  password: z.string().min(1),
+})
+
+export type ChangeEmailInput = z.infer<typeof changeEmailSchema>

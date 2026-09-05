@@ -6,13 +6,14 @@ import type { z } from "zod"
 import type { AppEnv } from "../../config/env"
 import { requireSession } from "../../middleware/require-session"
 import { requireAdmin } from "../../middleware/require-admin"
+import { requireInternalApiKey } from "../../middleware/require-internal-api-key"
 import {
   type AuthRepository,
   PrismaAuthRepository,
 } from "../auth/auth.repository"
 import { AuthService } from "../auth/auth.service"
 import { type UsersRepository, PrismaUsersRepository } from "./users.repository"
-import { createUserSchema, updateUserSchema } from "./users.schemas"
+import { createUserSchema, updateUserSchema, syncUserSchema } from "./users.schemas"
 import { UsersService } from "./users.service"
 
 export type UsersRouterOptions = {
@@ -69,6 +70,80 @@ export function createUsersRouter(
         response.json({
           data: await usersService.listUsers(),
         })
+      } catch (error) {
+        next(error)
+      }
+    }
+  )
+
+  router.post(
+    "/sync",
+    requireInternalApiKey(env),
+    async (request, response, next) => {
+      try {
+        const payload = parseBody(syncUserSchema, request.body)
+        if (!payload) {
+          invalidPayload(response)
+          return
+        }
+
+        const user = await usersService.syncUser(payload)
+        response.status(200).json({ data: user })
+      } catch (error) {
+        next(error)
+      }
+    }
+  )
+
+  router.post(
+    "/sync-delete",
+    requireInternalApiKey(env),
+    async (request, response, next) => {
+      try {
+        const { syncDeleteUserSchema } = await import("./users.schemas")
+        const payload = parseBody(syncDeleteUserSchema, request.body)
+        if (!payload) {
+          invalidPayload(response)
+          return
+        }
+
+        const user = await usersService.syncDeleteUser(payload)
+        response.status(200).json({ data: user })
+      } catch (error) {
+        next(error)
+      }
+    }
+  )
+
+  router.post(
+    "/change-email",
+    sessionMiddleware,
+    async (request, response, next) => {
+      try {
+        const { changeEmailSchema } = await import("./users.schemas")
+        const payload = parseBody(changeEmailSchema, request.body)
+        if (!payload || !request.spartaSession) {
+          invalidPayload(response)
+          return
+        }
+
+        const authRepo = options.authRepository ?? new PrismaAuthRepository()
+        const user = await authRepo.findUserById(request.spartaSession.user.id)
+        
+        if (!user) {
+          response.status(401).json({ error: { code: "UNAUTHORIZED", message: "Akses ditolak" }})
+          return
+        }
+
+        const isValid = await authService.verifyPassword(user, payload.password)
+        
+        if (!isValid) {
+          response.status(401).json({ error: { code: "INVALID_CREDENTIALS", message: "Password salah" }})
+          return
+        }
+
+        await usersService.changeEmailAndBroadcast(request.spartaSession.user.id, payload.newEmail, env)
+        response.status(200).json({ data: { ok: true } })
       } catch (error) {
         next(error)
       }

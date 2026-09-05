@@ -1,7 +1,8 @@
 import * as React from "react"
-import { ChevronDown, ChevronUp, KeyRound, LogOut } from "lucide-react"
+import { ChevronDown, ChevronUp, KeyRound, LogOut, Mail } from "lucide-react"
 
 import { ChangePasswordDialog } from "@/components/change-password-dialog"
+import { ChangeEmailDialog } from "@/components/change-email-dialog"
 import { Logo } from "@/components/logo"
 import {
   AlertDialog,
@@ -56,6 +57,7 @@ function AppShell({
     React.useState(false)
   const [isProfileMenuOpen, setIsProfileMenuOpen] = React.useState(false)
   const [isChangePasswordOpen, setIsChangePasswordOpen] = React.useState(false)
+  const [isChangeEmailOpen, setIsChangeEmailOpen] = React.useState(false)
   const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = React.useState(false)
   const [activeRoute, setActiveRoute] = React.useState(getCurrentRoute)
 
@@ -235,6 +237,15 @@ function AppShell({
                           <KeyRound />
                           Ganti Password
                         </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onSelect={() => {
+                            setIsProfileMenuOpen(false)
+                            setIsChangeEmailOpen(true)
+                          }}
+                        >
+                          <Mail />
+                          Ganti Email
+                        </DropdownMenuItem>
                         {onLogout ? (
                           <DropdownMenuItem
                             variant="destructive"
@@ -257,6 +268,13 @@ function AppShell({
               <ChangePasswordDialog
                 open={isChangePasswordOpen}
                 onOpenChange={setIsChangePasswordOpen}
+                session={session}
+              />
+            ) : null}
+            {session ? (
+              <ChangeEmailDialog
+                open={isChangeEmailOpen}
+                onOpenChange={setIsChangeEmailOpen}
                 session={session}
               />
             ) : null}

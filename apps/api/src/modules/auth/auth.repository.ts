@@ -15,6 +15,7 @@ export type AuthUserRecord = {
   email: string
   fullName: string
   branchName: string
+  validBranchNames: string[]
   passwordHash: string | null
   passwordState: keyof typeof PasswordState
   role: keyof typeof UserRole
@@ -41,6 +42,7 @@ export type AuthSessionRecord = CreateSessionInput & {
 
 export type AuthRepository = {
   findUserByEmail(email: string): Promise<AuthUserRecord | null>
+  findUserById(id: string): Promise<AuthUserRecord | null>
   updateSuccessfulLogin(userId: string, lastLoginAt: Date): Promise<void>
   incrementFailedLogin(userId: string): Promise<void>
   createSession(input: CreateSessionInput): Promise<AuthSessionRecord>
@@ -68,6 +70,7 @@ function mapUserRecord(user: PrismaAuthUser): AuthUserRecord {
     email: user.email,
     fullName: user.fullName,
     branchName: user.branch.name,
+    validBranchNames: user.validBranchNames,
     passwordHash: user.passwordHash,
     passwordState: user.passwordState,
     role: user.role,
@@ -117,6 +120,21 @@ export class PrismaAuthRepository implements AuthRepository {
 
   async findUserByEmail(email: string) {
     const user = await this.findPrismaUserByEmail(email)
+
+    return user ? mapUserRecord(user) : null
+  }
+
+  async findUserById(id: string) {
+    const user = await this.client.user.findUnique({
+      where: { id },
+      include: {
+        branch: true,
+        accesses: {
+          where: { isActive: true },
+          include: { module: true },
+        },
+      },
+    })
 
     return user ? mapUserRecord(user) : null
   }

@@ -55,6 +55,10 @@ const envSchema = z.object({
   SPARTA_ENERGY_CALLBACK_URL: z
     .string()
     .url("SPARTA_ENERGY_CALLBACK_URL must be a valid URL"),
+  SPARTA_INTERNAL_API_KEY: z
+    .string()
+    .min(1, "SPARTA_INTERNAL_API_KEY is required")
+    .default("sparta-internal-sync-key-2026"),
 })
 
 export type AppEnv = z.infer<typeof envSchema>

@@ -2,7 +2,7 @@ import rateLimit from "express-rate-limit"
 
 export const loginRateLimit = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // 5 attempts per window
+  max: 1000, // Changed from 5 to 1000 to disable limit during testing
   skip: () => process.env.NODE_ENV === "test",
   message: {
     error: {

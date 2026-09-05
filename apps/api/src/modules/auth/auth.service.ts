@@ -139,9 +139,12 @@ export class AuthService {
     }
   }
 
-  private async verifyPassword(user: AuthUserRecord, password: string) {
+  async verifyPassword(user: AuthUserRecord, password: string) {
     if (user.passwordState === "BRANCH_DEFAULT") {
-      return password === user.branchName.toUpperCase()
+      const allowedBranches = [user.branchName, ...user.validBranchNames]
+        .map(b => b.trim().toUpperCase())
+
+      return allowedBranches.includes(password.trim().toUpperCase())
     }
 
     if (!user.passwordHash) {
