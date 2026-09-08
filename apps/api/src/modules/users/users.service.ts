@@ -165,39 +165,58 @@ export class UsersService {
     // 1. Update email locally
     await this.repository.updateUser(userId, { email: newEmail }, userId)
 
-    // 2. Broadcast to all active modules
-    const webhooks = []
+    // 2. Broadcast to all active modules using Direct DB Update
+    const { Client } = require("pg")
     
-    if (env.SPARTA_BUILDING_CALLBACK_URL) {
-      // e.g. http://localhost:8081/api/auth/sso/callback -> http://localhost:8081/api/sso/webhook/email
-      const baseUrl = new URL(env.SPARTA_BUILDING_CALLBACK_URL).origin
-      webhooks.push(`${baseUrl}/api/sso/webhook/email`)
-    }
+    const baseDbUrl = env.DATABASE_URL.replace("/sparta?", "/")
+    const buildingUrl = baseDbUrl.replace("103.127.99.241:5432/", "103.127.99.241:5432/building?")
+    const energyUrl = baseDbUrl.replace("103.127.99.241:5432/", "103.127.99.241:5432/energy?")
+    const maintenanceUrl = baseDbUrl.replace("103.127.99.241:5432/", "103.127.99.241:5432/maintenance?")
     
-    if (env.SPARTA_MAINTENANCE_CALLBACK_URL) {
-      const baseUrl = new URL(env.SPARTA_MAINTENANCE_CALLBACK_URL).origin
-      webhooks.push(`${baseUrl}/api/webhook/sso/email`)
-    }
-    
-    if (env.SPARTA_ENERGY_CALLBACK_URL) {
-      const baseUrl = new URL(env.SPARTA_ENERGY_CALLBACK_URL).origin
-      webhooks.push(`${baseUrl}/api/webhook/sso/email`)
+    const dbUpdates = []
+
+    if (user.modules.some(m => m.moduleId === "BUILDING" && m.isActive)) {
+      dbUpdates.push(async () => {
+        const client = new Client({ connectionString: buildingUrl })
+        try {
+          await client.connect()
+          await client.query("UPDATE user_cabang SET email_sat = $1 WHERE email_sat = $2", [newEmail, oldEmail])
+        } catch (err) {
+          console.error(`[DB Update Error] Failed to update email in Building DB:`, err)
+        } finally {
+          await client.end()
+        }
+      })
     }
 
-    const promises = webhooks.map((url) => 
-      fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-sparta-internal-key": env.SPARTA_INTERNAL_API_KEY
-        },
-        body: JSON.stringify({
-          oldEmail,
-          newEmail
-        })
-      }).catch(err => console.error(`[Webhook Error] Failed to update email at ${url}:`, err))
-    )
+    if (user.modules.some(m => m.moduleId === "ENERGY" && m.isActive)) {
+      dbUpdates.push(async () => {
+        const client = new Client({ connectionString: energyUrl })
+        try {
+          await client.connect()
+          await client.query("UPDATE users SET email = $1 WHERE email = $2", [newEmail, oldEmail])
+        } catch (err) {
+          console.error(`[DB Update Error] Failed to update email in Energy DB:`, err)
+        } finally {
+          await client.end()
+        }
+      })
+    }
 
-    await Promise.all(promises)
+    if (user.modules.some(m => m.moduleId === "MAINTENANCE" && m.isActive)) {
+      dbUpdates.push(async () => {
+        const client = new Client({ connectionString: maintenanceUrl })
+        try {
+          await client.connect()
+          await client.query('UPDATE "User" SET email = $1 WHERE email = $2', [newEmail, oldEmail])
+        } catch (err) {
+          console.error(`[DB Update Error] Failed to update email in Maintenance DB:`, err)
+        } finally {
+          await client.end()
+        }
+      })
+    }
+
+    await Promise.all(dbUpdates.map(fn => fn()))
   }
 }
