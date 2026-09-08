@@ -129,7 +129,7 @@ async function main() {
   console.log("Inserting merged users into SSO...");
   
   let inserted = 0;
-  for (const [email, u] of userMap.entries()) {
+  for (const u of userMap.values()) {
     const branches = Array.from(u.validBranchNames);
     const primaryBranchCode = branches[0] || "HEAD OFFICE";
     const primaryBranchName = branches[0] || "HEAD OFFICE";

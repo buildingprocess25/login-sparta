@@ -27,6 +27,7 @@ const testEnv = {
   SPARTA_MAINTENANCE_CALLBACK_URL:
     "https://maintenance.sparta.local/auth/sso/callback",
   SPARTA_ENERGY_CALLBACK_URL: "https://energy.sparta.local/auth/sso/callback",
+  SPARTA_INTERNAL_API_KEY: "test-internal-api-key",
 } satisfies AppEnv
 
 class InMemoryAuthRepository implements AuthRepository {
@@ -36,6 +37,10 @@ class InMemoryAuthRepository implements AuthRepository {
 
   async findUserByEmail(email: string) {
     return this.users.get(email.toLowerCase()) ?? null
+  }
+
+  async findUserById(userId: string) {
+    return [...this.users.values()].find((record) => record.id === userId) ?? null
   }
 
   async updateSuccessfulLogin(userId: string, lastLoginAt: Date) {
@@ -105,6 +110,7 @@ function createBranchDefaultUser(
     email: "andi.halim@sparta.local",
     fullName: "Andi Halim",
     branchName: "Jakarta Pusat",
+    validBranchNames: ["Jakarta Pusat"],
     passwordHash: null,
     passwordState: "BRANCH_DEFAULT",
     role: "USER",

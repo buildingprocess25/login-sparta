@@ -175,7 +175,7 @@ export class UsersService {
     
     const dbUpdates = []
 
-    if (user.modules.some(m => m.moduleId === "BUILDING" && m.isActive)) {
+    if (user.modules.some(m => m.moduleId === "building" && m.isActive)) {
       dbUpdates.push(async () => {
         const client = new Client({ connectionString: buildingUrl })
         try {
@@ -189,7 +189,7 @@ export class UsersService {
       })
     }
 
-    if (user.modules.some(m => m.moduleId === "ENERGY" && m.isActive)) {
+    if (user.modules.some(m => m.moduleId === "energy" && m.isActive)) {
       dbUpdates.push(async () => {
         const client = new Client({ connectionString: energyUrl })
         try {
@@ -203,7 +203,7 @@ export class UsersService {
       })
     }
 
-    if (user.modules.some(m => m.moduleId === "MAINTENANCE" && m.isActive)) {
+    if (user.modules.some(m => m.moduleId === "maintenance" && m.isActive)) {
       dbUpdates.push(async () => {
         const client = new Client({ connectionString: maintenanceUrl })
         try {

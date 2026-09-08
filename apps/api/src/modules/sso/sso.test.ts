@@ -22,6 +22,7 @@ const testEnv = {
   SPARTA_MAINTENANCE_CALLBACK_URL:
     "https://maintenance.sparta.local/auth/sso/callback",
   SPARTA_ENERGY_CALLBACK_URL: "https://energy.sparta.local/auth/sso/callback",
+  SPARTA_INTERNAL_API_KEY: "test-internal-api-key",
 } satisfies AppEnv
 
 const testLaunchToken = "test-launch-token-with-sufficient-length"
@@ -63,6 +64,7 @@ function createUser(): AuthUserRecord {
     email: "andi.halim@sparta.local",
     fullName: "Andi Halim",
     branchName: "Jakarta Pusat",
+    validBranchNames: ["Jakarta Pusat"],
     passwordHash: null,
     passwordState: "USER_SET",
     role: "USER",

@@ -27,6 +27,7 @@ type PrismaSsoLaunch = ModuleLaunch & {
     email: string
     fullName: string
     branch: { name: string }
+    validBranchNames: string[]
     passwordHash: string | null
     passwordState: AuthUserRecord["passwordState"]
     role: AuthUserRecord["role"]
@@ -47,6 +48,7 @@ function mapUser(user: PrismaSsoLaunch["user"]): AuthUserRecord {
     email: user.email,
     fullName: user.fullName,
     branchName: user.branch.name,
+    validBranchNames: user.validBranchNames,
     passwordHash: user.passwordHash,
     passwordState: user.passwordState,
     role: user.role,

@@ -15,6 +15,7 @@ const baseEnv = {
   SPARTA_MAINTENANCE_CALLBACK_URL:
     "https://maintenance.sparta.local/auth/sso/callback",
   SPARTA_ENERGY_CALLBACK_URL: "https://energy.sparta.local/auth/sso/callback",
+  SPARTA_INTERNAL_API_KEY: "test-internal-api-key",
 }
 
 describe("email provider configuration", () => {
