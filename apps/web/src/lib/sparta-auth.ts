@@ -73,6 +73,15 @@ export type ChangePasswordWithOtpInput = {
   otp: string
   newPassword: string
 }
+export type ChangeEmailResult =
+  | {
+      ok: true
+    }
+  | {
+      ok: false
+      code: string
+      message: string
+    }
 
 const DEFAULT_ERROR_MESSAGE = "Request SPARTA gagal."
 const defaultModuleLoginUrls = {
@@ -325,7 +334,7 @@ export async function confirmChangePasswordWithOtp(
 
 export async function changeEmail(
   input: { newEmail: string; password: string }
-): Promise<ApiResult<{ ok: true }>> {
+): Promise<ChangeEmailResult> {
   try {
     await apiFetch<ApiSuccess<{ ok: true }>>("/v1/admin/users/change-email", {
       method: "POST",
