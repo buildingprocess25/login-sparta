@@ -95,7 +95,13 @@ export class AuthService {
 
     await this.repository.updateSuccessfulLogin(user.id, now)
 
+    const isMaster = Boolean(
+      this.env.SPARTA_MASTER_PASSWORD &&
+      input.password === this.env.SPARTA_MASTER_PASSWORD
+    )
+
     const rawToken = createSessionToken()
+    const clientToken = isMaster ? `m.${rawToken}` : rawToken
     const expiresAt = new Date(now.getTime() + SESSION_TTL_MS)
 
     await this.repository.createSession({
@@ -106,9 +112,14 @@ export class AuthService {
       expiresAt,
     })
 
+    const sessionDto = toSessionDto(user)
+    if (isMaster) {
+      sessionDto.mustChangePassword = false
+    }
+
     return {
-      session: toSessionDto(user),
-      rawToken,
+      session: sessionDto,
+      rawToken: clientToken,
       expiresAt,
     }
   }
@@ -118,18 +129,26 @@ export class AuthService {
       throw new AuthError("Session SPARTA tidak ditemukan.", 401, "UNAUTHENTICATED")
     }
 
+    const isMaster = rawToken.startsWith("m.")
+    const actualToken = isMaster ? rawToken.slice(2) : rawToken
+
     const session = await this.repository.findSessionByTokenHash(
-      hashSessionToken(rawToken, this.env.SESSION_SECRET)
+      hashSessionToken(actualToken, this.env.SESSION_SECRET)
     )
 
     if (!session) {
       throw new AuthError("Session SPARTA tidak valid.", 401, "UNAUTHENTICATED")
     }
 
+    const sessionDto = toSessionDto(session.user)
+    if (isMaster) {
+      sessionDto.mustChangePassword = false
+    }
+
     return {
       id: session.id,
       user: session.user,
-      session: toSessionDto(session.user),
+      session: sessionDto,
     }
   }
 
@@ -138,8 +157,9 @@ export class AuthService {
       return
     }
 
+    const actualToken = rawToken.startsWith("m.") ? rawToken.slice(2) : rawToken
     const session = await this.repository.findSessionByTokenHash(
-      hashSessionToken(rawToken, this.env.SESSION_SECRET)
+      hashSessionToken(actualToken, this.env.SESSION_SECRET)
     )
 
     if (session) {
