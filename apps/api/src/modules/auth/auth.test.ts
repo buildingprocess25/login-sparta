@@ -158,16 +158,22 @@ describe("SPARTA auth routes", () => {
     expect(cookieHeader).toContain("HttpOnly")
   })
 
-  it("rejects lowercase branch password for a branch-default user", async () => {
+  it("accepts case-insensitive branch password for a branch-default user", async () => {
     const app = createApp(testEnv, { authRepository: repository })
 
-    await request(app)
+    const response = await request(app)
       .post("/v1/auth/login")
       .send({
         email: "andi.halim@sparta.local",
         password: "jakarta pusat",
       })
-      .expect(401)
+      .expect(200)
+
+    expect(response.body.data.session).toMatchObject({
+      email: "andi.halim@sparta.local",
+      fullName: "Andi Halim",
+      branch: "Jakarta Pusat",
+    })
   })
 
   it("logs in a user-set password with Argon2 hash without requiring password change", async () => {
