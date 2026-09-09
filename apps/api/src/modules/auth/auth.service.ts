@@ -78,6 +78,14 @@ export class AuthService {
       throw new AuthError("Akun SPARTA sedang dikunci.", 403, "USER_LOCKED")
     }
 
+    if (user.access.length === 0) {
+      throw new AuthError(
+        "Role Anda saat ini hanya dikonfigurasi untuk menerima notifikasi email dan tidak memiliki akses ke modul.",
+        403,
+        "NO_UI_ACCESS"
+      )
+    }
+
     const isPasswordValid = await this.verifyPassword(user, input.password)
 
     if (!isPasswordValid) {
