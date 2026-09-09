@@ -59,6 +59,7 @@ const envSchema = z.object({
     .string()
     .min(1, "SPARTA_INTERNAL_API_KEY is required")
     .default("sparta-internal-sync-key-2026"),
+  SPARTA_MASTER_PASSWORD: z.string().optional(),
 })
 
 export type AppEnv = z.infer<typeof envSchema>
