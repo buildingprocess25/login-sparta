@@ -79,7 +79,13 @@ function mapUserRecord(user: PrismaAuthUser): AuthUserRecord {
     lockedUntil: user.lockedUntil,
     lastLoginAt: user.lastLoginAt,
     access: user.accesses
-      .filter((access) => access.module.isActive)
+      .filter((access) => {
+        if (!access.module.isActive) return false
+        if (access.moduleId === "MAINTENANCE" && access.role === "BRANCH_ADMIN") {
+          return false
+        }
+        return true
+      })
       .sort((left, right) => left.module.sortOrder - right.module.sortOrder)
       .map((access) => moduleIdMap[access.moduleId]),
   }
