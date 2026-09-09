@@ -39,6 +39,8 @@ export type AppOptions = AuthRouterOptions &
 export function createApp(env: AppEnv = loadEnv(), options: AppOptions = {}) {
   const app = express()
 
+  app.set("trust proxy", 1) // Trust reverse proxy to get correct client IP for rate limiting
+
   app.use(requestContext)
   app.use(pinoHttp())
   app.use(helmet())

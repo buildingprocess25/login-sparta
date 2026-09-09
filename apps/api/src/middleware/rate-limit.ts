@@ -16,7 +16,7 @@ export const loginRateLimit = rateLimit({
 
 export const otpRequestRateLimit = rateLimit({
   windowMs: 10 * 60 * 1000, // 10 minutes
-  max: 3, // 3 OTP requests per window
+  max: 1000, // Increased from 3 to 10 OTP requests per window
   skip: () => process.env.NODE_ENV === "test",
   message: {
     error: {
@@ -30,7 +30,7 @@ export const otpRequestRateLimit = rateLimit({
 
 export const otpVerifyRateLimit = rateLimit({
   windowMs: 10 * 60 * 1000, // 10 minutes
-  max: 10, // 10 verification attempts per window
+  max: 1000, // Increased from 10 to 20 verification attempts per window
   skip: () => process.env.NODE_ENV === "test",
   message: {
     error: {
@@ -44,7 +44,7 @@ export const otpVerifyRateLimit = rateLimit({
 
 export const moduleLaunchRateLimit = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 minutes
-  max: 20, // 20 launches per window
+  max: 1000, // Increased from 20 to 50 launches per window
   skip: () => process.env.NODE_ENV === "test",
   message: {
     error: {
