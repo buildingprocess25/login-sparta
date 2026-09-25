@@ -23,7 +23,7 @@ const primaryDevelopmentTeam = [
   {
     name: "M. Iqbal Humris",
     role: "Building, Maintenance & Energy System Specialist",
-    image: "/team/m-iqbal.jpg",
+    image: "/team/iqbal.jpeg",
   },
 ] satisfies SpartaTeamMember[]
 
