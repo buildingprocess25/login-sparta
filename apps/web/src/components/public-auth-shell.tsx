@@ -9,7 +9,7 @@ import { SPARTA_APP_LOGOS } from "@/lib/sparta-assets"
 import { cn } from "@/lib/utils"
 import { ROUTES } from "@/routes"
 
-const appOrder: SpartaAppId[] = ["building", "maintenance", "energy"]
+const appOrder: SpartaAppId[] = ["building", "maintenance", "energy", "engineering"]
 
 type PublicAuthShellProps = {
   children: React.ReactNode
@@ -91,7 +91,7 @@ function PublicAuthShell({ children, contentKey }: PublicAuthShellProps) {
                 </div>
               </div>
 
-              <div className="hidden shrink-0 border-t lg:grid lg:grid-cols-1 xl:grid-cols-3">
+              <div className="hidden shrink-0 border-t lg:grid lg:grid-cols-1 xl:grid-cols-4">
                 {appOrder.map((appId) => {
                   const app = SPARTA_APPS[appId]
 
