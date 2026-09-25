@@ -38,8 +38,13 @@ const modules = [
       "Membantu efisiensi konsumsi energi melalui audit peralatan elektronik serta estimasi kebutuhan pendingin ruangan dan lampu toko secara terintegrasi.",
     logo: SPARTA_APP_LOGOS.energy,
   },
+  {
+    name: "SPARTA Engineering",
+    description:
+      "Membantu pelaksanaan perbaikan dan perawatan rutin peralatan teknikal dan operasional, serta pemeliharaan fisik dan kelistrikan bangunan cabang maupun Warehouse.",
+    logo: SPARTA_APP_LOGOS.engineering,
+  },
 ]
-
 const spartaFocus = [
   {
     title: "Terintegrasi",
@@ -167,7 +172,7 @@ function AboutSpartaPage({
           </Card>
         </section>
 
-        <section id="modul-sparta" className="grid gap-3 md:grid-cols-3">
+        <section id="modul-sparta" className="grid gap-3 md:grid-cols-2">
           {modules.map((module) => (
             <Card key={module.name} size="sm">
               <CardHeader>
