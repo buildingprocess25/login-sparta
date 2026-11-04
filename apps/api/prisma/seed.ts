@@ -41,11 +41,18 @@ const moduleSeeds = [
     colorHex: "#007a55",
     sortOrder: 3,
   },
+  {
+    id: SpartaModuleId.SIAGA,
+    name: "SPARTA SIAGA",
+    shortName: "SIAGA",
+    description: "Sistem Pemantauan Cabang & Mitigasi Bencana Alfamart",
+    callbackUrl: env.SPARTA_SIAGA_CALLBACK_URL,
+    colorHex: "#123B6D",
+    sortOrder: 4,
+  },
 ]
 
-const branchSeeds = [
-  { code: "HEAD", name: "HEAD OFFICE" },
-]
+const branchSeeds = [{ code: "HEAD", name: "HEAD OFFICE" }]
 
 const userSeeds = [
   {

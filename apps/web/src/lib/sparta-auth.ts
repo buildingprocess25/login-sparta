@@ -88,6 +88,7 @@ const defaultModuleLoginUrls = {
   building: "http://localhost:5174/login",
   maintenance: "http://localhost:5175/login",
   energy: "http://localhost:5176/login",
+  siaga: "http://localhost:3004/login",
   engineering: "http://localhost:5177/login",
 } satisfies Record<SpartaAppId, string>
 
@@ -118,6 +119,15 @@ export const SPARTA_APPS: Record<SpartaAppId, SpartaApp> = {
     shortName: "Energy",
     description: "Audit peralatan dan estimasi kebutuhan energi toko.",
     colorHex: "#007a55",
+    hasAccess: false,
+    passwordRule: "Masukkan password SPARTA Anda.",
+  },
+  siaga: {
+    id: "siaga",
+    name: "SPARTA SIAGA",
+    shortName: "SIAGA",
+    description: "Sistem Pemantauan Cabang & Mitigasi Bencana Alfamart",
+    colorHex: "#123B6D",
     hasAccess: false,
     passwordRule: "Masukkan password SPARTA Anda.",
   },
@@ -155,9 +165,19 @@ export function getModuleLoginUrl(moduleId: SpartaAppId) {
   const envKey = `VITE_SPARTA_${moduleId.toUpperCase()}_LOGIN_URL`
   const envUrl = import.meta.env[envKey]
 
-  return typeof envUrl === "string" && envUrl.trim()
-    ? envUrl
-    : defaultModuleLoginUrls[moduleId]
+  if (typeof envUrl === "string" && envUrl.trim()) {
+    return envUrl
+  }
+
+  if (import.meta.env.PROD || import.meta.env.VITE_APP_ENV === "production") {
+    if (moduleId === "siaga") return "https://siaga.sparta-alfamart.web.id"
+    if (moduleId === "building") return "https://building.sparta-alfamart.web.id"
+    if (moduleId === "maintenance") return "https://maintenance.sparta-alfamart.web.id"
+    if (moduleId === "energy") return "https://energy.sparta-alfamart.web.id"
+    if (moduleId === "engineering") return "https://engineering.sparta-alfamart.web.id"
+  }
+
+  return defaultModuleLoginUrls[moduleId]
 }
 
 export async function getCurrentSpartaSession() {
@@ -332,9 +352,10 @@ export async function confirmChangePasswordWithOtp(
   }
 }
 
-export async function changeEmail(
-  input: { newEmail: string; password: string }
-): Promise<ChangeEmailResult> {
+export async function changeEmail(input: {
+  newEmail: string
+  password: string
+}): Promise<ChangeEmailResult> {
   try {
     await apiFetch<ApiSuccess<{ ok: true }>>("/v1/admin/users/change-email", {
       method: "POST",

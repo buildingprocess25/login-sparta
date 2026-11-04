@@ -29,6 +29,7 @@ const MODULE_NAMES: Record<string, string> = {
   building: "SPARTA Building",
   maintenance: "SPARTA Maintenance",
   energy: "SPARTA Energy",
+  siaga: "SPARTA SIAGA",
   engineering: "SPARTA Engineering",
 }
 
@@ -65,7 +66,7 @@ function ChangeEmailDialog({
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setIsSubmitting(true)
-    
+
     const result = await changeEmail({ newEmail, password })
     setIsSubmitting(false)
 
@@ -75,9 +76,9 @@ function ChangeEmailDialog({
     }
 
     toast.success("Email SPARTA berhasil diganti", {
-      description: "Perubahan akan diterapkan secara instan."
+      description: "Perubahan akan diterapkan secara instan.",
     })
-    
+
     handleOpenChange(false)
     window.location.reload()
   }
@@ -100,11 +101,15 @@ function ChangeEmailDialog({
         <form onSubmit={handleSubmit}>
           <FieldGroup>
             {activeModulesText && (
-              <Alert variant="default" className="bg-primary/5 text-primary border-primary/20">
+              <Alert
+                variant="default"
+                className="border-primary/20 bg-primary/5 text-primary"
+              >
                 <Info className="size-4 text-primary" />
                 <AlertTitle>Perhatian</AlertTitle>
                 <AlertDescription className="text-primary/90">
-                  Mengganti email SPARTA akan turut mengganti akun Anda di semua modul yang Anda akses ({activeModulesText}).
+                  Mengganti email SPARTA akan turut mengganti akun Anda di semua
+                  modul yang Anda akses ({activeModulesText}).
                 </AlertDescription>
               </Alert>
             )}
@@ -112,7 +117,9 @@ function ChangeEmailDialog({
             <Field>
               <FieldLabel>Email saat ini</FieldLabel>
               <InputGroup>
-                <InputGroupAddon><Mail /></InputGroupAddon>
+                <InputGroupAddon>
+                  <Mail />
+                </InputGroupAddon>
                 <InputGroupInput value={session.email} disabled readOnly />
               </InputGroup>
             </Field>
@@ -120,7 +127,9 @@ function ChangeEmailDialog({
             <Field data-invalid={Boolean(status)}>
               <FieldLabel htmlFor="new-email">Email baru</FieldLabel>
               <InputGroup>
-                <InputGroupAddon><Mail /></InputGroupAddon>
+                <InputGroupAddon>
+                  <Mail />
+                </InputGroupAddon>
                 <InputGroupInput
                   id="new-email"
                   type="email"
@@ -136,9 +145,13 @@ function ChangeEmailDialog({
             </Field>
 
             <Field data-invalid={Boolean(status)}>
-              <FieldLabel htmlFor="confirm-password">Password saat ini</FieldLabel>
+              <FieldLabel htmlFor="confirm-password">
+                Password saat ini
+              </FieldLabel>
               <InputGroup>
-                <InputGroupAddon><LockKeyhole /></InputGroupAddon>
+                <InputGroupAddon>
+                  <LockKeyhole />
+                </InputGroupAddon>
                 <InputGroupInput
                   id="confirm-password"
                   type="password"
@@ -155,10 +168,17 @@ function ChangeEmailDialog({
             </Field>
 
             <DialogFooter>
-              <Button type="button" variant="secondary" onClick={() => handleOpenChange(false)}>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => handleOpenChange(false)}
+              >
                 Batal
               </Button>
-              <Button type="submit" disabled={isSubmitting || !newEmail || !password}>
+              <Button
+                type="submit"
+                disabled={isSubmitting || !newEmail || !password}
+              >
                 {isSubmitting ? "Menyimpan..." : "Simpan Email"}
               </Button>
             </DialogFooter>

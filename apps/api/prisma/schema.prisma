@@ -11,6 +11,7 @@ enum SpartaModuleId {
   BUILDING
   MAINTENANCE
   ENERGY
+  SIAGA
 }
 
 enum UserStatus {

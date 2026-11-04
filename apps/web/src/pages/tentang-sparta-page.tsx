@@ -39,6 +39,12 @@ const modules = [
     logo: SPARTA_APP_LOGOS.energy,
   },
   {
+    name: "SPARTA SIAGA",
+    description:
+      "Membantu pemantauan operasional cabang dan mitigasi risiko bencana alam untuk gerai dan infrastruktur Alfamart secara terpadu.",
+    logo: SPARTA_APP_LOGOS.siaga,
+  },
+  {
     name: "SPARTA Engineering",
     description:
       "Membantu pelaksanaan perbaikan dan perawatan rutin peralatan teknikal dan operasional, serta pemeliharaan fisik dan kelistrikan bangunan cabang maupun Warehouse.",

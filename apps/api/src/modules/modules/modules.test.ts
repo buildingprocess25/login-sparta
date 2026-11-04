@@ -27,6 +27,8 @@ const testEnv = {
   SPARTA_MAINTENANCE_CALLBACK_URL:
     "https://maintenance.sparta.local/auth/sso/callback",
   SPARTA_ENERGY_CALLBACK_URL: "https://energy.sparta.local/auth/sso/callback",
+  SPARTA_SIAGA_CALLBACK_URL:
+    "https://siaga.sparta-alfamart.web.id/auth/sso/callback",
   SPARTA_INTERNAL_API_KEY: "test-internal-api-key",
 } satisfies AppEnv
 
@@ -60,7 +62,9 @@ class InMemoryAuthRepository implements AuthRepository {
   }
 
   async findUserById(userId: string) {
-    return [...this.users.values()].find((record) => record.id === userId) ?? null
+    return (
+      [...this.users.values()].find((record) => record.id === userId) ?? null
+    )
   }
 
   async updateSuccessfulLogin(userId: string, lastLoginAt: Date) {
@@ -208,6 +212,13 @@ function createModule(
       callbackUrl: "https://energy.sparta.local/auth/sso/callback",
       colorHex: "#007a55",
     },
+    siaga: {
+      name: "SPARTA SIAGA",
+      shortName: "SIAGA",
+      description: "Sistem Pemantauan Cabang & Mitigasi Bencana Alfamart",
+      callbackUrl: "https://siaga.sparta-alfamart.web.id/auth/sso/callback",
+      colorHex: "#123B6D",
+    },
   } satisfies Record<
     SpartaLaunchableModuleId,
     Omit<ModuleRecord, "id" | "isActive" | "sortOrder">
@@ -235,6 +246,7 @@ describe("SPARTA module routes", () => {
     moduleRepository.modules.set("energy", createModule("energy", 3))
     moduleRepository.modules.set("building", createModule("building", 1))
     moduleRepository.modules.set("maintenance", createModule("maintenance", 2))
+    moduleRepository.modules.set("siaga", createModule("siaga", 4))
   })
 
   function createAppWithFakes() {
@@ -254,7 +266,7 @@ describe("SPARTA module routes", () => {
       .expect(200)
   }
 
-  it("returns modules in Building, Maintenance, Energy order", async () => {
+  it("returns modules in Building, Maintenance, Energy, SIAGA order", async () => {
     const agent = request.agent(createAppWithFakes())
     await login(agent)
 
@@ -262,7 +274,7 @@ describe("SPARTA module routes", () => {
 
     expect(
       response.body.data.modules.map((module: ModuleRecord) => module.id)
-    ).toEqual(["building", "maintenance", "energy"])
+    ).toEqual(["building", "maintenance", "energy", "siaga"])
   })
 
   it("marks access per current user", async () => {
@@ -275,6 +287,7 @@ describe("SPARTA module routes", () => {
       { id: "building", hasAccess: true },
       { id: "maintenance", hasAccess: true },
       { id: "energy", hasAccess: false },
+      { id: "siaga", hasAccess: false },
     ])
   })
 
@@ -283,6 +296,36 @@ describe("SPARTA module routes", () => {
     await login(agent)
 
     await agent.post("/v1/modules/energy/launch").expect(403)
+  })
+
+  it("rejects launching SIAGA when user lacks SIAGA access", async () => {
+    const agent = request.agent(createAppWithFakes())
+    await login(agent)
+
+    await agent.post("/v1/modules/siaga/launch").expect(403)
+  })
+
+  it("launches SIAGA when user has access with one-time token redirect", async () => {
+    const userWithSiaga = createBranchDefaultUser({ access: ["siaga"] })
+    authRepository.users.set(userWithSiaga.email, userWithSiaga)
+
+    const agent = request.agent(createAppWithFakes())
+    await login(agent)
+
+    const response = await agent.post("/v1/modules/siaga/launch").expect(200)
+    const redirectUrl = new URL(response.body.data.redirectUrl)
+
+    expect(redirectUrl.origin).toBe("https://siaga.sparta-alfamart.web.id")
+    expect(redirectUrl.pathname).toBe("/auth/sso/callback")
+    expect(redirectUrl.searchParams.get("token")).toHaveLength(43)
+    expect(response.body.data.moduleId).toBe("siaga")
+    expect(moduleRepository.launches).toContainEqual(
+      expect.objectContaining({
+        userId: "user-1",
+        moduleId: "siaga",
+        redirectUrl: response.body.data.redirectUrl,
+      })
+    )
   })
 
   it("creates an audit event and launch record with one-time token redirect", async () => {

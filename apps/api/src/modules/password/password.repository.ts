@@ -3,6 +3,7 @@ import type { OtpChallenge, PrismaClient } from "@prisma/client"
 
 import { prisma } from "../../db/prisma"
 import type { AuthUserRecord } from "../auth/auth.repository"
+import { publicModuleIdByPrismaId } from "../modules/modules.repository"
 
 export type PasswordOtpPurpose = keyof typeof OtpPurpose
 export type PasswordOtpStatus = keyof typeof OtpStatus
@@ -32,10 +33,7 @@ export type CreateOtpChallengeInput = {
 }
 
 export type UpdateOtpChallengeInput = Partial<
-  Pick<
-    OtpChallengeRecord,
-    "status" | "attempts" | "resendCount" | "consumedAt"
-  >
+  Pick<OtpChallengeRecord, "status" | "attempts" | "resendCount" | "consumedAt">
 >
 
 export type PasswordRepository = {
@@ -49,10 +47,7 @@ export type PasswordRepository = {
     email: string,
     purpose: PasswordOtpPurpose
   ): Promise<OtpChallengeRecord | null>
-  updateOtpChallenge(
-    id: string,
-    input: UpdateOtpChallengeInput
-  ): Promise<void>
+  updateOtpChallenge(id: string, input: UpdateOtpChallengeInput): Promise<void>
 }
 
 type PrismaPasswordUser = NonNullable<
@@ -76,17 +71,7 @@ function mapUserRecord(user: PrismaPasswordUser): AuthUserRecord {
     access: user.accesses
       .filter((access) => access.module.isActive)
       .sort((left, right) => left.module.sortOrder - right.module.sortOrder)
-      .map((access) => {
-        if (access.moduleId === "BUILDING") {
-          return "building"
-        }
-
-        if (access.moduleId === "MAINTENANCE") {
-          return "maintenance"
-        }
-
-        return "energy"
-      }),
+      .map((access) => publicModuleIdByPrismaId[access.moduleId]),
   }
 }
 

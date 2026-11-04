@@ -22,6 +22,8 @@ const testEnv = {
   SPARTA_MAINTENANCE_CALLBACK_URL:
     "https://maintenance.sparta.local/auth/sso/callback",
   SPARTA_ENERGY_CALLBACK_URL: "https://energy.sparta.local/auth/sso/callback",
+  SPARTA_SIAGA_CALLBACK_URL:
+    "https://siaga.sparta-alfamart.web.id/auth/sso/callback",
   SPARTA_INTERNAL_API_KEY: "test-internal-api-key",
 } satisfies AppEnv
 
@@ -72,7 +74,7 @@ function createUser(): AuthUserRecord {
     failedLoginCount: 0,
     lockedUntil: null,
     lastLoginAt: null,
-    access: ["building", "maintenance"],
+    access: ["building", "maintenance", "siaga"],
   }
 }
 
@@ -120,7 +122,28 @@ describe("SPARTA SSO exchange routes", () => {
       email: "andi.halim@sparta.local",
       fullName: "Andi Halim",
       branch: "Jakarta Pusat",
-      access: ["building", "maintenance"],
+      access: ["building", "maintenance", "siaga"],
+    })
+    expect(repository.launches.get(launch.id)?.consumedAt).toBeInstanceOf(Date)
+  })
+
+  it("consumes a valid SIAGA launch token with moduleId 'siaga'", async () => {
+    const launch = addLaunch({
+      moduleId: "siaga",
+      redirectUrl:
+        "https://siaga.sparta-alfamart.web.id/auth/sso/callback?token=test",
+    })
+
+    const response = await request(createAppWithFakes())
+      .post("/v1/sso/exchange")
+      .send({ moduleId: "siaga", launchToken: testLaunchToken })
+      .expect(200)
+
+    expect(response.body.data.user).toEqual({
+      email: "andi.halim@sparta.local",
+      fullName: "Andi Halim",
+      branch: "Jakarta Pusat",
+      access: ["building", "maintenance", "siaga"],
     })
     expect(repository.launches.get(launch.id)?.consumedAt).toBeInstanceOf(Date)
   })
@@ -136,6 +159,15 @@ describe("SPARTA SSO exchange routes", () => {
 
   it("rejects a launch token issued for another module", async () => {
     addLaunch({ moduleId: "maintenance" })
+
+    await request(createAppWithFakes())
+      .post("/v1/sso/exchange")
+      .send({ moduleId: "building", launchToken: testLaunchToken })
+      .expect(403)
+  })
+
+  it("rejects a launch token exchanged with mismatched siaga moduleId", async () => {
+    addLaunch({ moduleId: "siaga" })
 
     await request(createAppWithFakes())
       .post("/v1/sso/exchange")

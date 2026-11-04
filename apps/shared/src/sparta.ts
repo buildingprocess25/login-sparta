@@ -2,6 +2,7 @@ export const SPARTA_LAUNCHABLE_MODULE_IDS = [
   "building",
   "maintenance",
   "energy",
+  "siaga",
 ] as const
 
 export const SPARTA_MODULE_IDS = [

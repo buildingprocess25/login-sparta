@@ -5,10 +5,11 @@ import {
   UserStatus,
 } from "@prisma/client"
 import type { PrismaClient } from "@prisma/client"
+import type { SpartaLaunchableModuleId } from "@sparta/shared"
 
 import { prisma } from "../../db/prisma"
 
-export type AuthAccessModuleId = "building" | "maintenance" | "energy"
+export type AuthAccessModuleId = SpartaLaunchableModuleId
 
 export type AuthUserRecord = {
   id: string
@@ -54,6 +55,7 @@ const moduleIdMap = {
   BUILDING: "building",
   MAINTENANCE: "maintenance",
   ENERGY: "energy",
+  SIAGA: "siaga",
 } satisfies Record<keyof typeof SpartaModuleId, AuthAccessModuleId>
 
 type PrismaAuthUser = NonNullable<
@@ -81,7 +83,10 @@ function mapUserRecord(user: PrismaAuthUser): AuthUserRecord {
     access: user.accesses
       .filter((access) => {
         if (!access.module.isActive) return false
-        if (access.moduleId === "MAINTENANCE" && access.role === "BRANCH_ADMIN") {
+        if (
+          access.moduleId === "MAINTENANCE" &&
+          access.role === "BRANCH_ADMIN"
+        ) {
           return false
         }
         return true

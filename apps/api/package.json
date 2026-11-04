@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/server.ts",
+    "dev:uat": "node --env-file=.env.uat --import tsx --watch src/server.ts",
     "start": "tsx src/server.ts",
     "build": "tsc --noEmit",
     "lint": "tsc --noEmit",

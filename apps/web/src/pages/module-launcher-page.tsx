@@ -20,6 +20,7 @@ const appOrder: SpartaAppId[] = [
   "building",
   "maintenance",
   "energy",
+  "siaga",
   "engineering",
 ]
 
@@ -40,6 +41,10 @@ const moduleThemeStyles = {
   energy: {
     "--primary": "#007a55",
     "--ring": "#007a55",
+  },
+  siaga: {
+    "--primary": "#123B6D",
+    "--ring": "#123B6D",
   },
   engineering: {
     "--primary": "#808080",
@@ -141,7 +146,7 @@ function ModuleLauncherPage({ session, onLogout }: ModuleLauncherPageProps) {
             </h1>
             <p className="mx-auto max-w-sm text-xs leading-5 text-muted-foreground sm:mx-0 sm:text-sm sm:leading-6">
               {ssoEnabled
-                ? "Buka modul Building, Maintenance, atau Energy sesuai akses yang terhubung dengan akun internal Anda."
+                ? "Buka modul Building, Maintenance, Energy, atau SIAGA sesuai akses yang terhubung dengan akun internal Anda."
                 : "Pilih modul SPARTA untuk menuju halaman login aplikasi terkait."}
             </p>
           </div>

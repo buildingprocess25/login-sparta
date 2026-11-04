@@ -1,4 +1,4 @@
-import type { ModuleLaunch, PrismaClient } from "@prisma/client"
+import type { ModuleLaunch, PrismaClient, SpartaModuleId } from "@prisma/client"
 import type { SpartaLaunchableModuleId } from "@sparta/shared"
 
 import { prisma } from "../../db/prisma"
@@ -36,7 +36,7 @@ type PrismaSsoLaunch = ModuleLaunch & {
     lockedUntil: Date | null
     lastLoginAt: Date | null
     accesses: Array<{
-      moduleId: "BUILDING" | "MAINTENANCE" | "ENERGY"
+      moduleId: SpartaModuleId
       module: { isActive: boolean; sortOrder: number }
     }>
   }
