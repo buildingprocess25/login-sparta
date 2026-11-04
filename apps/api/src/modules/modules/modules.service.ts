@@ -26,7 +26,9 @@ function toModuleDto(
     shortName: module.shortName,
     description: module.description,
     colorHex: module.colorHex,
-    hasAccess: module.isActive && user.access.includes(module.id),
+    hasAccess:
+      module.isActive &&
+      user.access.includes(module.id as SpartaLaunchableModuleId),
   }
 }
 

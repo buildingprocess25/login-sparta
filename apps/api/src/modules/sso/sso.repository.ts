@@ -57,9 +57,17 @@ function mapUser(user: PrismaSsoLaunch["user"]): AuthUserRecord {
     lockedUntil: user.lockedUntil,
     lastLoginAt: user.lastLoginAt,
     access: user.accesses
-      .filter((access) => access.module.isActive)
+      .filter(
+        (access) =>
+          access.module.isActive && access.moduleId !== "ENGINEERING"
+      )
       .sort((left, right) => left.module.sortOrder - right.module.sortOrder)
-      .map((access) => publicModuleIdByPrismaId[access.moduleId]),
+      .map(
+        (access) =>
+          publicModuleIdByPrismaId[
+            access.moduleId
+          ] as AuthUserRecord["access"][number]
+      ),
   }
 }
 
@@ -67,7 +75,9 @@ function mapLaunch(launch: PrismaSsoLaunch): SsoLaunchRecord {
   return {
     id: launch.id,
     userId: launch.userId,
-    moduleId: publicModuleIdByPrismaId[launch.moduleId],
+    moduleId: publicModuleIdByPrismaId[
+      launch.moduleId
+    ] as SpartaLaunchableModuleId,
     launchTokenHash: launch.launchTokenHash ?? "",
     redirectUrl: launch.redirectUrl,
     expiresAt: launch.expiresAt ?? new Date(0),

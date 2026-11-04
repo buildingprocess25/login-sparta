@@ -107,7 +107,9 @@ function mapUserRecord(user: PrismaUserRecord): UserListRecord {
     lastLoginAt: user.lastLoginAt,
     createdAt: user.createdAt,
     modules: user.accesses.map((access) => ({
-      moduleId: publicModuleIdByPrismaId[access.moduleId],
+      moduleId: publicModuleIdByPrismaId[
+        access.moduleId
+      ] as SpartaLaunchableModuleId,
       role: access.role,
       isActive: access.isActive,
     })),
@@ -226,7 +228,8 @@ export class PrismaUsersRepository implements UsersRepository {
     if (input.email !== undefined) data.email = input.email
     if (input.employeeId !== undefined) data.employeeId = input.employeeId
     if (input.fullName !== undefined) data.fullName = input.fullName
-    if (input.validBranchNames !== undefined) data.validBranchNames = input.validBranchNames
+    if (input.validBranchNames !== undefined)
+      data.validBranchNames = input.validBranchNames
     if (input.role !== undefined) data.role = UserRole[input.role]
     if (input.status !== undefined) data.status = UserStatus[input.status]
 

@@ -56,7 +56,15 @@ const moduleIdMap = {
   MAINTENANCE: "maintenance",
   ENERGY: "energy",
   SIAGA: "siaga",
-} satisfies Record<keyof typeof SpartaModuleId, AuthAccessModuleId>
+} as const
+
+type LaunchablePrismaModuleId = keyof typeof moduleIdMap
+
+function isLaunchableModule(
+  moduleId: SpartaModuleId
+): moduleId is LaunchablePrismaModuleId {
+  return moduleId in moduleIdMap
+}
 
 type PrismaAuthUser = NonNullable<
   Awaited<ReturnType<PrismaAuthRepository["findPrismaUserByEmail"]>>
@@ -89,10 +97,10 @@ function mapUserRecord(user: PrismaAuthUser): AuthUserRecord {
         ) {
           return false
         }
-        return true
+        return isLaunchableModule(access.moduleId)
       })
       .sort((left, right) => left.module.sortOrder - right.module.sortOrder)
-      .map((access) => moduleIdMap[access.moduleId]),
+      .map((access) => moduleIdMap[access.moduleId as LaunchablePrismaModuleId]),
   }
 }
 

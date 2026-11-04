@@ -1,11 +1,14 @@
 import { SpartaModuleId } from "@prisma/client"
 import type { AppModule, Prisma, PrismaClient } from "@prisma/client"
-import type { SpartaLaunchableModuleId } from "@sparta/shared"
+import type {
+  SpartaLaunchableModuleId,
+  SpartaModuleId as SharedSpartaModuleId,
+} from "@sparta/shared"
 
 import { prisma } from "../../db/prisma"
 
 export type ModuleRecord = {
-  id: SpartaLaunchableModuleId
+  id: SharedSpartaModuleId
   name: string
   shortName: string
   description: string
@@ -57,8 +60,9 @@ export const publicModuleIdByPrismaId = {
   BUILDING: "building",
   MAINTENANCE: "maintenance",
   ENERGY: "energy",
+  ENGINEERING: "engineering",
   SIAGA: "siaga",
-} satisfies Record<keyof typeof SpartaModuleId, SpartaLaunchableModuleId>
+} as const satisfies Record<keyof typeof SpartaModuleId, SharedSpartaModuleId>
 
 function mapModule(module: AppModule): ModuleRecord {
   return {
@@ -104,7 +108,7 @@ export class PrismaModuleRepository implements ModuleRepository {
     return {
       id: launch.id,
       userId: launch.userId,
-      moduleId: publicModuleIdByPrismaId[launch.moduleId],
+      moduleId: publicModuleIdByPrismaId[launch.moduleId] as SpartaLaunchableModuleId,
       launchTokenHash: launch.launchTokenHash ?? "",
       redirectUrl: launch.redirectUrl,
       ipAddress: launch.ipAddress,
