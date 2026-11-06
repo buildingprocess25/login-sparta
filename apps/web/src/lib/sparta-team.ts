@@ -78,6 +78,16 @@ const otherDevelopmentTeam = [
     role: "Fullstack Developer (3rd Gen)",
     image: "/team/wardan.jpg",
   },
+  {
+    name: "Rendy Elang Lesmana",
+    role: "Fullstack Developer (4rd Gen)",
+    image: "/team/rendy.jpeg",
+  },
+  {
+    name: "Dicky Rohid Fikra",
+    role: "IoT Engineer (4rd Gen)",
+    image: "/team/dicky.jpg",
+  },
 ] satisfies SpartaTeamMember[]
 
 export type { SpartaTeamMember }
