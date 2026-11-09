@@ -4,6 +4,8 @@
 @import "@fontsource-variable/geist";
 
 @custom-variant dark (&:is(.dark *));
+/* Layar dengan tinggi cukup (≥ 640px) — dipakai untuk memperbesar elemen tanpa memicu scroll. */
+@custom-variant tall (@media (min-height: 40rem));
 
 @theme inline {
   --font-heading: var(--font-sans);

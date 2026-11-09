@@ -1,9 +1,18 @@
 import * as React from "react"
-import { ArrowUpRight } from "lucide-react"
+import { ArrowUpRight, Loader2, Lock } from "lucide-react"
 import { toast } from "sonner"
 
 import { AppShell } from "@/components/app-shell"
-import { Card, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemGroup,
+  ItemMedia,
+  ItemTitle,
+} from "@/components/ui/item"
 import {
   getAccessibleApps,
   getModuleLoginUrl,
@@ -15,6 +24,7 @@ import {
   type SpartaSession,
 } from "@/lib/sparta-auth"
 import { SPARTA_APP_LOGOS } from "@/lib/sparta-assets"
+import { cn } from "@/lib/utils"
 
 const appOrder: SpartaAppId[] = [
   "building",
@@ -137,79 +147,112 @@ function ModuleLauncherPage({ session, onLogout }: ModuleLauncherPageProps) {
   }
 
   return (
-    <AppShell session={session} onLogout={onLogout} showHeader={!ssoEnabled}>
-      <section className="flex flex-1 flex-col justify-center gap-5 lg:grid lg:grid-cols-[0.78fr_1.22fr] lg:items-center lg:gap-8">
-        <div className="flex flex-col gap-4 text-center sm:text-left">
-          <div className="flex flex-col gap-3">
-            <h1 className="mx-auto max-w-md font-heading text-2xl font-medium text-balance sm:mx-0 sm:text-3xl md:text-5xl">
-              Pilih modul SPARTA anda.
-            </h1>
-            <p className="mx-auto max-w-sm text-xs leading-5 text-muted-foreground sm:mx-0 sm:text-sm sm:leading-6">
-              {ssoEnabled
-                ? "Buka modul Building, Maintenance, Energy, atau SIAGA sesuai akses yang terhubung dengan akun internal Anda."
-                : "Pilih modul SPARTA untuk menuju halaman login aplikasi terkait."}
-            </p>
-          </div>
+    <AppShell
+      session={session}
+      onLogout={onLogout}
+      showHeader={!ssoEnabled}
+      fitViewport
+    >
+      <section className="flex flex-1 flex-col justify-center gap-5 lg:grid lg:grid-cols-[0.8fr_1.2fr] lg:items-center lg:gap-12">
+        <div className="flex animate-in flex-col gap-2 text-center duration-500 fill-mode-both fade-in slide-in-from-bottom-2 motion-reduce:animate-none sm:gap-3 sm:text-left">
+          <h1 className="mx-auto max-w-md font-heading text-2xl font-medium text-balance sm:mx-0 sm:text-3xl lg:text-5xl">
+            Pilih modul SPARTA anda.
+          </h1>
+          <p className="mx-auto max-w-sm text-xs leading-5 text-muted-foreground sm:mx-0 sm:text-sm sm:leading-6">
+            {ssoEnabled
+              ? "Buka modul Building, Maintenance, Energy, atau SIAGA sesuai akses yang terhubung dengan akun internal Anda."
+              : "Pilih modul SPARTA untuk menuju halaman login aplikasi terkait."}
+          </p>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-2">
-          {apps.map((app) => {
+        <ItemGroup>
+          {apps.map((app, index) => {
             const isEngineering = app.id === "engineering"
             const hasAccess = isEngineering ? false : app.hasAccess
             const isLaunching = launchingAppId === app.id
-            const tile = (
-              <Card
-                className="relative min-h-33 overflow-hidden rounded-lg bg-primary/10 p-0 transition-colors group-hover:bg-primary group-hover:ring-primary/40 sm:aspect-16/11 sm:min-h-0"
-                style={moduleThemeStyles[app.id]}
-              >
-                <img
-                  src={SPARTA_APP_LOGOS[app.id]}
-                  alt=""
-                  className="absolute top-1/2 left-4 size-14 -translate-y-1/2 object-contain sm:top-[40%] sm:left-1/2 sm:size-20 sm:-translate-x-1/2 md:size-24"
-                />
-                <CardContent className="absolute inset-y-0 right-0 left-24 flex flex-col justify-center p-3 sm:inset-0 sm:justify-end">
-                  <div className="flex flex-col gap-1">
-                    <div className="text-sm font-semibold text-foreground transition-colors group-hover:text-white">
-                      {app.name}
-                    </div>
-                    <div className="line-clamp-2 text-xs leading-4 text-muted-foreground transition-colors group-hover:text-white/80 sm:leading-5">
-                      {isLaunching
-                        ? "Menyiapkan akses SSO..."
-                        : isEngineering
-                          ? "COMING SOON"
-                          : hasAccess
-                            ? app.description
-                            : "Anda tidak memiliki akses ke modul ini."}
-                    </div>
-                  </div>
-                </CardContent>
-                <ArrowUpRight className="absolute top-4 right-4 text-primary transition-colors group-hover:text-white" />
-              </Card>
+            const itemStyle = {
+              ...moduleThemeStyles[app.id],
+              // Durasi animasi masuk di-inline karena kelas duration-* juga
+              // dipakai untuk transisi hover dan akan saling menimpa.
+              animationDuration: "500ms",
+              animationDelay: `${100 + index * 60}ms`,
+            }
+            const itemAnimation =
+              "animate-in fill-mode-both fade-in slide-in-from-bottom-2 motion-reduce:animate-none"
+            const content = (
+              <>
+                <ItemMedia>
+                  <img
+                    src={SPARTA_APP_LOGOS[app.id]}
+                    alt=""
+                    className="size-10 object-contain transition-transform duration-200 ease-out group-hover/item:scale-105 sm:size-12 sm:tall:size-14"
+                  />
+                </ItemMedia>
+                <ItemContent>
+                  <ItemTitle className="font-semibold sm:tall:text-base">
+                    {app.name}
+                  </ItemTitle>
+                  <ItemDescription className="line-clamp-1 text-xs sm:text-sm">
+                    {isLaunching
+                      ? "Menyiapkan akses SSO..."
+                      : isEngineering
+                        ? "Modul ini sedang dalam pengembangan."
+                        : app.description}
+                  </ItemDescription>
+                </ItemContent>
+                <ItemActions>
+                  {isEngineering ? (
+                    <Badge variant="secondary">Segera hadir</Badge>
+                  ) : !hasAccess ? (
+                    <Badge variant="outline">
+                      <Lock data-icon="inline-start" />
+                      Tanpa akses
+                    </Badge>
+                  ) : isLaunching ? (
+                    <Loader2 className="size-5 animate-spin text-primary" />
+                  ) : (
+                    <ArrowUpRight className="size-5 text-primary transition-transform duration-200 ease-out group-hover/item:translate-x-0.5 group-hover/item:-translate-y-0.5" />
+                  )}
+                </ItemActions>
+              </>
             )
 
             return hasAccess ? (
-              <button
+              <Item
                 key={app.id}
-                type="button"
-                className="group block overflow-hidden rounded-lg text-left disabled:cursor-wait"
-                disabled={Boolean(launchingAppId)}
-                onClick={() => {
-                  void handleLaunchModule(app.id)
-                }}
+                asChild
+                variant="outline"
+                role="listitem"
+                className={cn(
+                  itemAnimation,
+                  "cursor-pointer bg-primary/5 text-left transition duration-200 ease-out hover:-translate-y-0.5 hover:border-primary/40 hover:bg-primary/10 hover:shadow-md hover:shadow-primary/10 active:translate-y-0 active:shadow-none disabled:cursor-wait disabled:opacity-70 disabled:hover:translate-y-0 disabled:hover:shadow-none"
+                )}
+                style={itemStyle}
               >
-                {tile}
-              </button>
+                <button
+                  type="button"
+                  disabled={Boolean(launchingAppId)}
+                  onClick={() => {
+                    void handleLaunchModule(app.id)
+                  }}
+                >
+                  {content}
+                </button>
+              </Item>
             ) : (
-              <div
+              <Item
                 key={app.id}
-                className="block overflow-hidden rounded-lg opacity-45"
+                variant="outline"
+                role="listitem"
                 aria-disabled="true"
+                className={cn(itemAnimation, "bg-primary/5 opacity-50")}
+                style={itemStyle}
               >
-                {tile}
-              </div>
+                {content}
+              </Item>
             )
           })}
-        </div>
+        </ItemGroup>
       </section>
     </AppShell>
   )

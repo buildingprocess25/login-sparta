@@ -35,6 +35,8 @@ type AppShellProps = {
   session?: SpartaSession | null
   onLogout?: () => void
   showHeader?: boolean
+  /** Kunci tinggi halaman ke viewport; konten hanya scroll di layar yang terlalu pendek. */
+  fitViewport?: boolean
 }
 
 function getInitials(name: string) {
@@ -52,6 +54,7 @@ function AppShell({
   session,
   onLogout,
   showHeader,
+  fitViewport = false,
 }: AppShellProps) {
   const [isMobileProfileMenuOpen, setIsMobileProfileMenuOpen] =
     React.useState(false)
@@ -74,10 +77,20 @@ function AppShell({
   }, [])
 
   return (
-    <main className="min-h-svh bg-background text-foreground">
-      <div className="mx-auto flex min-h-svh w-full max-w-7xl flex-col">
+    <main
+      className={cn(
+        "bg-background text-foreground",
+        fitViewport ? "h-svh overflow-hidden" : "min-h-svh"
+      )}
+    >
+      <div
+        className={cn(
+          "mx-auto flex w-full max-w-7xl flex-col",
+          fitViewport ? "h-svh" : "min-h-svh"
+        )}
+      >
         {session || showHeader ? (
-          <header className="border-b p-4 sm:p-6">
+          <header className="shrink-0 border-b px-4 py-3 sm:px-6 sm:py-4">
             <div className="flex items-center justify-between lg:hidden">
               <Logo />
               {session ? (
@@ -137,7 +150,7 @@ function AppShell({
                 </DropdownMenu>
               ) : null}
             </div>
-            <nav className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-3 lg:hidden">
+            <nav className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-3 lg:hidden">
               <a
                 href={ROUTES.modules}
                 aria-current={
@@ -303,7 +316,14 @@ function AppShell({
             ) : null}
           </header>
         ) : null}
-        <div className="flex flex-1 flex-col p-4 sm:p-8 lg:p-10">
+        <div
+          className={cn(
+            "flex flex-1 flex-col",
+            fitViewport
+              ? "min-h-0 overflow-y-auto p-4 sm:p-6 lg:px-10 lg:py-8"
+              : "p-4 sm:p-8 lg:p-10"
+          )}
+        >
           {children}
         </div>
       </div>
