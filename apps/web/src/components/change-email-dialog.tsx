@@ -30,6 +30,7 @@ const MODULE_NAMES: Record<string, string> = {
   maintenance: "SPARTA Maintenance",
   energy: "SPARTA Energy",
   siaga: "SPARTA SIAGA",
+  carbontrack: "SPARTA Carbontrack",
   engineering: "SPARTA Engineering",
 }
 

@@ -13,6 +13,7 @@ enum SpartaModuleId {
   ENERGY
   ENGINEERING
   SIAGA
+  CARBONTRACK
 }
 
 enum UserStatus {

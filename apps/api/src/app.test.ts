@@ -21,6 +21,8 @@ const testEnv = {
     "https://maintenance.sparta.local/auth/sso/callback",
   SPARTA_ENERGY_CALLBACK_URL: "https://energy.sparta.local/auth/sso/callback",
   SPARTA_SIAGA_CALLBACK_URL: "https://siaga.sparta.local/auth/sso/callback",
+  SPARTA_CARBONTRACK_CALLBACK_URL:
+    "https://grk.sparta.local/api/auth/sso/callback",
   SPARTA_INTERNAL_API_KEY: "test-internal-api-key",
 } satisfies AppEnv
 

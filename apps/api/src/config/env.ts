@@ -58,6 +58,9 @@ const envSchema = z.object({
   SPARTA_SIAGA_CALLBACK_URL: z
     .string()
     .url("SPARTA_SIAGA_CALLBACK_URL must be a valid URL"),
+  SPARTA_CARBONTRACK_CALLBACK_URL: z
+    .string()
+    .url("SPARTA_CARBONTRACK_CALLBACK_URL must be a valid URL"),
   SPARTA_INTERNAL_API_KEY: z
     .string()
     .min(1, "SPARTA_INTERNAL_API_KEY is required")

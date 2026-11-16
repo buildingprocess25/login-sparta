@@ -56,6 +56,7 @@ jobs:
             VITE_SPARTA_MAINTENANCE_LOGIN_URL=https://maintenance.sparta-alfamart.web.id
             VITE_SPARTA_ENERGY_LOGIN_URL=https://energy.sparta-alfamart.web.id
             VITE_SPARTA_SIAGA_LOGIN_URL=https://siaga.sparta-alfamart.web.id
+            VITE_SPARTA_CARBONTRACK_LOGIN_URL=https://grk.sparta-alfamart.web.id/login
 
       - name: Trigger Dokploy Webhooks
         run: |

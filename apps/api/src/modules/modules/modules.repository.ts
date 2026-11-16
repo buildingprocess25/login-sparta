@@ -54,6 +54,7 @@ export const prismaModuleIdByPublicId = {
   maintenance: SpartaModuleId.MAINTENANCE,
   energy: SpartaModuleId.ENERGY,
   siaga: SpartaModuleId.SIAGA,
+  carbontrack: SpartaModuleId.CARBONTRACK,
 } satisfies Record<SpartaLaunchableModuleId, SpartaModuleId>
 
 export const publicModuleIdByPrismaId = {
@@ -62,6 +63,7 @@ export const publicModuleIdByPrismaId = {
   ENERGY: "energy",
   ENGINEERING: "engineering",
   SIAGA: "siaga",
+  CARBONTRACK: "carbontrack",
 } as const satisfies Record<keyof typeof SpartaModuleId, SharedSpartaModuleId>
 
 function mapModule(module: AppModule): ModuleRecord {

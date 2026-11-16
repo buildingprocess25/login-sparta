@@ -1,0 +1,2 @@
+-- AlterEnum
+ALTER TYPE "SpartaModuleId" ADD VALUE IF NOT EXISTS 'CARBONTRACK';

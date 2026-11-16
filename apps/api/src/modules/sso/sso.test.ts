@@ -24,6 +24,8 @@ const testEnv = {
   SPARTA_ENERGY_CALLBACK_URL: "https://energy.sparta.local/auth/sso/callback",
   SPARTA_SIAGA_CALLBACK_URL:
     "https://siaga.sparta-alfamart.web.id/auth/sso/callback",
+  SPARTA_CARBONTRACK_CALLBACK_URL:
+    "https://grk.sparta-alfamart.web.id/api/auth/sso/callback",
   SPARTA_INTERNAL_API_KEY: "test-internal-api-key",
 } satisfies AppEnv
 
@@ -172,6 +174,26 @@ describe("SPARTA SSO exchange routes", () => {
     await request(createAppWithFakes())
       .post("/v1/sso/exchange")
       .send({ moduleId: "building", launchToken: testLaunchToken })
+      .expect(403)
+  })
+
+  it("consumes a valid Carbontrack launch token with moduleId 'carbontrack'", async () => {
+    addLaunch({ moduleId: "carbontrack" })
+
+    const response = await request(createAppWithFakes())
+      .post("/v1/sso/exchange")
+      .send({ moduleId: "carbontrack", launchToken: testLaunchToken })
+      .expect(200)
+
+    expect(response.body.data.user.email).toBe("andi.halim@sparta.local")
+  })
+
+  it("rejects a Carbontrack launch token exchanged as another module", async () => {
+    addLaunch({ moduleId: "carbontrack" })
+
+    await request(createAppWithFakes())
+      .post("/v1/sso/exchange")
+      .send({ moduleId: "energy", launchToken: testLaunchToken })
       .expect(403)
   })
 

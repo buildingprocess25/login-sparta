@@ -29,6 +29,8 @@ const testEnv = {
   SPARTA_ENERGY_CALLBACK_URL: "https://energy.sparta.local/auth/sso/callback",
   SPARTA_SIAGA_CALLBACK_URL:
     "https://siaga.sparta-alfamart.web.id/auth/sso/callback",
+  SPARTA_CARBONTRACK_CALLBACK_URL:
+    "https://grk.sparta-alfamart.web.id/api/auth/sso/callback",
   SPARTA_INTERNAL_API_KEY: "test-internal-api-key",
 } satisfies AppEnv
 
@@ -219,6 +221,14 @@ function createModule(
       callbackUrl: "https://siaga.sparta-alfamart.web.id/auth/sso/callback",
       colorHex: "#123B6D",
     },
+    carbontrack: {
+      name: "SPARTA Carbontrack",
+      shortName: "Carbontrack",
+      description:
+        "Pencatatan emisi GRK Scope 1, 2, 3 dan produksi PLTS di 37 DC.",
+      callbackUrl: "https://grk.sparta-alfamart.web.id/api/auth/sso/callback",
+      colorHex: "#902830",
+    },
   } satisfies Record<
     SpartaLaunchableModuleId,
     Omit<ModuleRecord, "id" | "isActive" | "sortOrder">
@@ -326,6 +336,33 @@ describe("SPARTA module routes", () => {
         redirectUrl: response.body.data.redirectUrl,
       })
     )
+  })
+
+  it("launches Carbontrack to its /api/auth/sso/callback route", async () => {
+    moduleRepository.modules.set("carbontrack", createModule("carbontrack", 5))
+    const userWithCarbontrack = createBranchDefaultUser({ access: ["carbontrack"] })
+    authRepository.users.set(userWithCarbontrack.email, userWithCarbontrack)
+
+    const agent = request.agent(createAppWithFakes())
+    await login(agent)
+
+    const response = await agent
+      .post("/v1/modules/carbontrack/launch")
+      .expect(200)
+    const redirectUrl = new URL(response.body.data.redirectUrl)
+
+    expect(redirectUrl.origin).toBe("https://grk.sparta-alfamart.web.id")
+    expect(redirectUrl.pathname).toBe("/api/auth/sso/callback")
+    expect(redirectUrl.searchParams.get("token")).toHaveLength(43)
+    expect(response.body.data.moduleId).toBe("carbontrack")
+  })
+
+  it("rejects launching Carbontrack when user lacks Carbontrack access", async () => {
+    moduleRepository.modules.set("carbontrack", createModule("carbontrack", 5))
+    const agent = request.agent(createAppWithFakes())
+    await login(agent)
+
+    await agent.post("/v1/modules/carbontrack/launch").expect(403)
   })
 
   it("creates an audit event and launch record with one-time token redirect", async () => {

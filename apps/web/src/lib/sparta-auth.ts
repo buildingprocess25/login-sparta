@@ -89,6 +89,7 @@ const defaultModuleLoginUrls = {
   maintenance: "http://localhost:5175/login",
   energy: "http://localhost:5176/login",
   siaga: "http://localhost:3004/login",
+  carbontrack: "http://localhost:3000/login",
   engineering: "http://localhost:5177/login",
 } satisfies Record<SpartaAppId, string>
 
@@ -128,6 +129,16 @@ export const SPARTA_APPS: Record<SpartaAppId, SpartaApp> = {
     shortName: "SIAGA",
     description: "Sistem Pemantauan Cabang & Mitigasi Bencana Alfamart",
     colorHex: "#123B6D",
+    hasAccess: false,
+    passwordRule: "Masukkan password SPARTA Anda.",
+  },
+  carbontrack: {
+    id: "carbontrack",
+    name: "SPARTA Carbontrack",
+    shortName: "Carbontrack",
+    description:
+      "Pencatatan emisi GRK Scope 1, 2, 3 dan produksi PLTS di 37 DC.",
+    colorHex: "#902830",
     hasAccess: false,
     passwordRule: "Masukkan password SPARTA Anda.",
   },
@@ -174,6 +185,7 @@ export function getModuleLoginUrl(moduleId: SpartaAppId) {
     if (moduleId === "building") return "https://building.sparta-alfamart.web.id"
     if (moduleId === "maintenance") return "https://maintenance.sparta-alfamart.web.id"
     if (moduleId === "energy") return "https://energy.sparta-alfamart.web.id"
+    if (moduleId === "carbontrack") return "https://grk.sparta-alfamart.web.id/login"
     if (moduleId === "engineering") return "https://engineering.sparta-alfamart.web.id"
   }
 

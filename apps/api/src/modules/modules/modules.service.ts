@@ -84,6 +84,8 @@ export class ModulesService {
       targetCallbackUrl = this.env.SPARTA_ENERGY_CALLBACK_URL
     else if (moduleId === "siaga")
       targetCallbackUrl = this.env.SPARTA_SIAGA_CALLBACK_URL
+    else if (moduleId === "carbontrack")
+      targetCallbackUrl = this.env.SPARTA_CARBONTRACK_CALLBACK_URL
 
     const redirectUrl = appendLaunchToken(targetCallbackUrl, launchToken)
     const expiresAt = new Date(Date.now() + LAUNCH_TOKEN_TTL_MS)

@@ -56,6 +56,7 @@ const moduleIdMap = {
   MAINTENANCE: "maintenance",
   ENERGY: "energy",
   SIAGA: "siaga",
+  CARBONTRACK: "carbontrack",
 } as const
 
 type LaunchablePrismaModuleId = keyof typeof moduleIdMap

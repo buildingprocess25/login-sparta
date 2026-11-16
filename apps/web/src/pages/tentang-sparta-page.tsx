@@ -45,6 +45,12 @@ const modules = [
     logo: SPARTA_APP_LOGOS.siaga,
   },
   {
+    name: "SPARTA Carbontrack",
+    description:
+      "Membantu pencatatan emisi gas rumah kaca Scope 1, 2, dan 3 serta pemantauan produksi PLTS di 37 DC Alfamart.",
+    logo: SPARTA_APP_LOGOS.carbontrack,
+  },
+  {
     name: "SPARTA Engineering",
     description:
       "Membantu pelaksanaan perbaikan dan perawatan rutin peralatan teknikal dan operasional, serta pemeliharaan fisik dan kelistrikan bangunan cabang maupun Warehouse.",

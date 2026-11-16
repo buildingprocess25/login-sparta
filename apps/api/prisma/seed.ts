@@ -50,6 +50,16 @@ const moduleSeeds = [
     colorHex: "#123B6D",
     sortOrder: 4,
   },
+  {
+    id: SpartaModuleId.CARBONTRACK,
+    name: "SPARTA Carbontrack",
+    shortName: "Carbontrack",
+    description:
+      "Pencatatan emisi GRK Scope 1, 2, 3 dan produksi PLTS di 37 DC.",
+    callbackUrl: env.SPARTA_CARBONTRACK_CALLBACK_URL,
+    colorHex: "#902830",
+    sortOrder: 5,
+  },
 ]
 
 const branchSeeds = [{ code: "HEAD", name: "HEAD OFFICE" }]

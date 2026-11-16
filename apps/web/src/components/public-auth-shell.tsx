@@ -14,6 +14,7 @@ const appOrder: SpartaAppId[] = [
   "maintenance",
   "energy",
   "siaga",
+  "carbontrack",
   "engineering",
 ]
 

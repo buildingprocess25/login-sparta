@@ -2,6 +2,7 @@ import buildingLogo from "@/assets/building.png"
 import energyLogo from "@/assets/energy.png"
 import maintenanceLogo from "@/assets/maintenance.png"
 import siagaLogo from "@/assets/siaga.png"
+import carbontrackLogo from "@/assets/carbontrack.png"
 import engineeringLogo from "@/assets/engineering.png"
 import type { SpartaAppId } from "@/lib/sparta-auth"
 
@@ -10,5 +11,6 @@ export const SPARTA_APP_LOGOS = {
   maintenance: maintenanceLogo,
   energy: energyLogo,
   siaga: siagaLogo,
+  carbontrack: carbontrackLogo,
   engineering: engineeringLogo,
 } satisfies Record<SpartaAppId, string>
