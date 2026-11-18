@@ -98,21 +98,22 @@ function PublicAuthShell({ children, contentKey }: PublicAuthShellProps) {
                 </div>
               </div>
 
-              <div className="hidden shrink-0 border-t lg:grid lg:grid-cols-1 xl:grid-cols-5">
+              {/* 3 x 2 grid: six modules split evenly, no orphan row. */}
+              <div className="hidden shrink-0 border-t lg:grid lg:grid-cols-3">
                 {appOrder.map((appId) => {
                   const app = SPARTA_APPS[appId]
 
                   return (
                     <div
                       key={app.id}
-                      className="flex min-w-0 flex-col items-center justify-center gap-2 border-r p-2 text-center last:border-r-0 sm:p-3 lg:border-r-0 lg:border-b lg:last:border-b-0 xl:border-r xl:border-b-0 xl:last:border-r-0"
+                      className="flex min-w-0 flex-col items-center justify-start gap-2 border-r p-3 text-center nth-[3n]:border-r-0 nth-[-n+3]:border-b"
                     >
                       <img
                         src={SPARTA_APP_LOGOS[appId]}
                         alt=""
-                        className="size-10 shrink-0 object-contain sm:size-15 lg:size-12 xl:size-15"
+                        className="size-12 shrink-0 object-contain xl:size-15"
                       />
-                      <span className="text-[10px] leading-tight font-medium break-words sm:text-xs lg:whitespace-nowrap xl:whitespace-normal">
+                      <span className="text-xs leading-tight font-medium break-words">
                         {app.name}
                       </span>
                     </div>
