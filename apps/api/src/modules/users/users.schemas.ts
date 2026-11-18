@@ -59,6 +59,8 @@ export const syncUserSchema = z.object({
   branchName: z.string().trim().min(1),
   role: z.string().trim().min(1).default("USER"),
   moduleId: z.enum(SPARTA_LAUNCHABLE_MODULE_IDS),
+  // Only used when this sync creates a new user; ignored for existing users.
+  initialPassword: z.string().min(8).optional(),
 })
 
 export type SyncUserInput = z.infer<typeof syncUserSchema>

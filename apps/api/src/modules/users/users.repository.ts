@@ -38,6 +38,9 @@ export type CreateUserInput = {
   branchName: string
   validBranchNames?: string[]
   role: keyof typeof UserRole
+  // When set, the user is created with this hash and must change it on
+  // first login (RESET_REQUIRED) instead of using the branch name.
+  initialPasswordHash?: string
   modules: Array<{
     moduleId: SpartaLaunchableModuleId
     role: string
@@ -187,7 +190,10 @@ export class PrismaUsersRepository implements UsersRepository {
         branchId: branch.id,
         validBranchNames: input.validBranchNames || [],
         role: UserRole[input.role],
-        passwordState: PasswordState.BRANCH_DEFAULT,
+        passwordHash: input.initialPasswordHash ?? null,
+        passwordState: input.initialPasswordHash
+          ? PasswordState.RESET_REQUIRED
+          : PasswordState.BRANCH_DEFAULT,
         status: UserStatus.ACTIVE,
         accesses: {
           create: input.modules.map((mod) => ({

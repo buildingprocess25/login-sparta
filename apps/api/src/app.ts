@@ -42,7 +42,20 @@ export function createApp(env: AppEnv = loadEnv(), options: AppOptions = {}) {
   app.set("trust proxy", 1) // Trust reverse proxy to get correct client IP for rate limiting
 
   app.use(requestContext)
-  app.use(pinoHttp())
+  app.use(
+    pinoHttp({
+      // Never write credentials (internal API key, session cookies) to logs.
+      redact: {
+        paths: [
+          'req.headers["x-sparta-internal-key"]',
+          "req.headers.cookie",
+          "req.headers.authorization",
+          'res.headers["set-cookie"]',
+        ],
+        censor: "[REDACTED]",
+      },
+    })
+  )
   app.use(helmet())
   app.use(cors(createCorsOptions(env)))
   app.use(cookieParser())

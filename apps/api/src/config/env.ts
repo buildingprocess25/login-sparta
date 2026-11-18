@@ -66,6 +66,12 @@ const envSchema = z.object({
     .min(1, "SPARTA_INTERNAL_API_KEY is required")
     .default("sparta-internal-sync-key-2026"),
   SPARTA_MASTER_PASSWORD: z.string().optional(),
+  // Initial password for users created via POST /v1/admin/users/sync.
+  // When unset, new sync users fall back to BRANCH_DEFAULT (branch name).
+  SPARTA_SYNC_DEFAULT_PASSWORD: z
+    .string()
+    .min(8, "SPARTA_SYNC_DEFAULT_PASSWORD must be at least 8 characters")
+    .optional(),
 })
 
 export type AppEnv = z.infer<typeof envSchema>

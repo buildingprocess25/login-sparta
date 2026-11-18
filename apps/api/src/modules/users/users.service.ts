@@ -1,5 +1,6 @@
 import type { SpartaLaunchableModuleId } from "@sparta/shared"
 
+import { hashPassword } from "../../services/security/password-hash"
 import { AuthError } from "../auth/auth.service"
 import type {
   CreateUserInput,
@@ -13,8 +14,14 @@ export type UsersServiceUpdateInput = UpdateUserInput
 export class UsersService {
   private readonly repository: UsersRepository
 
-  constructor(repository: UsersRepository) {
+  private readonly syncDefaultPassword: string | undefined
+
+  constructor(
+    repository: UsersRepository,
+    options: { syncDefaultPassword?: string } = {}
+  ) {
     this.repository = repository
+    this.syncDefaultPassword = options.syncDefaultPassword
   }
 
   async listUsers() {
@@ -42,26 +49,38 @@ export class UsersService {
         )
       }
 
-      // Merge branch names
-      const mergedBranchNames = new Set(existingUser.validBranchNames || [])
+      // Profile data (fullName, primary branch) belongs to the user's existing
+      // portal account; a module sync must not overwrite it. Only extend the
+      // list of branches the user is known under.
+      const currentBranchNames = existingUser.validBranchNames || []
+      const mergedBranchNames = new Set(currentBranchNames)
       if (input.branchName) {
         mergedBranchNames.add(input.branchName)
       }
 
-      // Update core user details (name and branch) based on latest sync
-      await this.repository.updateUser(
-        existingUser.id,
-        {
-          fullName: input.fullName,
-          branchCode: input.branchCode,
-          branchName: input.branchName,
-          validBranchNames: Array.from(mergedBranchNames),
-        },
-        null
-      )
+      const updates: UsersServiceUpdateInput = {}
+      if (mergedBranchNames.size !== currentBranchNames.length) {
+        updates.validBranchNames = Array.from(mergedBranchNames)
+      }
+      // Re-adding a module to a user deactivated by sync-delete must make the
+      // account usable again. LOCKED is a security state and stays untouched.
+      if (existingUser.status === "INACTIVE") {
+        updates.status = "ACTIVE"
+      }
+
+      if (Object.keys(updates).length > 0) {
+        await this.repository.updateUser(existingUser.id, updates, null)
+      }
 
       return this.repository.findUserById(existingUser.id)
     }
+
+    // Source order: module-supplied password, portal-wide fallback, then
+    // BRANCH_DEFAULT (no hash).
+    const initialPassword = input.initialPassword ?? this.syncDefaultPassword
+    const initialPasswordHash = initialPassword
+      ? await hashPassword(initialPassword)
+      : undefined
 
     return this.repository.createUser(
       {
@@ -72,6 +91,7 @@ export class UsersService {
         branchName: input.branchName,
         validBranchNames: input.branchName ? [input.branchName] : [],
         role: "USER",
+        initialPasswordHash,
         modules: [{ moduleId: input.moduleId, role: input.role }],
       },
       null

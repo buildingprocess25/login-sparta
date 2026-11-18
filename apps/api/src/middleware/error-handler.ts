@@ -13,7 +13,7 @@ export const notFoundHandler: RequestHandler = (_request, response) => {
 
 export const errorHandler: ErrorRequestHandler = (
   error,
-  _request,
+  request,
   response,
   _next
 ) => {
@@ -27,13 +27,14 @@ export const errorHandler: ErrorRequestHandler = (
     return
   }
 
-  const message =
-    error instanceof Error ? error.message : "Request SPARTA API gagal."
+  // Raw error messages (e.g. Prisma validation errors) can echo query
+  // arguments such as password hashes, so they stay in server logs only.
+  request.log?.error({ err: error }, "Unhandled SPARTA API error")
 
   response.status(500).json({
     error: {
       code: "INTERNAL_SERVER_ERROR",
-      message,
+      message: "Request SPARTA API gagal.",
     },
   })
 }

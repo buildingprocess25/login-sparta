@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it } from "vitest"
 
 import { createApp } from "../../app"
 import type { AppEnv } from "../../config/env"
+import { verifyPasswordHash } from "../../services/security/password-hash"
 import type {
   AuthRepository,
   AuthSessionRecord,
@@ -113,7 +114,10 @@ class InMemoryUsersRepository implements UsersRepository {
     return [...this.users.values()].find((user) => user.email.toLowerCase() === email.toLowerCase()) ?? null
   }
 
+  createInputs: CreateUserInput[] = []
+
   async createUser(input: CreateUserInput, actorUserId: string) {
+    this.createInputs.push(input)
     const user: UserListRecord = {
       id: `user-${this.users.size + 1}`,
       email: input.email,
@@ -124,7 +128,9 @@ class InMemoryUsersRepository implements UsersRepository {
       validBranchNames: input.validBranchNames || [input.branchName],
       role: input.role,
       status: "ACTIVE",
-      passwordState: "BRANCH_DEFAULT",
+      passwordState: input.initialPasswordHash
+        ? "RESET_REQUIRED"
+        : "BRANCH_DEFAULT",
       lastLoginAt: null,
       createdAt: new Date(),
       modules: input.modules.map((module) => ({
@@ -349,5 +355,178 @@ describe("SPARTA admin users routes", () => {
         expect.objectContaining({ action: "MODULE_ACCESS_REVOKED" }),
       ])
     )
+  })
+})
+
+describe("SPARTA internal user sync", () => {
+  let usersRepository: InMemoryUsersRepository
+
+  const syncPayload = {
+    email: "nina.energy@sparta.local",
+    employeeId: null,
+    fullName: "nina.energy",
+    branchCode: "HEAD OFFICE",
+    branchName: "HEAD OFFICE",
+    role: "USER",
+    moduleId: "carbontrack",
+  }
+
+  beforeEach(() => {
+    usersRepository = new InMemoryUsersRepository()
+  })
+
+  function sync(
+    env: AppEnv,
+    path: "/v1/admin/users/sync" | "/v1/admin/users/sync-delete",
+    body: object
+  ) {
+    return request(
+      createApp(env, {
+        authRepository: new InMemoryAuthRepository(),
+        usersRepository,
+      })
+    )
+      .post(path)
+      .set("x-sparta-internal-key", env.SPARTA_INTERNAL_API_KEY)
+      .send(body)
+  }
+
+  async function seedExistingUser(
+    override: Partial<UserListRecord> = {}
+  ): Promise<UserListRecord> {
+    const user = await usersRepository.createUser(
+      {
+        email: "nina.energy@sparta.local",
+        employeeId: "EMP010",
+        fullName: "Nina Kusuma",
+        branchCode: "BDG",
+        branchName: "Bandung",
+        validBranchNames: ["Bandung"],
+        role: "USER",
+        modules: [{ moduleId: "energy", role: "MANAGER" }],
+      },
+      "auth-user-1"
+    )
+    Object.assign(user, override)
+    usersRepository.createInputs = []
+    return user
+  }
+
+  it("creates new sync users with the env default password, reset required", async () => {
+    const env = { ...testEnv, SPARTA_SYNC_DEFAULT_PASSWORD: "ptsat123" }
+
+    const response = await sync(env, "/v1/admin/users/sync", syncPayload).expect(
+      200
+    )
+
+    expect(response.body.data).toMatchObject({
+      email: "nina.energy@sparta.local",
+      passwordState: "RESET_REQUIRED",
+      modules: [{ moduleId: "carbontrack", role: "USER", isActive: true }],
+    })
+    expect(response.body.data).not.toHaveProperty("initialPasswordHash")
+
+    const hashValue = usersRepository.createInputs[0]?.initialPasswordHash
+    expect(hashValue).toBeTruthy()
+    expect(hashValue).not.toBe("ptsat123")
+    expect(await verifyPasswordHash(hashValue!, "ptsat123")).toBe(true)
+  })
+
+  it("keeps branch-default password for new sync users when env is unset", async () => {
+    const response = await sync(
+      testEnv,
+      "/v1/admin/users/sync",
+      syncPayload
+    ).expect(200)
+
+    expect(response.body.data.passwordState).toBe("BRANCH_DEFAULT")
+    expect(usersRepository.createInputs[0]?.initialPasswordHash).toBeUndefined()
+  })
+
+  it("grants module access without overwriting an existing user's profile", async () => {
+    const env = { ...testEnv, SPARTA_SYNC_DEFAULT_PASSWORD: "ptsat123" }
+    const user = await seedExistingUser({ passwordState: "USER_SET" })
+
+    await sync(env, "/v1/admin/users/sync", syncPayload).expect(200)
+
+    const updated = usersRepository.users.get(user.id)
+    expect(updated).toMatchObject({
+      fullName: "Nina Kusuma",
+      branchCode: "BDG",
+      branchName: "Bandung",
+      passwordState: "USER_SET",
+      status: "ACTIVE",
+    })
+    expect(updated?.validBranchNames).toEqual(["Bandung", "HEAD OFFICE"])
+    expect(updated?.modules).toEqual(
+      expect.arrayContaining([
+        { moduleId: "energy", role: "MANAGER", isActive: true },
+        { moduleId: "carbontrack", role: "USER", isActive: true },
+      ])
+    )
+    expect(usersRepository.createInputs).toHaveLength(0)
+  })
+
+  it("reactivates a user deactivated by sync-delete when re-synced", async () => {
+    const user = await seedExistingUser({
+      modules: [{ moduleId: "carbontrack", role: "USER", isActive: true }],
+    })
+
+    await sync(testEnv, "/v1/admin/users/sync-delete", {
+      email: syncPayload.email,
+      moduleId: "carbontrack",
+    }).expect(200)
+    expect(usersRepository.users.get(user.id)?.status).toBe("INACTIVE")
+
+    await sync(testEnv, "/v1/admin/users/sync", syncPayload).expect(200)
+    expect(usersRepository.users.get(user.id)).toMatchObject({
+      status: "ACTIVE",
+      modules: [{ moduleId: "carbontrack", role: "USER", isActive: true }],
+    })
+  })
+
+  it("prefers the module-supplied initialPassword over the env fallback", async () => {
+    const env = { ...testEnv, SPARTA_SYNC_DEFAULT_PASSWORD: "ptsat123" }
+
+    const response = await sync(env, "/v1/admin/users/sync", {
+      ...syncPayload,
+      initialPassword: "carbon-start-1",
+    }).expect(200)
+
+    expect(response.body.data.passwordState).toBe("RESET_REQUIRED")
+    expect(JSON.stringify(response.body)).not.toContain("carbon-start-1")
+    const hashValue = usersRepository.createInputs[0]?.initialPasswordHash
+    expect(await verifyPasswordHash(hashValue!, "carbon-start-1")).toBe(true)
+    expect(await verifyPasswordHash(hashValue!, "ptsat123")).toBe(false)
+  })
+
+  it("ignores initialPassword for existing users", async () => {
+    const user = await seedExistingUser({ passwordState: "USER_SET" })
+
+    await sync(testEnv, "/v1/admin/users/sync", {
+      ...syncPayload,
+      initialPassword: "carbon-start-1",
+    }).expect(200)
+
+    expect(usersRepository.createInputs).toHaveLength(0)
+    expect(usersRepository.users.get(user.id)?.passwordState).toBe("USER_SET")
+  })
+
+  it("rejects an initialPassword shorter than 8 characters without creating a user", async () => {
+    const response = await sync(testEnv, "/v1/admin/users/sync", {
+      ...syncPayload,
+      initialPassword: "short",
+    }).expect(400)
+
+    expect(response.body.error.code).toBe("INVALID_USERS_PAYLOAD")
+    expect(usersRepository.users.size).toBe(0)
+  })
+
+  it("does not unlock a LOCKED user on sync", async () => {
+    const user = await seedExistingUser({ status: "LOCKED" })
+
+    await sync(testEnv, "/v1/admin/users/sync", syncPayload).expect(200)
+
+    expect(usersRepository.users.get(user.id)?.status).toBe("LOCKED")
   })
 })

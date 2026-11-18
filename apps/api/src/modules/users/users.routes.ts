@@ -27,7 +27,9 @@ function createServices(env: AppEnv, options: UsersRouterOptions) {
 
   return {
     authService: new AuthService(authRepository, env),
-    usersService: new UsersService(usersRepository),
+    usersService: new UsersService(usersRepository, {
+      syncDefaultPassword: env.SPARTA_SYNC_DEFAULT_PASSWORD,
+    }),
   }
 }
 
