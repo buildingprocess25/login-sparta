@@ -7,6 +7,7 @@ import {
   type SpartaSession,
 } from "@/lib/sparta-auth"
 import { PublicAuthShell } from "@/components/public-auth-shell"
+import { DataMasterPage } from "@/pages/data-master-page"
 import { ForgotPasswordPage } from "@/pages/forgot-password-page"
 import { LoginPage } from "@/pages/login-page"
 import { ModuleLauncherPage } from "@/pages/module-launcher-page"
@@ -143,6 +144,10 @@ export function App() {
         onLogout={handleLogout}
       />
     )
+  }
+
+  if (route === ROUTES.dataMaster) {
+    return <DataMasterPage session={session} onLogout={handleLogout} />
   }
 
   return <ModuleLauncherPage session={session} onLogout={handleLogout} />

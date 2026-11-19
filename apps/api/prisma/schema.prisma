@@ -24,7 +24,10 @@ enum UserStatus {
 
 enum UserRole {
   USER
+  /// Akses penuh portal, termasuk mengelola user dan data master.
   SYSTEM_ADMIN
+  /// Mengelola data master (cabang, area, alias). Tidak bisa mengelola user.
+  MASTER_ADMIN
 }
 
 enum PasswordState {

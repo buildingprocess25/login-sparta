@@ -16,10 +16,26 @@ export type SpartaLaunchableModuleId =
 
 export type SpartaModuleId = (typeof SPARTA_MODULE_IDS)[number]
 
+/** Role portal. Role di dalam tiap modul tetap dikelola modul masing-masing. */
+export const SPARTA_PORTAL_ROLES = [
+  "USER",
+  "SYSTEM_ADMIN",
+  "MASTER_ADMIN",
+] as const
+
+export type SpartaPortalRole = (typeof SPARTA_PORTAL_ROLES)[number]
+
+/** Role yang boleh mengelola data master (cabang, area, alias). */
+export const SPARTA_MASTER_DATA_ROLES: readonly SpartaPortalRole[] = [
+  "SYSTEM_ADMIN",
+  "MASTER_ADMIN",
+]
+
 export type SpartaSessionDto = {
   email: string
   fullName: string
   branch: string
+  role: SpartaPortalRole
   access: SpartaLaunchableModuleId[]
   mustChangePassword: boolean
 }
@@ -45,6 +61,35 @@ export type SpartaSsoUserPayload = {
   /** Kode cabang utama. Belum bersih sampai Fase 2; jangan dijadikan kunci dulu. */
   branchCode: string
   access: SpartaLaunchableModuleId[]
+}
+
+/** Alias cabang: nama/kode lama dari aplikasi lain yang dipetakan ke cabang resmi. */
+export type MasterBranchAliasDto = {
+  id: string
+  alias: string
+  source: string
+}
+
+/** Cabang untuk halaman admin data master. */
+export type MasterBranchAdminDto = {
+  code: string
+  name: string
+  address: string | null
+  areaCode: string | null
+  areaName: string | null
+  isActive: boolean
+  userCount: number
+  aliases: MasterBranchAliasDto[]
+  updatedAt: string
+}
+
+/** Area untuk halaman admin data master. */
+export type MasterAreaAdminDto = {
+  code: string
+  name: string
+  isActive: boolean
+  branchCount: number
+  updatedAt: string
 }
 
 export type SpartaModuleDto = {

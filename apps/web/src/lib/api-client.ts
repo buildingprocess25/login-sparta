@@ -19,10 +19,31 @@ function getApiUrl(path: string) {
   return `${baseUrl}${normalizedPath}`
 }
 
+/**
+ * Mode dev tiruan: hanya saat `pnpm dev` dan VITE_SPARTA_DEV_MOCK=true.
+ * import.meta.env.DEV bernilai false di build produksi, sehingga cabang ini
+ * dan modul tiruannya dibuang dari bundle produksi.
+ */
+const isDevMock =
+  import.meta.env.DEV && import.meta.env.VITE_SPARTA_DEV_MOCK === "true"
+
 export async function apiFetch<T>(
   path: string,
   init: RequestInit = {}
 ): Promise<T> {
+  if (isDevMock) {
+    const { handleDevMockRequest } = await import("@/lib/dev-mock/mock-api")
+    const mock = await handleDevMockRequest(path, init)
+    if (mock.status >= 400) {
+      const body = mock.body as ApiError
+      throw new ApiClientError(body.error.message, {
+        code: body.error.code,
+        status: mock.status,
+      })
+    }
+    return mock.body as T
+  }
+
   const response = await fetch(getApiUrl(path), {
     ...init,
     credentials: "include",

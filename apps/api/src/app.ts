@@ -18,6 +18,10 @@ import {
   type PasswordRouterOptions,
 } from "./modules/password/password.routes"
 import {
+  createMasterAdminRouter,
+  type MasterAdminRouterOptions,
+} from "./modules/master/master-admin.routes"
+import {
   createMasterRouter,
   type MasterRouterOptions,
 } from "./modules/master/master.routes"
@@ -39,7 +43,8 @@ export type AppOptions = AuthRouterOptions &
   ModulesRouterOptions &
   SsoRouterOptions &
   UsersRouterOptions &
-  MasterRouterOptions
+  MasterRouterOptions &
+  MasterAdminRouterOptions
 
 export function createApp(env: AppEnv = loadEnv(), options: AppOptions = {}) {
   const app = express()
@@ -77,6 +82,7 @@ export function createApp(env: AppEnv = loadEnv(), options: AppOptions = {}) {
   app.use("/v1/sso", createSsoRouter(env, options))
   app.use("/v1/admin/users", createUsersRouter(env, options))
   app.use("/v1/master", createMasterRouter(env, options))
+  app.use("/v1/admin/master", createMasterAdminRouter(env, options))
 
   app.use(notFoundHandler)
   app.use(errorHandler)

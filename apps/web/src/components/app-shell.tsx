@@ -27,6 +27,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import type { SpartaSession } from "@/lib/sparta-auth"
+import { canManageMasterData } from "@/lib/sparta-master-admin"
 import { cn } from "@/lib/utils"
 import { getCurrentRoute, ROUTES } from "@/routes"
 
@@ -179,6 +180,22 @@ function AppShell({
               >
                 Tentang SPARTA
               </a>
+              {canManageMasterData(session) ? (
+                <a
+                  href={ROUTES.dataMaster}
+                  aria-current={
+                    activeRoute === ROUTES.dataMaster ? "page" : undefined
+                  }
+                  className={cn(
+                    "relative py-1 text-xs font-medium whitespace-nowrap transition-colors after:absolute after:bottom-[-2px] after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-[width] after:duration-500 after:ease-out hover:text-foreground hover:after:w-full focus-visible:outline-none focus-visible:after:w-full sm:text-sm",
+                    activeRoute === ROUTES.dataMaster
+                      ? "text-foreground after:w-full"
+                      : "text-muted-foreground"
+                  )}
+                >
+                  Data Master
+                </a>
+              ) : null}
             </nav>
             <div className="hidden items-center justify-between gap-4 lg:flex">
               <Logo />
@@ -211,6 +228,22 @@ function AppShell({
                 >
                   Tentang SPARTA
                 </a>
+                {canManageMasterData(session) ? (
+                  <a
+                    href={ROUTES.dataMaster}
+                    aria-current={
+                      activeRoute === ROUTES.dataMaster ? "page" : undefined
+                    }
+                    className={cn(
+                      "relative py-1 text-sm font-medium transition-colors after:absolute after:bottom-[-2px] after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-[width] after:duration-500 after:ease-out hover:text-foreground hover:after:w-full focus-visible:outline-none focus-visible:after:w-full",
+                      activeRoute === ROUTES.dataMaster
+                        ? "text-foreground after:w-full"
+                        : "text-muted-foreground"
+                    )}
+                  >
+                    Data Master
+                  </a>
+                ) : null}
                 {session ? (
                   <DropdownMenu
                     open={isProfileMenuOpen}

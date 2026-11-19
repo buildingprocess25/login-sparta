@@ -15,11 +15,7 @@ export class AuthError extends Error {
   readonly statusCode: number
   readonly code: string
 
-  constructor(
-    message: string,
-    statusCode: number,
-    code: string
-  ) {
+  constructor(message: string, statusCode: number, code: string) {
     super(message)
     this.statusCode = statusCode
     this.code = code
@@ -42,6 +38,7 @@ function toSessionDto(user: AuthUserRecord): SpartaSessionDto {
     email: user.email,
     fullName: user.fullName,
     branch: user.branchName,
+    role: user.role,
     access: user.access,
     mustChangePassword:
       user.passwordState === "BRANCH_DEFAULT" ||
@@ -50,7 +47,10 @@ function toSessionDto(user: AuthUserRecord): SpartaSessionDto {
 }
 
 function isUserLocked(user: AuthUserRecord, now: Date) {
-  return user.status === "LOCKED" || Boolean(user.lockedUntil && user.lockedUntil > now)
+  return (
+    user.status === "LOCKED" ||
+    Boolean(user.lockedUntil && user.lockedUntil > now)
+  )
 }
 
 export class AuthService {
@@ -62,12 +62,19 @@ export class AuthService {
     this.env = env
   }
 
-  async login(input: LoginInput, context: LoginContext): Promise<AuthSessionResult> {
+  async login(
+    input: LoginInput,
+    context: LoginContext
+  ): Promise<AuthSessionResult> {
     const now = new Date()
     const user = await this.repository.findUserByEmail(input.email)
 
     if (!user) {
-      throw new AuthError("Email atau password SPARTA tidak sesuai.", 401, "INVALID_CREDENTIALS")
+      throw new AuthError(
+        "Email atau password SPARTA tidak sesuai.",
+        401,
+        "INVALID_CREDENTIALS"
+      )
     }
 
     if (user.status === "INACTIVE") {
@@ -90,7 +97,11 @@ export class AuthService {
 
     if (!isPasswordValid) {
       await this.repository.incrementFailedLogin(user.id)
-      throw new AuthError("Email atau password SPARTA tidak sesuai.", 401, "INVALID_CREDENTIALS")
+      throw new AuthError(
+        "Email atau password SPARTA tidak sesuai.",
+        401,
+        "INVALID_CREDENTIALS"
+      )
     }
 
     await this.repository.updateSuccessfulLogin(user.id, now)
@@ -126,7 +137,11 @@ export class AuthService {
 
   async getSession(rawToken: string | undefined) {
     if (!rawToken) {
-      throw new AuthError("Session SPARTA tidak ditemukan.", 401, "UNAUTHENTICATED")
+      throw new AuthError(
+        "Session SPARTA tidak ditemukan.",
+        401,
+        "UNAUTHENTICATED"
+      )
     }
 
     const isMaster = rawToken.startsWith("m.")
@@ -176,8 +191,9 @@ export class AuthService {
     }
 
     if (user.passwordState === "BRANCH_DEFAULT") {
-      const allowedBranches = [user.branchName, ...user.validBranchNames]
-        .map(b => b.trim().toUpperCase())
+      const allowedBranches = [user.branchName, ...user.validBranchNames].map(
+        (b) => b.trim().toUpperCase()
+      )
 
       return allowedBranches.includes(password.trim().toUpperCase())
     }
