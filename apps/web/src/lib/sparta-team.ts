@@ -80,13 +80,33 @@ const otherDevelopmentTeam = [
   },
   {
     name: "Rendy Elang Lesmana",
-    role: "Fullstack Developer (4rd Gen)",
+    role: "Fullstack Developer (4th Gen)",
     image: "/team/rendy.jpeg",
   },
   {
     name: "Dicky Rohid Fikra",
-    role: "IoT Engineer (4rd Gen)",
+    role: "IoT Engineer (4th Gen)",
     image: "/team/dicky.jpg",
+  },
+  {
+    name: "Valens Aditya Tirtadharma",
+    role: "Fullstack Developer (5th Gen)",
+    image: "/team/valens.jpg",
+  },
+  {
+    name: "Devran Perdana Malik",
+    role: "Fullstack Developer (5th Gen)",
+    image: "/team/devran.jpg",
+  },
+  {
+    name: "Noval Yusuf Alfian",
+    role: "Fullstack Developer (5th Gen)",
+    image: "/team/noval.jpg",
+  },
+  {
+    name: "Amelia Asri Lestari Susilo",
+    role: "IoT Engineer (5th Gen)",
+    image: "/team/amelia.jpg",
   },
 ] satisfies SpartaTeamMember[]
 
