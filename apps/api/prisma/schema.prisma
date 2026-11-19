@@ -130,11 +130,15 @@ model AppModule {
   shortName   String
   description String
   callbackUrl String
+  /// Endpoint provisioning modul (Fase 2B). Kosong = event untuk modul ini dilewati.
+  provisioningUrl String?
   colorHex    String
   isActive    Boolean           @default(true)
   sortOrder   Int
   accesses    UserModuleAccess[]
   launches    ModuleLaunch[]
+  roles       ModuleRole[]
+  provisioningEvents ProvisioningEvent[]
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
 
@@ -226,4 +230,54 @@ model AuditEvent {
   @@index([actorUserId, createdAt])
   @@index([action, createdAt])
   @@index([entityType, entityId])
+}
+
+/// Katalog role yang dikenal tiap modul. Admin portal hanya bisa memberi role
+/// dari katalog ini, sehingga modul selalu menerima role yang ia pahami.
+model ModuleRole {
+  id        String         @id @default(cuid())
+  moduleId  SpartaModuleId
+  /// Kode role persis seperti yang dipakai modul (mis. "BMS", "AUDITOR").
+  code      String
+  label     String
+  isActive  Boolean        @default(true)
+  sortOrder Int            @default(0)
+  module    AppModule      @relation(fields: [moduleId], references: [id])
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  @@unique([moduleId, code])
+  @@index([moduleId, isActive])
+}
+
+enum ProvisioningStatus {
+  PENDING
+  DELIVERED
+  /// Gagal setelah batas percobaan; bisa dikirim ulang manual dari admin.
+  FAILED
+  /// Modul belum punya provisioningUrl; event disimpan sebagai catatan saja.
+  SKIPPED
+}
+
+/// Outbox provisioning (Fase 2B): perubahan akun/akses yang harus dikirim ke
+/// modul. Worker mengirim dengan tanda tangan HMAC dan mencoba ulang bertahap.
+model ProvisioningEvent {
+  id            String             @id @default(cuid())
+  /// access.granted | access.revoked | user.updated | user.deactivated
+  type          String
+  userId        String
+  moduleId      SpartaModuleId
+  payload       Json
+  status        ProvisioningStatus @default(PENDING)
+  attempts      Int                @default(0)
+  nextAttemptAt DateTime           @default(now())
+  lastError     String?
+  deliveredAt   DateTime?
+  module        AppModule          @relation(fields: [moduleId], references: [id])
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+
+  @@index([status, nextAttemptAt])
+  @@index([userId, createdAt])
+  @@index([moduleId, status])
 }

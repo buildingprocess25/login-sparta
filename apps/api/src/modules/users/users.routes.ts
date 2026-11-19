@@ -12,6 +12,11 @@ import {
   PrismaAuthRepository,
 } from "../auth/auth.repository"
 import { AuthService } from "../auth/auth.service"
+import {
+  type ProvisioningRepository,
+  PrismaProvisioningRepository,
+} from "../provisioning/provisioning.repository"
+import { ProvisioningService } from "../provisioning/provisioning.service"
 import { type UsersRepository, PrismaUsersRepository } from "./users.repository"
 import {
   createUserSchema,
@@ -23,16 +28,29 @@ import { UsersService } from "./users.service"
 export type UsersRouterOptions = {
   authRepository?: AuthRepository
   usersRepository?: UsersRepository
+  /** null = provisioning mati (bawaan saat NODE_ENV=test). */
+  provisioningRepository?: ProvisioningRepository | null
 }
 
 function createServices(env: AppEnv, options: UsersRouterOptions) {
   const authRepository = options.authRepository ?? new PrismaAuthRepository()
   const usersRepository = options.usersRepository ?? new PrismaUsersRepository()
+  const provisioningRepository =
+    options.provisioningRepository !== undefined
+      ? options.provisioningRepository
+      : env.NODE_ENV === "test"
+        ? null
+        : new PrismaProvisioningRepository()
+  const provisioningService = provisioningRepository
+    ? new ProvisioningService(provisioningRepository)
+    : null
 
   return {
     authService: new AuthService(authRepository, env),
+    provisioningService,
     usersService: new UsersService(usersRepository, {
       syncDefaultPassword: env.SPARTA_SYNC_DEFAULT_PASSWORD,
+      provisioning: provisioningService ?? undefined,
     }),
   }
 }
@@ -59,8 +77,105 @@ export function createUsersRouter(
   options: UsersRouterOptions = {}
 ) {
   const router = Router()
-  const { authService, usersService } = createServices(env, options)
+  const { authService, usersService, provisioningService } = createServices(
+    env,
+    options
+  )
   const sessionMiddleware = requireSession(authService)
+
+  function provisioningDisabled(response: Response) {
+    response.status(503).json({
+      error: {
+        code: "PROVISIONING_DISABLED",
+        message: "Provisioning modul tidak aktif di server ini.",
+      },
+    })
+  }
+
+  // Katalog role per modul untuk pilihan role di halaman Manajemen User.
+  router.get(
+    "/module-roles",
+    sessionMiddleware,
+    requireAdmin,
+    async (_request, response, next) => {
+      try {
+        if (!provisioningService) {
+          provisioningDisabled(response)
+          return
+        }
+        response.json({ data: await provisioningService.listModuleRoles() })
+      } catch (error) {
+        next(error)
+      }
+    }
+  )
+
+  router.post(
+    "/provisioning-events/:eventId/retry",
+    sessionMiddleware,
+    requireAdmin,
+    async (request, response, next) => {
+      try {
+        const eventId = request.params.eventId
+        if (!eventId || Array.isArray(eventId)) {
+          invalidPayload(response)
+          return
+        }
+        if (!provisioningService) {
+          provisioningDisabled(response)
+          return
+        }
+        const requeued = await provisioningService.requeue(eventId)
+        if (!requeued) {
+          response.status(404).json({
+            error: {
+              code: "PROVISIONING_EVENT_NOT_RETRYABLE",
+              message: "Event tidak ditemukan atau tidak berstatus gagal.",
+            },
+          })
+          return
+        }
+        response.json({ data: { ok: true } })
+      } catch (error) {
+        next(error)
+      }
+    }
+  )
+
+  router.get(
+    "/:userId/provisioning-events",
+    sessionMiddleware,
+    requireAdmin,
+    async (request, response, next) => {
+      try {
+        const userId = request.params.userId
+        if (!userId || Array.isArray(userId)) {
+          invalidPayload(response)
+          return
+        }
+        if (!provisioningService) {
+          provisioningDisabled(response)
+          return
+        }
+        const events = await provisioningService.listEventsForUser(userId)
+        response.json({
+          data: events.map((event) => ({
+            id: event.id,
+            type: event.type,
+            moduleId: event.moduleId,
+            status: event.status,
+            attempts: event.attempts,
+            lastError: event.lastError,
+            nextAttemptAt: event.nextAttemptAt.toISOString(),
+            deliveredAt: event.deliveredAt?.toISOString() ?? null,
+            createdAt: event.createdAt.toISOString(),
+          })),
+        })
+      } catch (error) {
+        next(error)
+      }
+    }
+  )
 
   router.get(
     "/",

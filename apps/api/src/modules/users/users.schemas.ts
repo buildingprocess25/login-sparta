@@ -1,4 +1,4 @@
-import { SPARTA_LAUNCHABLE_MODULE_IDS } from "@sparta/shared"
+import { SPARTA_LAUNCHABLE_MODULE_IDS, SPARTA_PORTAL_ROLES } from "@sparta/shared"
 import { z } from "zod"
 
 export const createUserSchema = z.object({
@@ -10,7 +10,7 @@ export const createUserSchema = z.object({
   fullName: z.string().trim().min(1),
   branchCode: z.string().trim().min(1),
   branchName: z.string().trim().min(1),
-  role: z.enum(["USER", "SYSTEM_ADMIN"]).default("USER"),
+  role: z.enum(SPARTA_PORTAL_ROLES).default("USER"),
   modules: z
     .array(
       z.object({
@@ -31,7 +31,7 @@ export const updateUserSchema = z.object({
   fullName: z.string().trim().min(1).optional(),
   branchCode: z.string().trim().min(1).optional(),
   branchName: z.string().trim().min(1).optional(),
-  role: z.enum(["USER", "SYSTEM_ADMIN"]).optional(),
+  role: z.enum(SPARTA_PORTAL_ROLES).optional(),
   status: z.enum(["ACTIVE", "INACTIVE", "LOCKED"]).optional(),
 })
 

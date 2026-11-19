@@ -2,6 +2,7 @@ import type { SpartaLaunchableModuleId } from "@sparta/shared"
 
 import { hashPassword } from "../../services/security/password-hash"
 import { AuthError } from "../auth/auth.service"
+import type { ProvisioningPublisher } from "../provisioning/provisioning.service"
 import type {
   CreateUserInput,
   UpdateUserInput,
@@ -11,17 +12,36 @@ import type {
 export type UsersServiceCreateInput = CreateUserInput
 export type UsersServiceUpdateInput = UpdateUserInput
 
+/** Provisioning ke modul (Fase 2B). Tidak diisi = tidak ada event dikirim. */
+export type UsersProvisioning = ProvisioningPublisher & {
+  isRoleAllowed(moduleId: SpartaLaunchableModuleId, role: string): Promise<boolean>
+}
+
+const IDENTITY_FIELDS = [
+  "email",
+  "employeeId",
+  "fullName",
+  "branchCode",
+  "branchName",
+] as const
+
 export class UsersService {
   private readonly repository: UsersRepository
 
   private readonly syncDefaultPassword: string | undefined
 
+  private readonly provisioning: UsersProvisioning | null
+
   constructor(
     repository: UsersRepository,
-    options: { syncDefaultPassword?: string } = {}
+    options: {
+      syncDefaultPassword?: string
+      provisioning?: UsersProvisioning
+    } = {}
   ) {
     this.repository = repository
     this.syncDefaultPassword = options.syncDefaultPassword
+    this.provisioning = options.provisioning ?? null
   }
 
   async listUsers() {
@@ -29,7 +49,19 @@ export class UsersService {
   }
 
   async createUser(input: UsersServiceCreateInput, actorUserId: string) {
-    return this.repository.createUser(input, actorUserId)
+    for (const module of input.modules) {
+      await this.assertRoleAllowed(module.moduleId, module.role)
+    }
+
+    const user = await this.repository.createUser(input, actorUserId)
+    for (const module of input.modules) {
+      await this.provisioning?.publishAccessChange(
+        user,
+        module.moduleId,
+        "access.granted"
+      )
+    }
+    return user
   }
 
   async syncUser(input: import("./users.schemas").SyncUserInput) {
@@ -134,6 +166,12 @@ export class UsersService {
           { status: "INACTIVE" },
           null
         )
+        // Modul asal sudah tahu (ia yang menghapus); modul lain dikabari.
+        await this.provisioning?.publishUserChange(
+          { ...updatedUser, status: "INACTIVE" },
+          "user.deactivated",
+          { skipModuleId: input.moduleId }
+        )
       }
     }
 
@@ -151,7 +189,26 @@ export class UsersService {
       throw new AuthError("User SPARTA tidak ditemukan.", 404, "USER_NOT_FOUND")
     }
 
+    // Salinan nilai lama: repository boleh mengubah objek yang sama.
+    const before = { ...user }
     await this.repository.updateUser(userId, input, actorUserId)
+
+    const updated = await this.repository.findUserById(userId)
+    if (!updated || !this.provisioning) return
+
+    const statusChanged =
+      input.status !== undefined && input.status !== before.status
+    if (statusChanged && updated.status !== "ACTIVE") {
+      await this.provisioning.publishUserChange(updated, "user.deactivated")
+      return
+    }
+
+    const identityChanged = IDENTITY_FIELDS.some(
+      (field) => input[field] !== undefined && updated[field] !== before[field]
+    )
+    if (identityChanged || statusChanged) {
+      await this.provisioning.publishUserChange(updated, "user.updated")
+    }
   }
 
   async grantModuleAccess(
@@ -166,7 +223,17 @@ export class UsersService {
       throw new AuthError("User SPARTA tidak ditemukan.", 404, "USER_NOT_FOUND")
     }
 
+    await this.assertRoleAllowed(moduleId, role)
     await this.repository.grantModuleAccess(userId, moduleId, role, actorUserId)
+
+    const updated = await this.repository.findUserById(userId)
+    if (updated) {
+      await this.provisioning?.publishAccessChange(
+        updated,
+        moduleId,
+        "access.granted"
+      )
+    }
   }
 
   async revokeModuleAccess(
@@ -181,6 +248,29 @@ export class UsersService {
     }
 
     await this.repository.revokeModuleAccess(userId, moduleId, actorUserId)
+
+    const updated = await this.repository.findUserById(userId)
+    if (updated) {
+      await this.provisioning?.publishAccessChange(
+        updated,
+        moduleId,
+        "access.revoked"
+      )
+    }
+  }
+
+  private async assertRoleAllowed(
+    moduleId: SpartaLaunchableModuleId,
+    role: string
+  ) {
+    if (!this.provisioning) return
+    if (!(await this.provisioning.isRoleAllowed(moduleId, role))) {
+      throw new AuthError(
+        `Role ${role} tidak dikenal oleh modul ${moduleId}.`,
+        400,
+        "MODULE_ROLE_UNKNOWN"
+      )
+    }
   }
 
   async changeEmailAndBroadcast(
@@ -197,6 +287,14 @@ export class UsersService {
 
     // 1. Update email locally
     await this.repository.updateUser(userId, { email: newEmail }, userId)
+
+    // 2a. Kabari modul lewat event provisioning (pengganti tulis langsung ke
+    // DB modul di bawah; tulis langsung dihapus setelah semua modul punya
+    // endpoint provisioning).
+    const updated = await this.repository.findUserById(userId)
+    if (updated) {
+      await this.provisioning?.publishUserChange(updated, "user.updated")
+    }
 
     // 2. Broadcast to all active modules using Direct DB Update
     const { Client } = require("pg")

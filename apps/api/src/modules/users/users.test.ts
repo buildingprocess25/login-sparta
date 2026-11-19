@@ -11,6 +11,7 @@ import type {
   AuthUserRecord,
   CreateSessionInput,
 } from "../auth/auth.repository"
+import { InMemoryProvisioningRepository } from "../provisioning/provisioning.fakes"
 import type {
   CreateUserInput,
   UpdateUserInput,
@@ -562,5 +563,143 @@ describe("SPARTA internal user sync", () => {
     await sync(testEnv, "/v1/admin/users/sync", syncPayload).expect(200)
 
     expect(usersRepository.users.get(user.id)?.status).toBe("LOCKED")
+  })
+})
+
+describe("SPARTA admin users provisioning", () => {
+  let authRepository: InMemoryAuthRepository
+  let usersRepository: InMemoryUsersRepository
+  let provisioningRepository: InMemoryProvisioningRepository
+
+  beforeEach(() => {
+    authRepository = new InMemoryAuthRepository()
+    usersRepository = new InMemoryUsersRepository()
+    provisioningRepository = new InMemoryProvisioningRepository()
+    provisioningRepository.urls.set(
+      "energy",
+      "https://energy.sparta.local/provisioning"
+    )
+    provisioningRepository.roles = [
+      { moduleId: "energy", code: "AUDITOR", label: "Auditor" },
+    ]
+    authRepository.users.set("admin@sparta.local", createUser())
+  })
+
+  async function login() {
+    const agent = request.agent(
+      createApp(testEnv, {
+        authRepository,
+        usersRepository,
+        provisioningRepository,
+      })
+    )
+    await agent
+      .post("/v1/auth/login")
+      .send({ email: "admin@sparta.local", password: "JAKARTA PUSAT" })
+    return agent
+  }
+
+  async function seedUser() {
+    return usersRepository.createUser(
+      {
+        email: "sari@sparta.local",
+        employeeId: "EMP200",
+        fullName: "Sari Wulan",
+        branchCode: "BDG",
+        branchName: "Bandung",
+        role: "USER",
+        modules: [],
+      },
+      "auth-user-1"
+    )
+  }
+
+  it("rejects a role outside the module catalog", async () => {
+    const agent = await login()
+    const user = await seedUser()
+
+    const response = await agent
+      .put(`/v1/admin/users/${user.id}/access/energy`)
+      .send({ role: "MANAGER" })
+      .expect(400)
+    expect(response.body.error.code).toBe("MODULE_ROLE_UNKNOWN")
+    expect(provisioningRepository.events).toHaveLength(0)
+  })
+
+  it("queues access.granted and access.revoked events", async () => {
+    const agent = await login()
+    const user = await seedUser()
+
+    await agent
+      .put(`/v1/admin/users/${user.id}/access/energy`)
+      .send({ role: "AUDITOR" })
+      .expect(200)
+    await agent.delete(`/v1/admin/users/${user.id}/access/energy`).expect(200)
+
+    expect(
+      provisioningRepository.events.map((event) => [
+        event.type,
+        event.status,
+        event.payload.access,
+      ])
+    ).toEqual([
+      ["access.granted", "PENDING", { isActive: true, role: "AUDITOR" }],
+      ["access.revoked", "PENDING", { isActive: false, role: "AUDITOR" }],
+    ])
+  })
+
+  it("queues user.updated on email change and user.deactivated on deactivation", async () => {
+    const agent = await login()
+    const user = await seedUser()
+    await usersRepository.grantModuleAccess(user.id, "energy", "AUDITOR", "x")
+
+    await agent
+      .patch(`/v1/admin/users/${user.id}`)
+      .send({ email: "sari.wulan@sparta.local" })
+      .expect(200)
+    await agent
+      .patch(`/v1/admin/users/${user.id}`)
+      .send({ status: "INACTIVE" })
+      .expect(200)
+
+    expect(provisioningRepository.events.map((event) => event.type)).toEqual([
+      "user.updated",
+      "user.deactivated",
+    ])
+    expect(provisioningRepository.events[0]?.payload.user.email).toBe(
+      "sari.wulan@sparta.local"
+    )
+  })
+
+  it("lists a user's events and retries a failed one", async () => {
+    const agent = await login()
+    const user = await seedUser()
+    await agent
+      .put(`/v1/admin/users/${user.id}/access/energy`)
+      .send({ role: "AUDITOR" })
+      .expect(200)
+    const event = provisioningRepository.events[0]!
+    event.status = "FAILED"
+
+    const listed = await agent
+      .get(`/v1/admin/users/${user.id}/provisioning-events`)
+      .expect(200)
+    expect(listed.body.data[0]).toMatchObject({ id: event.id, status: "FAILED" })
+
+    await agent
+      .post(`/v1/admin/users/provisioning-events/${event.id}/retry`)
+      .expect(200)
+    expect(event.status).toBe("PENDING")
+    await agent
+      .post(`/v1/admin/users/provisioning-events/${event.id}/retry`)
+      .expect(404)
+  })
+
+  it("serves the module role catalog", async () => {
+    const agent = await login()
+    const response = await agent.get("/v1/admin/users/module-roles").expect(200)
+    expect(response.body.data).toEqual([
+      { moduleId: "energy", code: "AUDITOR", label: "Auditor" },
+    ])
   })
 })

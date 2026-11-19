@@ -107,6 +107,95 @@ Data master cabang dan area untuk sync malam. Parameter opsional `updatedSince` 
 
 Simpan `meta.syncedAt` dan pakai sebagai `updatedSince` di sync berikutnya. Waktu ini diambil sebelum query, jadi perubahan yang terjadi saat query berjalan tidak terlewat.
 
+## Provisioning (Fase 2B, portal ke modul)
+
+Saat admin portal memberi/mencabut akses, mengganti identitas, atau menonaktifkan user, portal mengirim event ke endpoint provisioning modul. Modul tidak perlu menunggu user login dulu untuk tahu perubahan itu.
+
+### Yang disiapkan modul
+
+1. Endpoint `POST` (mis. `/api/sparta/provisioning`). Admin portal mengisi URL-nya ke `AppModule.provisioningUrl`. Selama kosong, event untuk modul itu dicatat `SKIPPED` dan tidak dikirim.
+2. Secret HMAC minimal 32 karakter, sama di kedua sisi. Di portal: `SPARTA_PROVISIONING_SECRET_<MODUL>` (BUILDING, MAINTENANCE, ENERGY, SIAGA, CARBONTRACK).
+3. Role yang dipakai modul terdaftar di katalog `ModuleRole`. Admin hanya bisa memberi role dari katalog itu (katalog kosong = semua role diterima).
+
+### Request
+
+Header:
+
+| Header | Isi |
+|---|---|
+| `x-sparta-event-id` | ID event, sama dengan `eventId` di body |
+| `x-sparta-timestamp` | Unix detik saat dikirim |
+| `x-sparta-signature` | `sha256=` + hex HMAC-SHA256(secret, `` `${timestamp}.${rawBody}` ``) |
+
+Body (`SpartaProvisioningEvent` di `@sparta/shared`):
+
+```json
+{
+  "eventId": "6f1c2b0e-...",
+  "type": "access.granted",
+  "occurredAt": "2026-11-19T10:00:00.000Z",
+  "moduleId": "energy",
+  "user": {
+    "spartaUserId": "cm3abc...",
+    "employeeId": "EMP100",
+    "email": "rina@sparta.local",
+    "fullName": "Rina Lestari",
+    "branch": "Bandung",
+    "branchCode": "BDG",
+    "status": "ACTIVE"
+  },
+  "access": { "isActive": true, "role": "AUDITOR" }
+}
+```
+
+| `type` | Yang dilakukan modul |
+|---|---|
+| `access.granted` | Buat akun lokal atau aktifkan lagi, set role dari `access.role` |
+| `access.revoked` | Nonaktifkan akun lokal (jangan hapus, data riwayat tetap) |
+| `user.updated` | Perbarui email, nama, NIK, cabang. `access` berisi akses saat ini |
+| `user.deactivated` | Nonaktifkan akun dan putus semua sesi aktif |
+
+### Aturan untuk modul
+
+- **Verifikasi tanda tangan** dari raw body (sebelum di-parse ulang) dengan perbandingan waktu-konstan. Tolak bila `x-sparta-timestamp` selisih lebih dari 5 menit.
+- **Idempotent**: event yang sama bisa datang lebih dari sekali. Simpan `eventId` yang sudah diproses, atau pastikan efeknya aman diulang.
+- **Cari user** dengan urutan yang sama seperti SSO: `spartaUserId`, lalu `employeeId`, lalu `email`. Simpan `spartaUserId` saat pertama ketemu.
+- **Abaikan event lama**: bila `occurredAt` lebih tua dari perubahan terakhir yang sudah diterapkan untuk user itu, balas 2xx tanpa mengubah apa pun.
+- **Balasan**: 2xx = diterima. 5xx, 408, 429, atau timeout (10 dtk) = portal mencoba ulang bertahap (30 dtk, 1 mnt, 2 mnt, ... maks 1 jam, 8 percobaan). 4xx lain = event langsung `FAILED` dan admin bisa mengirim ulang setelah masalahnya dibereskan.
+- Perubahan yang berasal dari modul sendiri (`/sync`, `/sync-delete`) tidak dikirim balik ke modul itu.
+- **User belum ada di modul**: modul yang tidak membuat akun dari SSO (role ditentukan admin modul, mis. CarbonTrack) membalas `200` dengan `{ "result": "ignored", "reason": "unknown_user" }`. Jangan balas 4xx, supaya event tidak menumpuk sebagai `FAILED`.
+- **Email bentrok** (`user.updated` membawa email yang sudah dipakai akun lain di modul): balas `409` dengan pesan singkat. Event menjadi `FAILED` dan tampil di admin portal; setelah bentrok dibereskan, admin mengirim ulang.
+- **Nonaktif berarti sesi ikut mati**: setelah `access.revoked` atau `user.deactivated`, request berikutnya dari user itu harus ditolak. Modul dengan sesi berbentuk cookie bertanda tangan (tanpa session store) wajib mengecek status akun lokal di setiap request atau saat cookie divalidasi.
+- **Modul yang belum menyimpan NIK** melewati langkah `employeeId`: cari dengan `spartaUserId`, lalu `email`.
+- Isi body balasan 2xx boleh kosong; portal hanya membaca status HTTP.
+- **Role dari portal hanya awal**: `access.role` dipakai saat modul membuat akun atau mengaktifkan lagi akun lewat `access.granted`. `user.updated` tidak boleh menimpa role lokal. Kalau admin modul mengubah role, modul melapor ke portal lewat `/sync`, jadi admin portal dan admin modul tidak saling menimpa.
+- **Buat akun atau tidak** saat `access.granted` untuk user yang belum ada adalah pilihan modul: buat dengan `access.role` dan `user.branch`, atau balas `ignored` seperti di atas.
+- **Idempotensi cukup satu kolom**: simpan `occurredAt` terakhir yang diterapkan per user (mis. `last_provisioned_at`). Event dengan `occurredAt` lebih tua atau sama diabaikan dengan balasan 2xx; karena efek tiap event aman diulang, tabel `eventId` terpisah tidak wajib.
+
+Contoh verifikasi (Node):
+
+```ts
+import { createHmac, timingSafeEqual } from "node:crypto"
+
+function isValidSpartaEvent(rawBody: string, headers: Record<string, string>, secret: string) {
+  const timestamp = Number(headers["x-sparta-timestamp"])
+  if (!Number.isFinite(timestamp) || Math.abs(Date.now() / 1000 - timestamp) > 300) return false
+  const expected = Buffer.from(
+    "sha256=" + createHmac("sha256", secret).update(`${timestamp}.${rawBody}`).digest("hex")
+  )
+  const actual = Buffer.from(headers["x-sparta-signature"] ?? "")
+  return expected.length === actual.length && timingSafeEqual(expected, actual)
+}
+```
+
+### Endpoint admin portal terkait
+
+- `GET /v1/admin/users/module-roles`: katalog role per modul.
+- `GET /v1/admin/users/:userId/provisioning-events`: 50 event terakhir user (status, percobaan, error terakhir).
+- `POST /v1/admin/users/provisioning-events/:eventId/retry`: kirim ulang event `FAILED`.
+
+Worker pengirim berjalan di proses API bila `SPARTA_PROVISIONING_WORKER_ENABLED=true`. Saat mati, event tetap tercatat `PENDING` dan dikirim setelah worker dinyalakan.
+
 ## Catatan Penting
 
 - Launch token **sekali pakai** dan **TTL 2 menit**.

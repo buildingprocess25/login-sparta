@@ -63,6 +63,47 @@ export type SpartaSsoUserPayload = {
   access: SpartaLaunchableModuleId[]
 }
 
+/**
+ * Event provisioning (Fase 2B) yang dikirim portal ke endpoint modul.
+ * - access.granted: user boleh masuk modul (buat atau aktifkan akun lokal).
+ * - access.revoked: akses modul dicabut (nonaktifkan akun lokal, jangan hapus).
+ * - user.updated: identitas berubah (mis. email); perbarui akun lokal.
+ * - user.deactivated: user dinonaktifkan di portal; nonaktifkan akun & sesi.
+ */
+export const SPARTA_PROVISIONING_EVENT_TYPES = [
+  "access.granted",
+  "access.revoked",
+  "user.updated",
+  "user.deactivated",
+] as const
+
+export type SpartaProvisioningEventType =
+  (typeof SPARTA_PROVISIONING_EVENT_TYPES)[number]
+
+export type SpartaProvisioningEvent = {
+  /** ID unik event. Modul wajib idempotent: event yang sama boleh datang 2x. */
+  eventId: string
+  type: SpartaProvisioningEventType
+  /** ISO timestamp saat perubahan terjadi di portal. */
+  occurredAt: string
+  moduleId: SpartaModuleId
+  user: {
+    spartaUserId: string
+    employeeId: string | null
+    email: string
+    fullName: string
+    branch: string
+    branchCode: string
+    status: "ACTIVE" | "INACTIVE" | "LOCKED"
+  }
+  /** Akses user untuk modul ini setelah perubahan. */
+  access: {
+    isActive: boolean
+    /** Role dari katalog role modul (ModuleRole). */
+    role: string
+  }
+}
+
 /** Alias cabang: nama/kode lama dari aplikasi lain yang dipetakan ke cabang resmi. */
 export type MasterBranchAliasDto = {
   id: string

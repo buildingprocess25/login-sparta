@@ -23,6 +23,11 @@ function loadEnvironmentFile() {
 
 loadEnvironmentFile()
 
+const provisioningSecret = z
+  .string()
+  .min(32, "Secret provisioning minimal 32 karakter")
+  .optional()
+
 const envSchema = z.object({
   NODE_ENV: z
     .enum(["development", "test", "production"])
@@ -72,6 +77,15 @@ const envSchema = z.object({
     .string()
     .min(8, "SPARTA_SYNC_DEFAULT_PASSWORD must be at least 8 characters")
     .optional(),
+  // Fase 2B: worker pengirim event provisioning ke modul. Mati secara bawaan;
+  // event tetap dicatat di outbox dan dikirim setelah worker dinyalakan.
+  SPARTA_PROVISIONING_WORKER_ENABLED: z.enum(["true", "false"]).optional(),
+  // Secret HMAC per modul, sama dengan yang disimpan modul penerima.
+  SPARTA_PROVISIONING_SECRET_BUILDING: provisioningSecret,
+  SPARTA_PROVISIONING_SECRET_MAINTENANCE: provisioningSecret,
+  SPARTA_PROVISIONING_SECRET_ENERGY: provisioningSecret,
+  SPARTA_PROVISIONING_SECRET_SIAGA: provisioningSecret,
+  SPARTA_PROVISIONING_SECRET_CARBONTRACK: provisioningSecret,
 })
 
 export type AppEnv = z.infer<typeof envSchema>

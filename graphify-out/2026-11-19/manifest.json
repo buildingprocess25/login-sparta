@@ -108,10 +108,10 @@
     "semantic_hash": "54a36f0f5edaff618d59afec012af2a4"
   },
   "apps/api/src/config/env.ts": {
-    "mtime": 1794970570.9019933,
-    "seen": 1795073715.3557007,
-    "ast_hash": "55a9f8463099f162487dad3c9dd714cd",
-    "semantic_hash": "55a9f8463099f162487dad3c9dd714cd"
+    "mtime": 1795075391.827322,
+    "seen": 1795075552.317079,
+    "ast_hash": "cb371ac23236b5ed163b5032388b877e",
+    "semantic_hash": ""
   },
   "apps/api/src/db/prisma.ts": {
     "mtime": 1794793556.350737,
@@ -300,28 +300,28 @@
     "semantic_hash": "e917d09d122dae565ee72bf332d43614"
   },
   "apps/api/src/modules/users/users.routes.ts": {
-    "mtime": 1795073282.1840997,
-    "seen": 1795073715.3557007,
-    "ast_hash": "f416ed59e4aed6c83e86db8e2d18e159",
-    "semantic_hash": "f416ed59e4aed6c83e86db8e2d18e159"
+    "mtime": 1795075391.8283243,
+    "seen": 1795075552.317079,
+    "ast_hash": "fe365826566a006cea17f6309a3f3226",
+    "semantic_hash": ""
   },
   "apps/api/src/modules/users/users.schemas.ts": {
-    "mtime": 1795073282.20885,
-    "seen": 1795073715.3557007,
-    "ast_hash": "ad84eacc30cad52aa53487661de048d1",
-    "semantic_hash": "ad84eacc30cad52aa53487661de048d1"
+    "mtime": 1795075491.4487393,
+    "seen": 1795075552.317079,
+    "ast_hash": "da10583554a7122de1a0b258d27ed1fd",
+    "semantic_hash": ""
   },
   "apps/api/src/modules/users/users.service.ts": {
-    "mtime": 1795073282.2349164,
-    "seen": 1795073715.3557007,
-    "ast_hash": "fa04d5c2698a87cf37b75fefcef590ba",
-    "semantic_hash": "fa04d5c2698a87cf37b75fefcef590ba"
+    "mtime": 1795075425.4472444,
+    "seen": 1795075552.317079,
+    "ast_hash": "ce05f502fc9fbb2af90f45e91ff7e62e",
+    "semantic_hash": ""
   },
   "apps/api/src/modules/users/users.test.ts": {
-    "mtime": 1795072936.1125498,
-    "seen": 1795073715.3557007,
-    "ast_hash": "52f6fa2eb58bd4000b7acd631c2b2743",
-    "semantic_hash": "52f6fa2eb58bd4000b7acd631c2b2743"
+    "mtime": 1795075467.2823322,
+    "seen": 1795075552.317079,
+    "ast_hash": "1392d72345af7cc95b2a6e03f89b27bb",
+    "semantic_hash": ""
   },
   "apps/api/src/scripts/check-users.ts": {
     "mtime": 1794793556.365677,
@@ -336,10 +336,10 @@
     "semantic_hash": "98a926d0bd87d6ff68d76c2ee9830479"
   },
   "apps/api/src/server.ts": {
-    "mtime": 1794793556.3666754,
-    "seen": 1795073715.3557007,
-    "ast_hash": "8ef086527b212ce85f3c3ea090121bc9",
-    "semantic_hash": "8ef086527b212ce85f3c3ea090121bc9"
+    "mtime": 1795075391.8283243,
+    "seen": 1795075552.317079,
+    "ast_hash": "6af399947d561274a6f5749c0a9f19ec",
+    "semantic_hash": ""
   },
   "apps/api/src/services/email/console-email.provider.ts": {
     "mtime": 1794793556.3676777,
@@ -414,9 +414,9 @@
     "semantic_hash": "b6566e6ba66f109925bb64b5a070fb7d"
   },
   "apps/shared/src/sparta.ts": {
-    "mtime": 1795074009.331066,
-    "seen": 1795074552.0674968,
-    "ast_hash": "2cdc2297987e4a007ace1679ec347fa6",
+    "mtime": 1795075209.1687598,
+    "seen": 1795075552.3185835,
+    "ast_hash": "03739afe53d3933f343e37e5fcb56de2",
     "semantic_hash": ""
   },
   "apps/shared/src/validation.ts": {
@@ -654,10 +654,10 @@
     "semantic_hash": "5037647b99a194828b521aa4a0c7e5da"
   },
   "apps/web/src/lib/api-client.ts": {
-    "mtime": 1794793556.4246714,
-    "seen": 1795073715.3557007,
-    "ast_hash": "d70e71fc5cba0d1e9c316e5caa07567f",
-    "semantic_hash": "d70e71fc5cba0d1e9c316e5caa07567f"
+    "mtime": 1795074832.8931043,
+    "seen": 1795074878.690689,
+    "ast_hash": "5eaeb83a8535069fc78430d4d61899a4",
+    "semantic_hash": ""
   },
   "apps/web/src/lib/shared-contract-check.ts": {
     "mtime": 1794793556.4256704,
@@ -834,10 +834,10 @@
     "semantic_hash": "4f500ff6377f3e74ede86759f0b4cdd3"
   },
   "docs/integration/module-sso-contract.md": {
-    "mtime": 1795073338.8278012,
-    "seen": 1795073715.3557007,
-    "ast_hash": "bcdd753ce332a5d764adc76ddcf092a2",
-    "semantic_hash": "bcdd753ce332a5d764adc76ddcf092a2"
+    "mtime": 1795075619.305686,
+    "seen": 1795075629.228161,
+    "ast_hash": "8bd1e7a794d3a290f079bb0056ee4b76",
+    "semantic_hash": ""
   },
   "docs/integration/sparta-building-sso-checklist.md": {
     "mtime": 1794793556.4326704,
@@ -1185,6 +1185,54 @@
     "mtime": 1794793556.414676,
     "seen": 1795074552.0684946,
     "ast_hash": "f0e41272f064da91eb9d399f00e287e7",
+    "semantic_hash": ""
+  },
+  "apps/web/src/lib/dev-mock/mock-api.ts": {
+    "mtime": 1795074832.8619828,
+    "seen": 1795074878.690689,
+    "ast_hash": "59b691b9f036c42c9fb36bd65aba84bc",
+    "semantic_hash": ""
+  },
+  "apps/api/prisma/migrations/20261119110000_add_module_roles_and_provisioning/migration.sql": {
+    "mtime": 1795075163.3319552,
+    "seen": 1795075552.317079,
+    "ast_hash": "162addf0a4e5252c48b7940f5f22a54f",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/provisioning/provisioning-signature.ts": {
+    "mtime": 1795075209.235549,
+    "seen": 1795075552.317079,
+    "ast_hash": "e3a4e526cffdbacf675a1bdd7eb94c37",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/provisioning/provisioning.fakes.ts": {
+    "mtime": 1795075425.4874508,
+    "seen": 1795075552.317079,
+    "ast_hash": "c6e2ab2be9e4d658936e384070328342",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/provisioning/provisioning.repository.ts": {
+    "mtime": 1795075209.2913084,
+    "seen": 1795075552.317079,
+    "ast_hash": "6f1232b871c984bcdf9a90a0aea771ab",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/provisioning/provisioning.service.ts": {
+    "mtime": 1795075338.905182,
+    "seen": 1795075552.317079,
+    "ast_hash": "c1debbfb93d3395e8f281f96b8340432",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/provisioning/provisioning.test.ts": {
+    "mtime": 1795075448.5351098,
+    "seen": 1795075552.317079,
+    "ast_hash": "595815cb9471cc48adc94b0a350009c6",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/provisioning/provisioning.worker.ts": {
+    "mtime": 1795075339.0066092,
+    "seen": 1795075552.317079,
+    "ast_hash": "9c10eb079b1b99fa027acae09c349242",
     "semantic_hash": ""
   },
   "package-lock.json": {
