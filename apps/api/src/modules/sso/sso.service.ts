@@ -1,21 +1,24 @@
-import type { SpartaSessionDto } from "@sparta/shared"
+import {
+  SPARTA_SSO_CONTRACT_VERSION,
+  type SpartaSsoUserPayload,
+} from "@sparta/shared"
 
 import type { AppEnv } from "../../config/env"
 import { hashSessionToken } from "../../services/security/session-token"
 import { AuthError } from "../auth/auth.service"
-import type { SsoRepository } from "./sso.repository"
+import type { SsoRepository, SsoUserRecord } from "./sso.repository"
 import type { SsoExchangeInput } from "./sso.schemas"
 
-function toSsoUserPayload(user: {
-  email: string
-  fullName: string
-  branchName: string
-  access: SpartaSessionDto["access"]
-}) {
+/** Payload kontrak v2; field v1 tetap ada agar modul lama tidak rusak. */
+function toSsoUserPayload(user: SsoUserRecord): SpartaSsoUserPayload {
   return {
+    contractVersion: SPARTA_SSO_CONTRACT_VERSION,
+    spartaUserId: user.id,
+    employeeId: user.employeeId,
     email: user.email,
     fullName: user.fullName,
     branch: user.branchName,
+    branchCode: user.branchCode,
     access: user.access,
   }
 }

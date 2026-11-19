@@ -467,6 +467,40 @@ describe("SPARTA internal user sync", () => {
     expect(usersRepository.createInputs).toHaveLength(0)
   })
 
+  it("returns spartaUserId in the sync response", async () => {
+    const response = await sync(
+      testEnv,
+      "/v1/admin/users/sync",
+      syncPayload
+    ).expect(200)
+
+    expect(response.body.data.spartaUserId).toBeTruthy()
+    expect(response.body.data.spartaUserId).toBe(response.body.data.id)
+  })
+
+  it("revokes module access by spartaUserId even after the email changed", async () => {
+    const user = await seedExistingUser({
+      modules: [{ moduleId: "carbontrack", role: "USER", isActive: true }],
+    })
+
+    await sync(testEnv, "/v1/admin/users/sync-delete", {
+      spartaUserId: user.id,
+      email: "old.address@sparta.local",
+      moduleId: "carbontrack",
+    }).expect(200)
+
+    expect(usersRepository.users.get(user.id)).toMatchObject({
+      status: "INACTIVE",
+      modules: [{ moduleId: "carbontrack", role: "USER", isActive: false }],
+    })
+  })
+
+  it("rejects sync-delete without spartaUserId and email", async () => {
+    await sync(testEnv, "/v1/admin/users/sync-delete", {
+      moduleId: "carbontrack",
+    }).expect(400)
+  })
+
   it("reactivates a user deactivated by sync-delete when re-synced", async () => {
     const user = await seedExistingUser({
       modules: [{ moduleId: "carbontrack", role: "USER", isActive: true }],

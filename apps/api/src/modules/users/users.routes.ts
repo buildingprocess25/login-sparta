@@ -13,7 +13,11 @@ import {
 } from "../auth/auth.repository"
 import { AuthService } from "../auth/auth.service"
 import { type UsersRepository, PrismaUsersRepository } from "./users.repository"
-import { createUserSchema, updateUserSchema, syncUserSchema } from "./users.schemas"
+import {
+  createUserSchema,
+  updateUserSchema,
+  syncUserSchema,
+} from "./users.schemas"
 import { UsersService } from "./users.service"
 
 export type UsersRouterOptions = {
@@ -90,7 +94,10 @@ export function createUsersRouter(
         }
 
         const user = await usersService.syncUser(payload)
-        response.status(200).json({ data: user })
+        // spartaUserId = ID portal yang disimpan modul (kontrak SSO v2).
+        response
+          .status(200)
+          .json({ data: user ? { ...user, spartaUserId: user.id } : user })
       } catch (error) {
         next(error)
       }
@@ -131,20 +138,30 @@ export function createUsersRouter(
 
         const authRepo = options.authRepository ?? new PrismaAuthRepository()
         const user = await authRepo.findUserById(request.spartaSession.user.id)
-        
+
         if (!user) {
-          response.status(401).json({ error: { code: "UNAUTHORIZED", message: "Akses ditolak" }})
+          response
+            .status(401)
+            .json({ error: { code: "UNAUTHORIZED", message: "Akses ditolak" } })
           return
         }
 
         const isValid = await authService.verifyPassword(user, payload.password)
-        
+
         if (!isValid) {
-          response.status(401).json({ error: { code: "INVALID_CREDENTIALS", message: "Password salah" }})
+          response
+            .status(401)
+            .json({
+              error: { code: "INVALID_CREDENTIALS", message: "Password salah" },
+            })
           return
         }
 
-        await usersService.changeEmailAndBroadcast(request.spartaSession.user.id, payload.newEmail, env)
+        await usersService.changeEmailAndBroadcast(
+          request.spartaSession.user.id,
+          payload.newEmail,
+          env
+        )
         response.status(200).json({ data: { ok: true } })
       } catch (error) {
         next(error)

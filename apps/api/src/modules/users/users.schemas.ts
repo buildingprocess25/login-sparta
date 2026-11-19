@@ -43,10 +43,22 @@ export type CreateUserInput = z.infer<typeof createUserSchema>
 export type UpdateUserInput = z.infer<typeof updateUserSchema>
 export type AccessUpdateInput = z.infer<typeof accessUpdateSchema>
 
-export const syncDeleteUserSchema = z.object({
-  email: z.string().email(),
-  moduleId: z.enum(SPARTA_LAUNCHABLE_MODULE_IDS),
-})
+// spartaUserId diutamakan (tetap meski email diganti); email jadi cadangan
+// untuk modul yang belum menyimpan ID portal. Minimal salah satu wajib.
+export const syncDeleteUserSchema = z
+  .object({
+    spartaUserId: z.string().trim().min(1).optional(),
+    email: z
+      .string()
+      .email()
+      .transform((value) => value.toLowerCase())
+      .optional(),
+    moduleId: z.enum(SPARTA_LAUNCHABLE_MODULE_IDS),
+  })
+  .refine((value) => Boolean(value.spartaUserId || value.email), {
+    message: "spartaUserId atau email wajib diisi.",
+    path: ["spartaUserId"],
+  })
 
 export const syncUserSchema = z.object({
   email: z
@@ -67,7 +79,10 @@ export type SyncUserInput = z.infer<typeof syncUserSchema>
 export type SyncDeleteUserInput = z.infer<typeof syncDeleteUserSchema>
 
 export const changeEmailSchema = z.object({
-  newEmail: z.string().email().transform((value) => value.toLowerCase()),
+  newEmail: z
+    .string()
+    .email()
+    .transform((value) => value.toLowerCase()),
   password: z.string().min(1),
 })
 

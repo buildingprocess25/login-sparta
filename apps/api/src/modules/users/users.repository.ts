@@ -8,6 +8,7 @@ import type { Prisma, PrismaClient } from "@prisma/client"
 import type { SpartaLaunchableModuleId } from "@sparta/shared"
 
 import { prisma } from "../../db/prisma"
+import { normalizeBranchAlias } from "../master/branch-alias"
 import { publicModuleIdByPrismaId } from "../modules/modules.repository"
 
 export type UserListRecord = {
@@ -168,19 +169,30 @@ export class PrismaUsersRepository implements UsersRepository {
     return user ? mapUserRecord(user) : null
   }
 
-  async createUser(input: CreateUserInput, actorUserId: string | null) {
-    let branch = await this.client.branch.findUnique({
-      where: { code: input.branchCode },
-    })
+  /**
+   * Cari cabang resmi untuk kode/nama dari input: kode persis, lalu alias
+   * (kode atau nama lama yang pernah dipetakan admin). Kalau tetap tidak ada,
+   * cabang baru dibuat seperti perilaku lama agar sync modul tidak gagal;
+   * cabang ini dirapikan lewat alias di Fase 2.
+   */
+  private async resolveBranch(code: string, name: string) {
+    const exact = await this.client.branch.findUnique({ where: { code } })
+    if (exact) return exact
 
-    if (!branch) {
-      branch = await this.client.branch.create({
-        data: {
-          code: input.branchCode,
-          name: input.branchName,
-        },
-      })
-    }
+    const aliases = [
+      ...new Set([normalizeBranchAlias(code), normalizeBranchAlias(name)]),
+    ]
+    const alias = await this.client.branchAlias.findFirst({
+      where: { alias: { in: aliases } },
+      include: { branch: true },
+    })
+    if (alias) return alias.branch
+
+    return this.client.branch.create({ data: { code, name } })
+  }
+
+  async createUser(input: CreateUserInput, actorUserId: string | null) {
+    const branch = await this.resolveBranch(input.branchCode, input.branchName)
 
     const user = await this.client.user.create({
       data: {
@@ -240,18 +252,10 @@ export class PrismaUsersRepository implements UsersRepository {
     if (input.status !== undefined) data.status = UserStatus[input.status]
 
     if (input.branchCode !== undefined && input.branchName !== undefined) {
-      let branch = await this.client.branch.findUnique({
-        where: { code: input.branchCode },
-      })
-
-      if (!branch) {
-        branch = await this.client.branch.create({
-          data: {
-            code: input.branchCode,
-            name: input.branchName,
-          },
-        })
-      }
+      const branch = await this.resolveBranch(
+        input.branchCode,
+        input.branchName
+      )
 
       data.branch = { connect: { id: branch.id } }
     }

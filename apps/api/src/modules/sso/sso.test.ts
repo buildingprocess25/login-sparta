@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it } from "vitest"
 
 import { createApp } from "../../app"
 import type { AppEnv } from "../../config/env"
-import type { AuthUserRecord } from "../auth/auth.repository"
+import type { SsoUserRecord } from "./sso.repository"
 
 const testEnv = {
   NODE_ENV: "test",
@@ -39,7 +39,7 @@ type LaunchRecord = {
   redirectUrl: string
   expiresAt: Date
   consumedAt: Date | null
-  user: AuthUserRecord
+  user: SsoUserRecord
 }
 
 class InMemorySsoRepository {
@@ -62,11 +62,13 @@ class InMemorySsoRepository {
   }
 }
 
-function createUser(): AuthUserRecord {
+function createUser(): SsoUserRecord {
   return {
     id: "user-1",
     email: "andi.halim@sparta.local",
+    employeeId: "2010123456",
     fullName: "Andi Halim",
+    branchCode: "JKP",
     branchName: "Jakarta Pusat",
     validBranchNames: ["Jakarta Pusat"],
     passwordHash: null,
@@ -112,7 +114,7 @@ describe("SPARTA SSO exchange routes", () => {
     return launch
   }
 
-  it("consumes a valid launch token and returns the user payload", async () => {
+  it("consumes a valid launch token and returns the v2 user payload", async () => {
     const launch = addLaunch()
 
     const response = await request(createAppWithFakes())
@@ -121,12 +123,28 @@ describe("SPARTA SSO exchange routes", () => {
       .expect(200)
 
     expect(response.body.data.user).toEqual({
+      contractVersion: 2,
+      spartaUserId: "user-1",
+      employeeId: "2010123456",
       email: "andi.halim@sparta.local",
       fullName: "Andi Halim",
       branch: "Jakarta Pusat",
+      branchCode: "JKP",
       access: ["building", "maintenance", "siaga"],
     })
     expect(repository.launches.get(launch.id)?.consumedAt).toBeInstanceOf(Date)
+  })
+
+  it("sends employeeId as null for a legacy user without NIK", async () => {
+    addLaunch({ user: { ...createUser(), employeeId: null } })
+
+    const response = await request(createAppWithFakes())
+      .post("/v1/sso/exchange")
+      .send({ moduleId: "building", launchToken: testLaunchToken })
+      .expect(200)
+
+    expect(response.body.data.user.employeeId).toBeNull()
+    expect(response.body.data.user.spartaUserId).toBe("user-1")
   })
 
   it("consumes a valid SIAGA launch token with moduleId 'siaga'", async () => {
@@ -142,9 +160,13 @@ describe("SPARTA SSO exchange routes", () => {
       .expect(200)
 
     expect(response.body.data.user).toEqual({
+      contractVersion: 2,
+      spartaUserId: "user-1",
+      employeeId: "2010123456",
       email: "andi.halim@sparta.local",
       fullName: "Andi Halim",
       branch: "Jakarta Pusat",
+      branchCode: "JKP",
       access: ["building", "maintenance", "siaga"],
     })
     expect(repository.launches.get(launch.id)?.consumedAt).toBeInstanceOf(Date)

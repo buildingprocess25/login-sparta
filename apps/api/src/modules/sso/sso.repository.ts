@@ -5,6 +5,12 @@ import { prisma } from "../../db/prisma"
 import type { AuthUserRecord } from "../auth/auth.repository"
 import { publicModuleIdByPrismaId } from "../modules/modules.repository"
 
+/** User untuk SSO exchange: data auth + identitas yang dikirim ke modul (kontrak v2). */
+export type SsoUserRecord = AuthUserRecord & {
+  employeeId: string | null
+  branchCode: string
+}
+
 export type SsoLaunchRecord = {
   id: string
   userId: string
@@ -13,7 +19,7 @@ export type SsoLaunchRecord = {
   redirectUrl: string
   expiresAt: Date
   consumedAt: Date | null
-  user: AuthUserRecord
+  user: SsoUserRecord
 }
 
 export type SsoRepository = {
@@ -25,8 +31,9 @@ type PrismaSsoLaunch = ModuleLaunch & {
   user: {
     id: string
     email: string
+    employeeId: string | null
     fullName: string
-    branch: { name: string }
+    branch: { code: string; name: string }
     validBranchNames: string[]
     passwordHash: string | null
     passwordState: AuthUserRecord["passwordState"]
@@ -42,11 +49,13 @@ type PrismaSsoLaunch = ModuleLaunch & {
   }
 }
 
-function mapUser(user: PrismaSsoLaunch["user"]): AuthUserRecord {
+function mapUser(user: PrismaSsoLaunch["user"]): SsoUserRecord {
   return {
     id: user.id,
     email: user.email,
+    employeeId: user.employeeId,
     fullName: user.fullName,
+    branchCode: user.branch.code,
     branchName: user.branch.name,
     validBranchNames: user.validBranchNames,
     passwordHash: user.passwordHash,
@@ -58,8 +67,7 @@ function mapUser(user: PrismaSsoLaunch["user"]): AuthUserRecord {
     lastLoginAt: user.lastLoginAt,
     access: user.accesses
       .filter(
-        (access) =>
-          access.module.isActive && access.moduleId !== "ENGINEERING"
+        (access) => access.module.isActive && access.moduleId !== "ENGINEERING"
       )
       .sort((left, right) => left.module.sortOrder - right.module.sortOrder)
       .map(

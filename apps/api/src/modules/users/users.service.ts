@@ -34,13 +34,17 @@ export class UsersService {
 
   async syncUser(input: import("./users.schemas").SyncUserInput) {
     const existingUser = await this.repository.findUserByEmail(input.email)
-    
+
     if (existingUser) {
       const existingAccess = existingUser.modules.find(
         (m) => m.moduleId === input.moduleId
       )
 
-      if (!existingAccess || !existingAccess.isActive || existingAccess.role !== input.role) {
+      if (
+        !existingAccess ||
+        !existingAccess.isActive ||
+        existingAccess.role !== input.role
+      ) {
         await this.repository.grantModuleAccess(
           existingUser.id,
           input.moduleId,
@@ -99,8 +103,13 @@ export class UsersService {
   }
 
   async syncDeleteUser(input: import("./users.schemas").SyncDeleteUserInput) {
-    const existingUser = await this.repository.findUserByEmail(input.email)
-    
+    // ID portal diutamakan: tetap tepat sasaran walau email sudah diganti.
+    const existingUser = input.spartaUserId
+      ? await this.repository.findUserById(input.spartaUserId)
+      : input.email
+        ? await this.repository.findUserByEmail(input.email)
+        : null
+
     if (!existingUser) {
       // User already deleted or doesn't exist in SSO
       return null
@@ -116,8 +125,8 @@ export class UsersService {
     // Check if user has any other active modules
     const updatedUser = await this.repository.findUserById(existingUser.id)
     if (updatedUser) {
-      const hasActiveModules = updatedUser.modules.some(m => m.isActive)
-      
+      const hasActiveModules = updatedUser.modules.some((m) => m.isActive)
+
       // If no active modules left, set status to INACTIVE
       if (!hasActiveModules && updatedUser.status !== "INACTIVE") {
         await this.repository.updateUser(
@@ -174,7 +183,11 @@ export class UsersService {
     await this.repository.revokeModuleAccess(userId, moduleId, actorUserId)
   }
 
-  async changeEmailAndBroadcast(userId: string, newEmail: string, env: import("../../config/env").AppEnv) {
+  async changeEmailAndBroadcast(
+    userId: string,
+    newEmail: string,
+    env: import("../../config/env").AppEnv
+  ) {
     const user = await this.repository.findUserById(userId)
     if (!user) {
       throw new AuthError("User SPARTA tidak ditemukan.", 404, "USER_NOT_FOUND")
@@ -187,56 +200,83 @@ export class UsersService {
 
     // 2. Broadcast to all active modules using Direct DB Update
     const { Client } = require("pg")
-    
+
     const baseDbUrl = env.DATABASE_URL.replace("/sparta?", "/")
-    const buildingUrl = baseDbUrl.replace("103.127.99.241:5432/", "103.127.99.241:5432/building?")
-    const energyUrl = baseDbUrl.replace("103.127.99.241:5432/", "103.127.99.241:5432/energy?")
-    const maintenanceUrl = baseDbUrl.replace("103.127.99.241:5432/", "103.127.99.241:5432/maintenance?")
-    
+    const buildingUrl = baseDbUrl.replace(
+      "103.127.99.241:5432/",
+      "103.127.99.241:5432/building?"
+    )
+    const energyUrl = baseDbUrl.replace(
+      "103.127.99.241:5432/",
+      "103.127.99.241:5432/energy?"
+    )
+    const maintenanceUrl = baseDbUrl.replace(
+      "103.127.99.241:5432/",
+      "103.127.99.241:5432/maintenance?"
+    )
+
     const dbUpdates = []
 
-    if (user.modules.some(m => m.moduleId === "building" && m.isActive)) {
+    if (user.modules.some((m) => m.moduleId === "building" && m.isActive)) {
       dbUpdates.push(async () => {
         const client = new Client({ connectionString: buildingUrl })
         try {
           await client.connect()
-          await client.query("UPDATE user_cabang SET email_sat = $1 WHERE email_sat = $2", [newEmail, oldEmail])
+          await client.query(
+            "UPDATE user_cabang SET email_sat = $1 WHERE email_sat = $2",
+            [newEmail, oldEmail]
+          )
         } catch (err) {
-          console.error(`[DB Update Error] Failed to update email in Building DB:`, err)
+          console.error(
+            `[DB Update Error] Failed to update email in Building DB:`,
+            err
+          )
         } finally {
           await client.end()
         }
       })
     }
 
-    if (user.modules.some(m => m.moduleId === "energy" && m.isActive)) {
+    if (user.modules.some((m) => m.moduleId === "energy" && m.isActive)) {
       dbUpdates.push(async () => {
         const client = new Client({ connectionString: energyUrl })
         try {
           await client.connect()
-          await client.query("UPDATE users SET email = $1 WHERE email = $2", [newEmail, oldEmail])
+          await client.query("UPDATE users SET email = $1 WHERE email = $2", [
+            newEmail,
+            oldEmail,
+          ])
         } catch (err) {
-          console.error(`[DB Update Error] Failed to update email in Energy DB:`, err)
+          console.error(
+            `[DB Update Error] Failed to update email in Energy DB:`,
+            err
+          )
         } finally {
           await client.end()
         }
       })
     }
 
-    if (user.modules.some(m => m.moduleId === "maintenance" && m.isActive)) {
+    if (user.modules.some((m) => m.moduleId === "maintenance" && m.isActive)) {
       dbUpdates.push(async () => {
         const client = new Client({ connectionString: maintenanceUrl })
         try {
           await client.connect()
-          await client.query('UPDATE "User" SET email = $1 WHERE email = $2', [newEmail, oldEmail])
+          await client.query('UPDATE "User" SET email = $1 WHERE email = $2', [
+            newEmail,
+            oldEmail,
+          ])
         } catch (err) {
-          console.error(`[DB Update Error] Failed to update email in Maintenance DB:`, err)
+          console.error(
+            `[DB Update Error] Failed to update email in Maintenance DB:`,
+            err
+          )
         } finally {
           await client.end()
         }
       })
     }
 
-    await Promise.all(dbUpdates.map(fn => fn()))
+    await Promise.all(dbUpdates.map((fn) => fn()))
   }
 }
