@@ -80,7 +80,9 @@ function AppShell({
     <main
       className={cn(
         "bg-background text-foreground",
-        fitViewport ? "h-svh overflow-hidden" : "min-h-svh"
+        // overflow-x-clip: latar selebar layar tidak memicu scroll samping
+        // (berbeda dengan overflow-hidden, tidak memutus elemen sticky).
+        fitViewport ? "h-svh overflow-hidden" : "min-h-svh overflow-x-clip"
       )}
     >
       <div

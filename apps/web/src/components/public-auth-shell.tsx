@@ -67,13 +67,15 @@ function PublicAuthShell({ children, contentKey }: PublicAuthShellProps) {
       <FasciaStripe className="absolute inset-x-0 top-0 z-20" />
       <AuthBackdrop />
 
-      <div className="relative mx-auto grid min-h-svh w-full max-w-7xl grid-cols-[minmax(0,1fr)] content-start px-4 pt-9 pb-6 sm:px-8 sm:pt-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:content-center lg:items-center lg:gap-x-16 lg:px-12 lg:py-12 xl:gap-x-24">
-        <section className="flex min-w-0 flex-col items-center gap-4 text-center sm:gap-5 lg:items-start lg:gap-8 lg:text-left">
+      {/* Mobile: header ringkas (label + judul) lalu form, tanpa gambar toko,
+          agar seluruh form muat dalam satu layar tanpa scroll. */}
+      <div className="relative mx-auto grid min-h-svh w-full max-w-7xl grid-cols-[minmax(0,1fr)] content-start gap-y-5 px-4 pt-7 pb-6 sm:gap-y-6 sm:px-8 sm:pt-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:content-center lg:items-center lg:gap-x-16 lg:gap-y-0 lg:px-12 lg:py-12 xl:gap-x-24">
+        <section className="flex min-w-0 flex-col items-center gap-2 text-center sm:gap-4 lg:items-start lg:gap-8 lg:text-left">
           <p className="text-xs font-medium text-panel-foreground/70 sm:text-sm">
             Building, Maintenance & Energy
           </p>
 
-          <h1 className="order-2 max-w-md font-heading text-xl leading-snug font-medium text-balance sm:max-w-xl sm:text-2xl lg:order-3 lg:max-w-xl lg:text-3xl xl:tall-desktop:text-4xl">
+          <h1 className="order-2 max-w-md font-heading text-lg leading-snug font-medium text-balance sm:max-w-xl sm:text-2xl lg:order-3 lg:max-w-xl lg:text-3xl xl:tall-desktop:text-4xl">
             {acronym.map((part, index) => (
               <React.Fragment key={index}>
                 <span className="text-primary">{part.initial}</span>
@@ -84,7 +86,7 @@ function PublicAuthShell({ children, contentKey }: PublicAuthShellProps) {
 
           {/* Wadah mengikuti rasio gambar agar bisa rata tengah (mobile) dan
               rata kiri (desktop) tanpa ruang kosong di sisinya. */}
-          <div className="relative order-3 aspect-[700/444] h-40 max-w-full sm:h-48 lg:order-2 lg:h-[min(36vh,18rem)] xl:aspect-[944/444]">
+          <div className="relative order-3 hidden aspect-[700/444] h-48 max-w-full sm:block lg:order-2 lg:h-[min(36vh,18rem)] xl:aspect-[944/444]">
             <StorefrontElevation
               animated
               className="absolute inset-0 size-full text-panel-foreground/80 xl:hidden"
@@ -128,14 +130,16 @@ function PublicAuthShell({ children, contentKey }: PublicAuthShellProps) {
           </ul>
         </section>
 
-        <div className="relative -mt-5 flex w-full flex-col items-center gap-5 sm:-mt-6 lg:mt-0">
+        <div className="relative flex w-full flex-col items-center gap-5">
           <div className="auth-glass relative z-10 w-full max-w-md overflow-hidden rounded-3xl border border-white bg-white/80 text-foreground shadow-[0_1px_2px_rgb(16_24_32/0.06),0_24px_64px_-24px_rgb(16_24_32/0.28)] ring-1 ring-black/5 backdrop-blur-2xl backdrop-saturate-150">
-            <div className="px-6 pt-7">
+            <div className="px-6 pt-6 sm:pt-7">
               <Logo />
             </div>
+            {/* Mobile, halaman login saja: deskripsi kartu disembunyikan agar
+                form muat satu layar (halaman lain tetap butuh penjelasannya). */}
             <div
               key={contentKey}
-              className="animate-in duration-300 fade-in-0 [&_[data-slot=card-title]]:text-xl sm:[&_[data-slot=card-title]]:text-2xl [&>[data-slot=card]]:bg-transparent [&>[data-slot=card]]:ring-0"
+              className={`animate-in duration-300 fade-in-0 ${contentKey === ROUTES.login ? "max-sm:[&_[data-slot=card-description]]:hidden" : ""} [&_[data-slot=card-title]]:text-xl sm:[&_[data-slot=card-title]]:text-2xl [&>[data-slot=card]]:bg-transparent [&>[data-slot=card]]:ring-0`}
             >
               {children}
             </div>
