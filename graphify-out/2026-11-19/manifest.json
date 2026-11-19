@@ -1235,6 +1235,12 @@
     "ast_hash": "9c10eb079b1b99fa027acae09c349242",
     "semantic_hash": ""
   },
+  "docs/plan/sisa-plan-sparta.md": {
+    "mtime": 1795076550.2614205,
+    "seen": 1795076557.5679708,
+    "ast_hash": "7e4e1d8b26066792d7cd1efc0ea31af3",
+    "semantic_hash": ""
+  },
   "package-lock.json": {
     "mtime": 1794793556.4366744,
     "seen": 1795074552.0684946,

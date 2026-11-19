@@ -32,15 +32,18 @@ Catatan sisa pekerjaan setelah sesi 2026-11-19. Rencana lengkap ada di dokumen "
 
 ### Modul (menunggu izin user)
 
-- [ ] CarbonTrack: endpoint provisioning, kolom status aktif di `AppUser`, tolak sesi cookie untuk user nonaktif, balas `ignored` untuk user yang belum ada.
-- [ ] Energy: endpoint provisioning, kolom `is_active`, hapus sesi `sso_session` saat dinonaktifkan, kolom `last_provisioned_at`.
+- [x] CarbonTrack (2026-11-19, di working tree, belum di-commit): `POST https://grk.sparta-alfamart.web.id/api/sparta/provisioning`. Kolom `app_user.is_active`, sesi ditolak paling lama 15 detik setelah event, balasan `applied` / `ignored` (`unknown_user`, `stale_event`) / 409 bentrok email / 401 signature salah / 503 secret kosong.
+  - [ ] Saat deploy (butuh izin user karena mengubah DB/env): isi `AppModule.provisioningUrl` CARBONTRACK dengan URL di atas, set `SPARTA_PROVISIONING_SECRET_CARBONTRACK` di portal sama dengan `SPARTA_PROVISIONING_SECRET` di CarbonTrack, lalu nyalakan worker.
+- [x] Energy (2026-11-19, di working tree, belum di-commit/deploy): `POST https://<domain-energy>/api/sparta/provisioning`. `access.granted` membuat akun otomatis (role dari `access.role`, cabang hanya untuk role USER); `user.updated` mengubah email, nama, NIK saja; revoke/deactivate set `is_active=false` dan hapus semua sesi. Balasan 401/400/409/422 (role tidak dikenal) = FAILED, 503 = retry, `ignored` untuk user tak dikenal atau event lama. Sisa rencana Energy: `docs/sso-v2-sisa-rencana.md` di repo Energy.
+  - [ ] Saat deploy (butuh izin user): isi `AppModule.provisioningUrl` ENERGY, set `SPARTA_PROVISIONING_SECRET_ENERGY` sama dengan `SPARTA_PROVISIONING_SECRET` di Energy, nyalakan worker.
+  - [ ] Setelah endpoint Energy aktif di produksi: hapus `changeEmailAndBroadcast` bagian Energy, dan bersihkan `branchCode` (Fase 2 modul).
 - [ ] Maintenance, Building, SIAGA, Engineering: belum dihubungi.
 - Syarat lanjut ke Fase 3: satu karyawan uji coba dibuat di portal lalu otomatis muncul di semua modul yang dipilih.
 
 ### Keputusan yang menunggu user
 
-- [ ] Tabel `users` Energy juga dipakai smart-energy-monitoring. Apakah user nonaktif juga harus ditolak di sana? Kalau ya, aplikasi itu ikut mengecek kolom `is_active`.
-- [ ] Energy: buat akun otomatis saat `access.granted` untuk user yang belum ada, atau balas `ignored`?
+- [ ] Tabel `users` Energy juga dipakai smart-energy-monitoring, yang belum mengecek `is_active`. Apakah user nonaktif juga harus ditolak di sana?
+- [x] Energy membuat akun otomatis saat `access.granted` (diputuskan user 2026-11-19). CarbonTrack tidak membuat akun (balas `ignored`).
 - [ ] NIK wajib di `/sync` (ditunda atas permintaan user).
 
 ## Fase 2 di modul (belum mulai)
