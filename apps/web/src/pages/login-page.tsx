@@ -7,7 +7,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -41,8 +40,16 @@ function LoginPage({ onAuthenticated }: LoginPageProps) {
   const [status, setStatus] = React.useState<LoginStatus>(null)
   const [isSubmitting, setIsSubmitting] = React.useState(false)
 
+  const canSubmit = Boolean(email.trim() && password.trim())
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+
+    // Tombol selalu aktif (merah penuh); field kosong dijelaskan lewat pesan.
+    if (!canSubmit) {
+      setStatus({ message: "Isi email dan password SPARTA terlebih dahulu." })
+      return
+    }
 
     setIsSubmitting(true)
     const result = await loginToSparta({ email, password })
@@ -58,8 +65,6 @@ function LoginPage({ onAuthenticated }: LoginPageProps) {
 
     onAuthenticated(result.session)
   }
-
-  const canSubmit = Boolean(email.trim() && password.trim())
 
   return (
     <Card>
@@ -143,22 +148,13 @@ function LoginPage({ onAuthenticated }: LoginPageProps) {
               {status ? <FieldError>{status.message}</FieldError> : null}
             </Field>
 
-            <Button type="submit" disabled={!canSubmit || isSubmitting}>
+            <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Memproses..." : "Masuk ke SPARTA"}
               <ArrowRight data-icon="inline-end" />
             </Button>
           </FieldGroup>
         </form>
       </CardContent>
-
-      <CardFooter className="flex-col items-center gap-1 text-center">
-        <p className="hidden text-xs text-muted-foreground sm:block">
-          © 2026 PT Sumber Alfaria Trijaya, Tbk. Seluruh Hak Cipta.
-        </p>
-        <p className="text-xs text-muted-foreground">
-          Hanya untuk penggunaan manajemen internal Departemen BME.
-        </p>
-      </CardFooter>
     </Card>
   )
 }

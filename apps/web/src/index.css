@@ -6,6 +6,8 @@
 @custom-variant dark (&:is(.dark *));
 /* Layar dengan tinggi cukup (≥ 640px) — dipakai untuk memperbesar elemen tanpa memicu scroll. */
 @custom-variant tall (@media (min-height: 40rem));
+/* Desktop dengan tinggi lega (≥ 820px), misal untuk judul besar di halaman login. */
+@custom-variant tall-desktop (@media (min-height: 51.25rem));
 
 @theme inline {
   --font-heading: var(--font-sans);
@@ -41,6 +43,12 @@
   --color-card: var(--card);
   --color-foreground: var(--foreground);
   --color-background: var(--background);
+  --color-panel: var(--panel);
+  --color-panel-foreground: var(--panel-foreground);
+  --color-auth-link: var(--auth-link);
+  --color-fascia-red: var(--fascia-red);
+  --color-fascia-yellow: var(--fascia-yellow);
+  --color-fascia-blue: var(--fascia-blue);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -84,6 +92,73 @@
   --sidebar-accent-foreground: oklch(0.218 0.008 223.9);
   --sidebar-border: oklch(0.925 0.005 214.3);
   --sidebar-ring: oklch(0.723 0.014 214.4);
+  /* Halaman login: latar putih keabuan dengan garis gambar tinta gelap, dan warna fascia toko Alfamart. */
+  --panel: #f4f5f6;
+  --panel-foreground: #1d2226;
+  /* Merah sedikit lebih gelap untuk teks link kecil di latar terang (kontras AA). */
+  --auth-link: #c0000a;
+  --fascia-red: #e6000b;
+  --fascia-yellow: #ffc20e;
+  --fascia-blue: #0a4ea2;
+}
+
+/*
+ * Animasi gambar kerja di halaman login: garis "digambar" lalu warna muncul.
+ * Berjalan sekali; dimatikan untuk pengguna yang memilih reduced motion.
+ * Elemen path memakai pathLength="1" sehingga dash 1 = panjang garis penuh.
+ */
+@keyframes sketch-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes sketch-fade {
+  to {
+    opacity: 1;
+  }
+}
+
+.sketch-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: sketch-draw 0.9s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+  animation-delay: var(--sketch-delay, 0s);
+}
+
+.sketch-fade {
+  opacity: 0;
+  animation: sketch-fade 0.5s ease-out forwards;
+  animation-delay: var(--sketch-delay, 0s);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sketch-draw,
+  .sketch-fade {
+    animation: none;
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+/*
+ * Kartu kaca putih di halaman login. Kaca sedikit tembus pandang, jadi teks
+ * sekunder dan link dibuat sedikit lebih gelap agar tetap kontras AA.
+ */
+.auth-glass {
+  --muted-foreground: #525c63;
+  --input: oklch(0.88 0.006 214.3);
+  color: var(--foreground);
+}
+
+.auth-glass [data-slot="button"][data-variant="link"] {
+  color: #c0000a;
+}
+
+/* Target sentuh minimal 44px untuk input dan tombol utama. */
+.auth-glass [data-slot="input-group"],
+.auth-glass [data-slot="button"][data-size="default"] {
+  height: 2.75rem;
 }
 
 @layer base {

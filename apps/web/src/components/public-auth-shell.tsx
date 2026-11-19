@@ -1,12 +1,13 @@
 import * as React from "react"
 import { ArrowRight } from "lucide-react"
 
+import { FasciaStripe } from "@/components/fascia-stripe"
 import { Logo } from "@/components/logo"
-import { Badge } from "@/components/ui/badge"
+import { StoreFloorPlan } from "@/components/store-floor-plan"
+import { StorefrontElevation } from "@/components/storefront-elevation"
 import { Button } from "@/components/ui/button"
 import { SPARTA_APPS, type SpartaAppId } from "@/lib/sparta-auth"
 import { SPARTA_APP_LOGOS } from "@/lib/sparta-assets"
-import { cn } from "@/lib/utils"
 import { ROUTES } from "@/routes"
 
 const appOrder: SpartaAppId[] = [
@@ -18,127 +19,166 @@ const appOrder: SpartaAppId[] = [
   "engineering",
 ]
 
+const acronym = [
+  { initial: "S", rest: "ystem for " },
+  { initial: "P", rest: "roperty " },
+  { initial: "A", rest: "dministration, " },
+  { initial: "R", rest: "eporting, " },
+  { initial: "T", rest: "racking & " },
+  { initial: "A", rest: "pproval" },
+]
+
+/** Warna status bar browser mobile mengikuti latar halaman login. */
+const PANEL_THEME_COLOR = "#f4f5f6"
+
+function usePanelThemeColor() {
+  React.useEffect(() => {
+    const meta = document.querySelector<HTMLMetaElement>(
+      'meta[name="theme-color"]'
+    )
+    if (!meta) return
+
+    const previous = meta.content
+    meta.content = PANEL_THEME_COLOR
+    return () => {
+      meta.content = previous
+    }
+  }, [])
+}
+
 type PublicAuthShellProps = {
   children: React.ReactNode
   contentKey: string
 }
 
+/*
+ * Halaman publik (login, lupa password) di atas latar putih keabuan.
+ * - Desktop: identitas di kiri, form melayang (kaca putih) di kanan. Di
+ *   belakang kaca ada denah toko samar agar efek kaca terlihat.
+ * - Mobile: semua rata tengah; kartu kaca menimpa bagian bawah gambar.
+ * Lapisan latar (AuthBackdrop) sengaja terpisah agar nanti bisa diganti
+ * gambar lain tanpa mengubah tata letak.
+ */
 function PublicAuthShell({ children, contentKey }: PublicAuthShellProps) {
-  const isLoginRoute = contentKey === ROUTES.login
-  const [isMobileLoginFormOpen, setIsMobileLoginFormOpen] =
-    React.useState(false)
-
-  const shouldShowMobileForm = !isLoginRoute || isMobileLoginFormOpen
+  usePanelThemeColor()
 
   return (
-    <main className="min-h-svh overflow-x-hidden bg-background text-foreground">
-      <div className="mx-auto grid min-h-svh w-full max-w-7xl grid-cols-1 lg:h-svh lg:grid-cols-[0.95fr_1.05fr] lg:overflow-hidden">
-        <section
-          className={cn(
-            "border-b bg-muted/30 lg:flex lg:min-h-0 lg:flex-col lg:overflow-hidden lg:border-r lg:border-b-0",
-            isLoginRoute &&
-              !isMobileLoginFormOpen &&
-              "flex min-h-svh items-center border-b-0",
-            shouldShowMobileForm && "hidden lg:flex"
-          )}
-        >
-          <div
-            className={cn(
-              "flex items-center p-5 sm:p-8 lg:min-h-0 lg:flex-1 lg:p-10",
-              isLoginRoute && !isMobileLoginFormOpen && "flex-1 justify-center"
-            )}
+    <main className="relative min-h-svh overflow-x-hidden bg-panel text-panel-foreground">
+      <FasciaStripe className="absolute inset-x-0 top-0 z-20" />
+      <AuthBackdrop />
+
+      <div className="relative mx-auto grid min-h-svh w-full max-w-7xl grid-cols-[minmax(0,1fr)] content-start px-4 pt-9 pb-6 sm:px-8 sm:pt-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:content-center lg:items-center lg:gap-x-16 lg:px-12 lg:py-12 xl:gap-x-24">
+        <section className="flex min-w-0 flex-col items-center gap-4 text-center sm:gap-5 lg:items-start lg:gap-8 lg:text-left">
+          <p className="text-xs font-medium text-panel-foreground/70 sm:text-sm">
+            Building, Maintenance & Energy
+          </p>
+
+          <h1 className="order-2 max-w-md font-heading text-xl leading-snug font-medium text-balance sm:max-w-xl sm:text-2xl lg:order-3 lg:max-w-xl lg:text-3xl xl:tall-desktop:text-4xl">
+            {acronym.map((part, index) => (
+              <React.Fragment key={index}>
+                <span className="text-primary">{part.initial}</span>
+                {part.rest}
+              </React.Fragment>
+            ))}
+          </h1>
+
+          {/* Wadah mengikuti rasio gambar agar bisa rata tengah (mobile) dan
+              rata kiri (desktop) tanpa ruang kosong di sisinya. */}
+          <div className="relative order-3 aspect-[700/444] h-40 max-w-full sm:h-48 lg:order-2 lg:h-[min(36vh,18rem)] xl:aspect-[944/444]">
+            <StorefrontElevation
+              animated
+              className="absolute inset-0 size-full text-panel-foreground/80 xl:hidden"
+            />
+            <StorefrontElevation
+              animated
+              annotated
+              className="absolute inset-0 hidden size-full text-panel-foreground/85 xl:block"
+            />
+          </div>
+
+          <p className="order-4 hidden max-w-xl text-sm leading-6 text-panel-foreground/70 xl:text-base xl:leading-7 lg:tall-desktop:block">
+            Digitalisasi proses bisnis departemen Building, Maintenance & Energy
+            (BME). Melalui satu platform digital, sistem ini terintegrasi dan
+            dirancang untuk menghubungkan seluruh proses kerja.
+          </p>
+
+          <ul
+            aria-label="Modul SPARTA"
+            className="order-5 hidden w-full grid-cols-6 gap-2 border-t border-panel-foreground/15 pt-6 lg:grid"
           >
-            <div className="flex w-full flex-col gap-6 text-center sm:gap-8 lg:text-left">
-              <Logo className="justify-center lg:justify-start" />
+            {appOrder.map((appId) => {
+              const app = SPARTA_APPS[appId]
 
-              <div className="mx-auto flex max-w-xl flex-col items-center gap-4 sm:gap-5 lg:mx-0 lg:items-start">
-                <div className="flex flex-wrap justify-center gap-2 lg:justify-start">
-                  <Badge variant="outline">
-                    Building Maintenance Energy System
-                  </Badge>
-                </div>
-                <div className="flex flex-col gap-4 sm:gap-6">
-                  <h1 className="font-heading text-4xl font-medium tracking-normal text-balance lg:text-5xl">
-                    <span className="font-medium text-primary">S</span>ystem for{" "}
-                    <span className="font-medium text-primary">P</span>
-                    roperty <span className="font-medium text-primary">A</span>
-                    dministration,{" "}
-                    <span className="font-medium text-primary">R</span>
-                    eporting,{" "}
-                    <span className="font-medium text-primary">T</span>racking &{" "}
-                    <span className="font-medium text-primary">A</span>
-                    pproval
-                  </h1>
-                  <p className="max-w-md text-sm leading-6 text-muted-foreground sm:text-base lg:max-w-lg">
-                    Digitalisasi proses bisnis departemen Building, Maintenance
-                    & Energy (BME). Melalui satu platform digital, sistem ini
-                    terintegrasi dan dirancang untuk menghubungkan seluruh
-                    proses kerja.
-                  </p>
-                  <div className="flex flex-col items-center gap-3 lg:items-start">
-                    {isLoginRoute ? (
-                      <Button
-                        type="button"
-                        className="w-full max-w-xl lg:hidden"
-                        onClick={() => {
-                          setIsMobileLoginFormOpen(true)
-                        }}
-                      >
-                        Masuk ke SPARTA
-                        <ArrowRight data-icon="inline-end" />
-                      </Button>
-                    ) : null}
-                    <Badge className="rounded-none p-0" variant="link" asChild>
-                      <a href={ROUTES.about}>
-                        Tentang SPARTA
-                        <ArrowRight data-icon="inline-end" />
-                      </a>
-                    </Badge>
-                  </div>
-                </div>
-              </div>
+              return (
+                <li
+                  key={app.id}
+                  className="flex min-w-0 flex-col items-center gap-2 text-center"
+                >
+                  <img
+                    src={SPARTA_APP_LOGOS[appId]}
+                    alt=""
+                    className="size-9 shrink-0 object-contain xl:size-11"
+                  />
+                  <span className="text-[11px] leading-tight text-panel-foreground/80 xl:text-xs">
+                    {app.name.replace(/^SPARTA\s+/, "")}
+                  </span>
+                </li>
+              )
+            })}
+          </ul>
+        </section>
 
-              {/* 3 x 2 grid: six modules split evenly, no orphan row. */}
-              <div className="hidden shrink-0 border-t lg:grid lg:grid-cols-3">
-                {appOrder.map((appId) => {
-                  const app = SPARTA_APPS[appId]
-
-                  return (
-                    <div
-                      key={app.id}
-                      className="flex min-w-0 flex-col items-center justify-start gap-2 border-r p-3 text-center nth-[3n]:border-r-0 nth-[-n+3]:border-b"
-                    >
-                      <img
-                        src={SPARTA_APP_LOGOS[appId]}
-                        alt=""
-                        className="size-12 shrink-0 object-contain xl:size-15"
-                      />
-                      <span className="text-xs leading-tight font-medium break-words">
-                        {app.name}
-                      </span>
-                    </div>
-                  )
-                })}
-              </div>
+        <div className="relative -mt-5 flex w-full flex-col items-center gap-5 sm:-mt-6 lg:mt-0">
+          <div className="auth-glass relative z-10 w-full max-w-md overflow-hidden rounded-3xl border border-white bg-white/80 text-foreground shadow-[0_1px_2px_rgb(16_24_32/0.06),0_24px_64px_-24px_rgb(16_24_32/0.28)] ring-1 ring-black/5 backdrop-blur-2xl backdrop-saturate-150">
+            <div className="px-6 pt-7">
+              <Logo />
+            </div>
+            <div
+              key={contentKey}
+              className="animate-in duration-300 fade-in-0 [&_[data-slot=card-title]]:text-xl sm:[&_[data-slot=card-title]]:text-2xl [&>[data-slot=card]]:bg-transparent [&>[data-slot=card]]:ring-0"
+            >
+              {children}
             </div>
           </div>
-        </section>
 
-        <section
-          className={cn(
-            "items-center justify-center p-4 sm:p-6 lg:flex lg:min-h-0 lg:overflow-hidden lg:p-8",
-            shouldShowMobileForm ? "flex min-h-svh lg:min-h-0" : "hidden"
-          )}
-        >
-          <div
-            key={`${contentKey}-${shouldShowMobileForm}`}
-            className="w-full max-w-xl animate-in duration-500 fade-in-0 slide-in-from-right-8 lg:slide-in-from-right-2"
-          >
-            {children}
-          </div>
-        </section>
+          <footer className="relative z-10 flex w-full max-w-md flex-col items-center gap-1 text-center text-xs leading-5 text-panel-foreground/65 sm:flex-row sm:justify-between sm:px-6 sm:text-left">
+            <span className="whitespace-nowrap">
+              © 2026 PT Sumber Alfaria Trijaya, Tbk.
+              <br />
+              Internal Departemen BME
+            </span>
+            <Button variant="link" size="xs" className="text-auth-link" asChild>
+              <a href={ROUTES.about}>
+                Tentang SPARTA
+                <ArrowRight data-icon="inline-end" />
+              </a>
+            </Button>
+          </footer>
+        </div>
       </div>
     </main>
+  )
+}
+
+/**
+ * Latar halaman: denah toko samar (memudar ke arah teks) dan bingkai lembar
+ * gambar. Dekoratif; ganti isi komponen ini untuk latar lain tanpa mengubah
+ * tata letak.
+ */
+function AuthBackdrop() {
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 overflow-hidden"
+    >
+      {/* Mobile: denah di belakang kartu (bawah). Desktop: di sisi kanan. */}
+      <div className="absolute inset-x-0 top-[34%] bottom-0 [mask-image:linear-gradient(to_bottom,transparent,black_25%,black_75%,transparent)] lg:inset-y-0 lg:right-0 lg:left-[40%] lg:[mask-image:linear-gradient(to_right,transparent,black_35%)]">
+        <StoreFloorPlan className="absolute top-1/2 left-1/2 aspect-[1200/760] h-[72%] w-auto max-w-none -translate-x-1/2 -translate-y-1/2 text-panel-foreground opacity-[0.09] lg:left-[54%] lg:h-[84%]" />
+      </div>
+
+      {/* Bingkai lembar gambar */}
+      <div className="absolute inset-3 hidden border border-panel-foreground/10 lg:block xl:inset-5" />
+    </div>
   )
 }
 
