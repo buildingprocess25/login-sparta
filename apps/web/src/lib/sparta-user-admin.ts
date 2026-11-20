@@ -33,8 +33,7 @@ export type ModuleAccessInput = {
 export function canManageUsers(session: SpartaSession | null | undefined) {
   return Boolean(
     session &&
-    (session.role === "SYSTEM_ADMIN" ||
-      (session.adminModules?.length ?? 0) > 0)
+    (session.role === "SYSTEM_ADMIN" || (session.adminModules?.length ?? 0) > 0)
   )
 }
 

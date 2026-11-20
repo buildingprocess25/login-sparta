@@ -204,4 +204,13 @@
   body {
     -ms-overflow-style: none;
   }
+  /* Cegah kotak biru/kuning autofill Chrome menembus pinggir rounded InputGroup. */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-text-fill-color: var(--foreground);
+    caret-color: var(--foreground);
+    transition: background-color 9999s ease-in-out 0s;
+  }
 }

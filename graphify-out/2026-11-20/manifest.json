@@ -522,9 +522,9 @@
     "semantic_hash": "53509b139ca5e9f7e4a38ba913c6b022"
   },
   "apps/web/src/components/storefront-elevation.tsx": {
-    "mtime": 1795165354.4561877,
-    "seen": 1795166020.408301,
-    "ast_hash": "a2bb1364992a6e914418909c762fc71c",
+    "mtime": 1795166208.3515406,
+    "seen": 1795166256.3408012,
+    "ast_hash": "231942efb7399c42b67808e1f48f474e",
     "semantic_hash": ""
   },
   "apps/web/src/components/team-carousel.tsx": {
