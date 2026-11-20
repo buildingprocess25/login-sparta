@@ -1,11 +1,13 @@
+// env WAJIB di-import sebelum @prisma/client: Prisma client memuat file .env
+// saat di-import, dan apps/api/.env berisi DATABASE_URL produksi.
+import { loadEnv } from "../src/config/env.ts";
 import fs from "fs";
 import path from "path";
 import csvParser from "csv-parser";
 import { PrismaClient, PasswordState, UserStatus, SpartaModuleId } from "@prisma/client";
-import { loadEnv } from "../src/config/env.ts";
 
-loadEnv(); // This loads .env files so prisma can find DATABASE_URL
-const prisma = new PrismaClient();
+const env = loadEnv();
+const prisma = new PrismaClient({ datasourceUrl: env.DATABASE_URL });
 
 const CSV_FILE_PATH = path.resolve(
   process.cwd(),

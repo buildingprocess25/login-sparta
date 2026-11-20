@@ -1,7 +1,7 @@
 # Graph Report - login-sparta  (2026-11-20)
 
 ## Corpus Check
-- 195 files · ~81,871 words
+- 195 files · ~82,364 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 13 file(s) not represented in the graph (top: (none) 5, .example 2, .toml 1)
 
