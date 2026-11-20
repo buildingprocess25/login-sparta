@@ -55,6 +55,10 @@ class InMemoryMasterAdminRepository implements MasterAdminRepository {
   async areaExists(code: string) {
     return this.areas.has(code)
   }
+  async isBranchActive(code: string) {
+    const branch = this.branches.get(code)
+    return branch ? branch.isActive : null
+  }
   async findAliasOwner(alias: string) {
     for (const branch of this.branches.values()) {
       if (branch.aliases.some((item) => item.alias === alias))
@@ -183,6 +187,24 @@ describe("MasterAdminService", () => {
     await expect(
       service.addAlias("BDG", "Head Office", "admin-1")
     ).rejects.toMatchObject({ statusCode: 409, code: "MASTER_ALIAS_TAKEN" })
+  })
+
+  it("accepts the code of a deactivated branch as an alias", async () => {
+    await service.createBranch(
+      { code: "CIKOKOL", name: "CIKOKOL", address: null, areaCode: null },
+      "admin-1"
+    )
+    await service.createBranch(
+      { code: "KZ01", name: "CIKOKOL", address: null, areaCode: null },
+      "admin-1"
+    )
+    await expect(
+      service.addAlias("KZ01", "CIKOKOL", "admin-1")
+    ).rejects.toMatchObject({ code: "MASTER_ALIAS_TAKEN" })
+
+    await service.updateBranch("CIKOKOL", { isActive: false }, "admin-1")
+    await service.addAlias("KZ01", "CIKOKOL", "admin-1")
+    expect(repository.branches.get("KZ01")?.aliases[0]?.alias).toBe("CIKOKOL")
   })
 
   it("rejects an alias equal to another branch code", async () => {

@@ -137,10 +137,12 @@ export class MasterAdminService {
         "MASTER_ALIAS_INVALID"
       )
     }
-    // Alias yang sama dengan kode cabang lain membuat pencocokan ambigu.
-    if (await this.repository.branchExists(alias)) {
+    // Alias yang sama dengan kode cabang AKTIF lain membuat pencocokan ambigu.
+    // Kode cabang nonaktif boleh (dipakai saat konversi ke kode Alfamart:
+    // kode lama jadi alias cabang baru).
+    if ((await this.repository.isBranchActive(alias)) === true) {
       throw new AuthError(
-        `"${alias}" sudah menjadi kode cabang lain.`,
+        `"${alias}" sudah menjadi kode cabang aktif lain.`,
         409,
         "MASTER_ALIAS_TAKEN"
       )

@@ -1,3 +1,6 @@
+// env WAJIB di-import sebelum @prisma/client: Prisma client memuat file .env
+// saat di-import, dan apps/api/.env berisi DATABASE_URL produksi.
+import { loadEnv } from "../src/config/env.ts"
 import {
   PasswordState,
   PrismaClient,
@@ -6,10 +9,8 @@ import {
   UserStatus,
 } from "@prisma/client"
 
-import { loadEnv } from "../src/config/env.ts"
-
-const prisma = new PrismaClient()
 const env = loadEnv()
+const prisma = new PrismaClient({ datasourceUrl: env.DATABASE_URL })
 
 const moduleSeeds = [
   {

@@ -176,8 +176,12 @@ export class PrismaUsersRepository implements UsersRepository {
    * cabang ini dirapikan lewat alias di Fase 2.
    */
   private async resolveBranch(code: string, name: string) {
+    // Urutan: kode persis yang aktif, lalu alias, lalu kode persis yang sudah
+    // nonaktif. Setelah konversi ke kode Alfamart, kode lama (mis. CIKOKOL)
+    // tetap ada sebagai cabang nonaktif sekaligus alias cabang baru (KZ01);
+    // alias harus menang agar user masuk ke cabang yang aktif.
     const exact = await this.client.branch.findUnique({ where: { code } })
-    if (exact) return exact
+    if (exact?.isActive) return exact
 
     const aliases = [
       ...new Set([normalizeBranchAlias(code), normalizeBranchAlias(name)]),
@@ -187,6 +191,7 @@ export class PrismaUsersRepository implements UsersRepository {
       include: { branch: true },
     })
     if (alias) return alias.branch
+    if (exact) return exact
 
     return this.client.branch.create({ data: { code, name } })
   }

@@ -107,6 +107,14 @@ Data master cabang dan area untuk sync malam. Parameter opsional `updatedSince` 
 
 Simpan `meta.syncedAt` dan pakai sebagai `updatedSince` di sync berikutnya. Waktu ini diambil sebelum query, jadi perubahan yang terjadi saat query berjalan tidak terlewat.
 
+### Aturan akses berbasis cabang (berlaku untuk semua modul)
+
+Keputusan user 2026-11-20: master data dipakai semua project, jadi arti "cabang" harus sama di semua modul.
+
+- **Bawaan:** unit akses = cabang Alfamart (`branchCode` dari `/v1/master/branches`). User sebuah cabang boleh mengakses semua toko dengan `branchCode` yang sama.
+- Cabang yang digabung (mis. BALARAJA/TZ01 ke CIKOKOL/KZ01) dikirim `isActive: false`, dan nama/kodenya menjadi alias cabang induk. User dan toko yang memakai nama lama otomatis masuk ke cabang induk, dan secara bawaan aksesnya ikut melebar ke seluruh cabang induk.
+- **Catatan, pengecualian yang diizinkan:** kalau sebuah modul benar-benar butuh akses lebih sempit dari satu cabang (mis. auditor hanya boleh melihat wilayah BALARAJA di dalam KZ01), modul BOLEH membatasinya, misalnya lewat `subArea` toko. Syaratnya: (1) `branchCode` tetap dipakai sebagai kunci cabang yang sama dengan portal, karena pembatasan hanya menyaring di dalam cabang dan tidak mengganti arti cabang; (2) aturan pembatasannya ditulis di dokumentasi modul dan dikabarkan ke portal, supaya perilaku antar modul tetap bisa dilacak; (3) `subArea` belum lengkap untuk semua toko (toko asal Energy/Building banyak yang kosong), jadi kalau dipakai untuk membatasi, minta portal melengkapinya dulu.
+
 ### GET /v1/master/stores (API key internal, Fase 3)
 
 Master toko untuk sync malam, dengan `updatedSince` dan `meta.syncedAt` yang sama seperti cabang. Parameter **`moduleId` wajib** (`building`, `maintenance`, `energy`, `siaga`, `carbontrack`, `engineering`), contoh: `GET /v1/master/stores?moduleId=carbontrack&updatedSince=...`. Tanpa `moduleId` balasannya 400.

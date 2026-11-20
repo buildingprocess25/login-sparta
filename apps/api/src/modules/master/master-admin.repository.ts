@@ -39,6 +39,8 @@ export type MasterAdminRepository = {
   listBranches(): Promise<AdminBranchRecord[]>
   listAreas(): Promise<AdminAreaRecord[]>
   branchExists(code: string): Promise<boolean>
+  /** true/false = cabang ada dan aktif/nonaktif; null = tidak ada. */
+  isBranchActive(code: string): Promise<boolean | null>
   areaExists(code: string): Promise<boolean>
   /** Cabang pemilik alias (sudah dinormalisasi), atau null. */
   findAliasOwner(alias: string): Promise<string | null>
@@ -116,6 +118,14 @@ export class PrismaMasterAdminRepository implements MasterAdminRepository {
 
   async branchExists(code: string) {
     return (await this.client.branch.count({ where: { code } })) > 0
+  }
+
+  async isBranchActive(code: string) {
+    const branch = await this.client.branch.findUnique({
+      where: { code },
+      select: { isActive: true },
+    })
+    return branch ? branch.isActive : null
   }
 
   async areaExists(code: string) {
