@@ -122,6 +122,7 @@ function createBranchDefaultUser(
     lockedUntil: null,
     lastLoginAt: null,
     access: ["building", "maintenance"],
+    adminModules: [],
     ...override,
   }
 }
@@ -270,6 +271,30 @@ describe("SPARTA auth routes", () => {
         password: "JAKARTA PUSAT",
       })
       .expect(403)
+  })
+
+  it("rejects a regular user without module access but lets a portal admin in", async () => {
+    repository.users.set(
+      "andi.halim@sparta.local",
+      createBranchDefaultUser({ access: [] })
+    )
+    const app = createApp(testEnv, { authRepository: repository })
+    const login = () =>
+      request(app).post("/v1/auth/login").send({
+        email: "andi.halim@sparta.local",
+        password: "JAKARTA PUSAT",
+      })
+
+    const rejected = await login().expect(403)
+    expect(rejected.body.error.code).toBe("NO_UI_ACCESS")
+
+    for (const role of ["SYSTEM_ADMIN", "MASTER_ADMIN"] as const) {
+      repository.users.set(
+        "andi.halim@sparta.local",
+        createBranchDefaultUser({ access: [], role })
+      )
+      await login().expect(200)
+    }
   })
 
   it("rejects locked users", async () => {

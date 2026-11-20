@@ -2,7 +2,11 @@ import { OtpPurpose, OtpStatus, PasswordState } from "@prisma/client"
 import type { OtpChallenge, PrismaClient } from "@prisma/client"
 
 import { prisma } from "../../db/prisma"
-import type { AuthUserRecord } from "../auth/auth.repository"
+import {
+  type AuthUserRecord,
+  adminModulesOf,
+  adminRoleInclude,
+} from "../auth/auth.repository"
 import { publicModuleIdByPrismaId } from "../modules/modules.repository"
 
 export type PasswordOtpPurpose = keyof typeof OtpPurpose
@@ -80,6 +84,7 @@ function mapUserRecord(user: PrismaPasswordUser): AuthUserRecord {
             access.moduleId
           ] as AuthUserRecord["access"][number]
       ),
+    adminModules: adminModulesOf(user.accesses),
   }
 }
 
@@ -114,7 +119,7 @@ export class PrismaPasswordRepository implements PasswordRepository {
         branch: true,
         accesses: {
           where: { isActive: true },
-          include: { module: true },
+          include: { module: { include: adminRoleInclude } },
         },
       },
     })
@@ -133,7 +138,7 @@ export class PrismaPasswordRepository implements PasswordRepository {
         branch: true,
         accesses: {
           where: { isActive: true },
-          include: { module: true },
+          include: { module: { include: adminRoleInclude } },
         },
       },
     })

@@ -48,7 +48,8 @@ export type ProvisioningRepository = {
   markFailed(id: string, error: string): Promise<void>
   listForUser(userId: string): Promise<ProvisioningEventRecord[]>
   /** Kirim ulang event FAILED: kembali ke PENDING, percobaan direset. */
-  requeue(id: string, now: Date): Promise<boolean>
+  /** moduleIds diisi = hanya event modul-modul ini (admin modul). */
+  requeue(id: string, now: Date, moduleIds?: PublicModuleId[]): Promise<boolean>
 }
 
 const toPrismaModuleId = (moduleId: PublicModuleId) =>
@@ -175,9 +176,13 @@ export class PrismaProvisioningRepository implements ProvisioningRepository {
     return events.map(mapEvent)
   }
 
-  async requeue(id: string, now: Date) {
+  async requeue(id: string, now: Date, moduleIds?: PublicModuleId[]) {
     const result = await this.client.provisioningEvent.updateMany({
-      where: { id, status: "FAILED" },
+      where: {
+        id,
+        status: "FAILED",
+        ...(moduleIds ? { moduleId: { in: moduleIds.map(toPrismaModuleId) } } : {}),
+      },
       data: { status: "PENDING", attempts: 0, nextAttemptAt: now },
     })
     return result.count === 1

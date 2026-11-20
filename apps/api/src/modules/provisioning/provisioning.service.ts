@@ -105,8 +105,8 @@ export class ProvisioningService implements ProvisioningPublisher {
     return this.repository.listForUser(userId)
   }
 
-  requeue(eventId: string) {
-    return this.repository.requeue(eventId, this.now())
+  requeue(eventId: string, moduleIds?: SpartaModuleId[]) {
+    return this.repository.requeue(eventId, this.now(), moduleIds)
   }
 
   private async enqueue(

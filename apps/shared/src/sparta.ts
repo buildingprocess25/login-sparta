@@ -37,6 +37,11 @@ export type SpartaSessionDto = {
   branch: string
   role: SpartaPortalRole
   access: SpartaLaunchableModuleId[]
+  /**
+   * Modul tempat user menjadi admin modul. Admin modul boleh membuka
+   * Manajemen User (khusus modulnya) dan melihat Data Master (baca saja).
+   */
+  adminModules: SpartaLaunchableModuleId[]
   mustChangePassword: boolean
 }
 

@@ -40,6 +40,7 @@ function toSessionDto(user: AuthUserRecord): SpartaSessionDto {
     branch: user.branchName,
     role: user.role,
     access: user.access,
+    adminModules: user.adminModules,
     mustChangePassword:
       user.passwordState === "BRANCH_DEFAULT" ||
       user.passwordState === "RESET_REQUIRED",
@@ -85,7 +86,11 @@ export class AuthService {
       throw new AuthError("Akun SPARTA sedang dikunci.", 403, "USER_LOCKED")
     }
 
-    if (user.access.length === 0) {
+    // Admin portal (SYSTEM_ADMIN, MASTER_ADMIN) bekerja di portal, jadi boleh
+    // login tanpa akses modul. User biasa tetap butuh minimal satu modul.
+    const isPortalAdmin =
+      user.role === "SYSTEM_ADMIN" || user.role === "MASTER_ADMIN"
+    if (user.access.length === 0 && !isPortalAdmin) {
       throw new AuthError(
         "Role Anda saat ini hanya dikonfigurasi untuk menerima notifikasi email dan tidak memiliki akses ke modul.",
         403,

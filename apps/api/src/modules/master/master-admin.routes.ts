@@ -1,10 +1,12 @@
-import { SPARTA_MASTER_DATA_ROLES } from "@sparta/shared"
 import { Router } from "express"
 import type { Request, Response } from "express"
 import type { z } from "zod"
 
 import type { AppEnv } from "../../config/env"
-import { requireRoles } from "../../middleware/require-roles"
+import {
+  requireMasterRead,
+  requireMasterWrite,
+} from "../../middleware/portal-access"
 import { requireSession } from "../../middleware/require-session"
 import {
   type AuthRepository,
@@ -78,9 +80,15 @@ export function createMasterAdminRouter(
     options.storeRepository ?? new PrismaStoreRepository()
   )
 
+  // Baca: admin sistem, admin data master, dan admin modul. Ubah (selain GET):
+  // hanya admin sistem dan admin data master, karena data ini dipakai semua modul.
   router.use(
     requireSession(authService),
-    requireRoles(SPARTA_MASTER_DATA_ROLES)
+    requireMasterRead,
+    (request, response, next) =>
+      request.method === "GET"
+        ? next()
+        : requireMasterWrite(request, response, next)
   )
 
   router.get("/branches", async (_request, response, next) => {

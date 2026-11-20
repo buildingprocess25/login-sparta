@@ -33,6 +33,7 @@ const session: SpartaSessionDto = {
   role: devRole,
   access: ["building", "maintenance", "energy", "siaga", "carbontrack"],
   mustChangePassword: false,
+  adminModules: [],
 }
 
 // Auto sign in: sesi langsung ada saat aplikasi dibuka.

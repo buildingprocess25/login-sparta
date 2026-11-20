@@ -61,6 +61,7 @@ import {
 } from "@/lib/sparta-master-admin"
 import {
   canManageUsers,
+  getUserAdminScope,
   listAdminUsers,
   listModuleRoles,
   PORTAL_ROLE_LABEL,
@@ -158,6 +159,11 @@ export function UserManagementPage({
   })
 
   const canManage = canManageUsers(session)
+  const scope = getUserAdminScope(session)
+  const filterModules = scope.all ? SPARTA_LAUNCHABLE_MODULE_IDS : scope.modules
+  const scopeModuleLabel = scope.all
+    ? null
+    : scope.modules.map((id) => SPARTA_APPS[id].shortName).join(", ")
 
   const load = React.useCallback(async () => {
     try {
@@ -266,6 +272,11 @@ export function UserManagementPage({
               Akun dibuat sekali di portal, lalu dikirim ke modul yang dipilih.
               User yang tidak dipakai lagi dinonaktifkan, bukan dihapus.
             </p>
+            {scopeModuleLabel ? (
+              <p className="max-w-2xl text-xs leading-5 text-muted-foreground">
+                Anda admin modul: {scopeModuleLabel}.
+              </p>
+            ) : null}
           </div>
           <Button onClick={() => setDialog({ kind: "form", userId: null })}>
             <Plus data-icon="inline-start" />
@@ -410,7 +421,7 @@ export function UserManagementPage({
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value={ALL}>Semua modul</SelectItem>
-                        {SPARTA_LAUNCHABLE_MODULE_IDS.map((moduleId) => (
+                        {filterModules.map((moduleId) => (
                           <SelectItem key={moduleId} value={moduleId}>
                             {SPARTA_APPS[moduleId].shortName}
                           </SelectItem>
@@ -611,6 +622,7 @@ export function UserManagementPage({
         user={dialog.kind === "access" ? null : dialogUser}
         branches={branches}
         moduleRoles={moduleRoles}
+        scope={scope}
         onChanged={() => void load()}
       />
       {dialogUser ? (
@@ -622,6 +634,7 @@ export function UserManagementPage({
           }}
           user={dialogUser}
           moduleRoles={moduleRoles}
+          scope={scope}
           onChanged={() => void load()}
         />
       ) : null}

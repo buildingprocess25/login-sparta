@@ -66,6 +66,8 @@ const SEARCH_DELAY_MS = 300
 type MasterStorePanelProps = {
   /** Cabang untuk saringan dan form toko. */
   branches: MasterBranch[]
+  /** Mode baca saja: sembunyikan tombol tambah dan kolom aksi. */
+  readOnly?: boolean
 }
 
 type LoadState =
@@ -78,7 +80,10 @@ function errorMessage(error: unknown, fallback: string) {
 }
 
 /** Isi tab Toko di Data Master: daftar dipaginasi dan dicari di server. */
-export function MasterStorePanel({ branches }: MasterStorePanelProps) {
+export function MasterStorePanel({
+  branches,
+  readOnly = false,
+}: MasterStorePanelProps) {
   const [stores, setStores] = React.useState<MasterStore[]>([])
   const [meta, setMeta] = React.useState<MasterStoreMeta | null>(null)
   const [loadState, setLoadState] = React.useState<LoadState>({
@@ -302,13 +307,17 @@ export function MasterStorePanel({ branches }: MasterStorePanelProps) {
                     className={isFetching ? "animate-spin" : undefined}
                   />
                 </Button>
-                <Button onClick={() => setDialog({ open: true, store: null })}>
-                  <Plus data-icon="inline-start" />
-                  Tambah toko
-                </Button>
+                {!readOnly ? (
+                  <Button
+                    onClick={() => setDialog({ open: true, store: null })}
+                  >
+                    <Plus data-icon="inline-start" />
+                    Tambah toko
+                  </Button>
+                ) : null}
               </div>
             </div>
-            <StoreBrandAccess />
+            <StoreBrandAccess readOnly={readOnly} />
           </div>
         </CardHeader>
         <CardContent>
@@ -372,7 +381,9 @@ export function MasterStorePanel({ branches }: MasterStorePanelProps) {
                       <TableHead>Sub-area</TableHead>
                       <TableHead>Kepemilikan</TableHead>
                       <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Aksi</TableHead>
+                      {!readOnly ? (
+                        <TableHead className="text-right">Aksi</TableHead>
+                      ) : null}
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -420,38 +431,40 @@ export function MasterStorePanel({ branches }: MasterStorePanelProps) {
                             tone={store.isActive ? "success" : "neutral"}
                           />
                         </TableCell>
-                        <TableCell className="text-right">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                aria-label={`Aksi toko ${store.code}`}
-                              >
-                                <MoreHorizontal />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem
-                                onSelect={() =>
-                                  setDialog({ open: true, store })
-                                }
-                              >
-                                Ubah data toko
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                variant={
-                                  store.isActive ? "destructive" : "default"
-                                }
-                                onSelect={() => void toggleStore(store)}
-                              >
-                                {store.isActive
-                                  ? "Nonaktifkan"
-                                  : "Aktifkan kembali"}
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
+                        {!readOnly ? (
+                          <TableCell className="text-right">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  aria-label={`Aksi toko ${store.code}`}
+                                >
+                                  <MoreHorizontal />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem
+                                  onSelect={() =>
+                                    setDialog({ open: true, store })
+                                  }
+                                >
+                                  Ubah data toko
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  variant={
+                                    store.isActive ? "destructive" : "default"
+                                  }
+                                  onSelect={() => void toggleStore(store)}
+                                >
+                                  {store.isActive
+                                    ? "Nonaktifkan"
+                                    : "Aktifkan kembali"}
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        ) : null}
                       </TableRow>
                     ))}
                   </TableBody>

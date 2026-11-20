@@ -56,7 +56,8 @@ import { ApiClientError } from "@/lib/api-client"
 import { downloadCsv } from "@/lib/csv"
 import type { SpartaSession } from "@/lib/sparta-auth"
 import {
-  canManageMasterData,
+  canEditMasterData,
+  canViewMasterData,
   isNonStandardCode,
   listMasterAreas,
   listMasterBranches,
@@ -132,7 +133,9 @@ export function DataMasterPage({ session, onLogout }: DataMasterPageProps) {
     area: MasterArea | null
   }>({ open: false, area: null })
 
-  const canManage = canManageMasterData(session)
+  const canView = canViewMasterData(session)
+  const canEdit = canEditMasterData(session)
+  const readOnly = !canEdit
 
   const load = React.useCallback(async () => {
     try {
@@ -152,11 +155,11 @@ export function DataMasterPage({ session, onLogout }: DataMasterPageProps) {
   }, [])
 
   React.useEffect(() => {
-    if (!canManage) return
+    if (!canView) return
     // Muat di frame berikutnya: setState tidak dipanggil langsung di effect.
     const frame = requestAnimationFrame(() => void load())
     return () => cancelAnimationFrame(frame)
-  }, [canManage, load])
+  }, [canView, load])
 
   const retry = () => {
     setLoadState({ status: "loading" })
@@ -233,13 +236,14 @@ export function DataMasterPage({ session, onLogout }: DataMasterPageProps) {
       ])
     )
 
-  if (!canManage) {
+  if (!canView) {
     return (
       <AppShell session={session} onLogout={onLogout}>
         <Alert>
           <AlertTitle>Akses ditolak</AlertTitle>
           <AlertDescription>
-            Halaman Data Master hanya untuk admin sistem dan admin data master.
+            Halaman Data Master hanya untuk admin sistem, admin data master,
+            atau admin modul.
           </AlertDescription>
         </Alert>
       </AppShell>
@@ -274,6 +278,12 @@ export function DataMasterPage({ session, onLogout }: DataMasterPageProps) {
                 tidak bisa diubah setelah dibuat, dan data yang tidak dipakai
                 lagi dinonaktifkan, bukan dihapus.
               </p>
+              {readOnly ? (
+                <p className="max-w-2xl text-xs leading-5 text-muted-foreground">
+                  Anda melihat Data Master dalam mode baca. Perubahan dilakukan
+                  oleh admin sistem atau admin data master.
+                </p>
+              ) : null}
             </div>
             <TabsList>
               <TabsTrigger value="branches">
@@ -401,14 +411,16 @@ export function DataMasterPage({ session, onLogout }: DataMasterPageProps) {
                             </SelectItem>
                           </SelectContent>
                         </Select>
-                        <Button
-                          onClick={() =>
-                            setBranchDialog({ open: true, code: null })
-                          }
-                        >
-                          <Plus data-icon="inline-start" />
-                          Tambah cabang
-                        </Button>
+                        {!readOnly ? (
+                          <Button
+                            onClick={() =>
+                              setBranchDialog({ open: true, code: null })
+                            }
+                          >
+                            <Plus data-icon="inline-start" />
+                            Tambah cabang
+                          </Button>
+                        ) : null}
                       </div>
                     </div>
                   </CardHeader>
@@ -449,9 +461,11 @@ export function DataMasterPage({ session, onLogout }: DataMasterPageProps) {
                                   User
                                 </TableHead>
                                 <TableHead>Status</TableHead>
-                                <TableHead className="text-right">
-                                  Aksi
-                                </TableHead>
+                                {!readOnly ? (
+                                  <TableHead className="text-right">
+                                    Aksi
+                                  </TableHead>
+                                ) : null}
                               </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -497,45 +511,47 @@ export function DataMasterPage({ session, onLogout }: DataMasterPageProps) {
                                   <TableCell>
                                     <ActiveBadge isActive={branch.isActive} />
                                   </TableCell>
-                                  <TableCell className="text-right">
-                                    <DropdownMenu>
-                                      <DropdownMenuTrigger asChild>
-                                        <Button
-                                          variant="ghost"
-                                          size="icon"
-                                          aria-label={`Aksi cabang ${branch.code}`}
-                                        >
-                                          <MoreHorizontal />
-                                        </Button>
-                                      </DropdownMenuTrigger>
-                                      <DropdownMenuContent align="end">
-                                        <DropdownMenuItem
-                                          onSelect={() =>
-                                            setBranchDialog({
-                                              open: true,
-                                              code: branch.code,
-                                            })
-                                          }
-                                        >
-                                          Ubah dan atur alias
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem
-                                          variant={
-                                            branch.isActive
-                                              ? "destructive"
-                                              : "default"
-                                          }
-                                          onSelect={() =>
-                                            void toggleBranch(branch)
-                                          }
-                                        >
-                                          {branch.isActive
-                                            ? "Nonaktifkan"
-                                            : "Aktifkan kembali"}
-                                        </DropdownMenuItem>
-                                      </DropdownMenuContent>
-                                    </DropdownMenu>
-                                  </TableCell>
+                                  {!readOnly ? (
+                                    <TableCell className="text-right">
+                                      <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                          <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            aria-label={`Aksi cabang ${branch.code}`}
+                                          >
+                                            <MoreHorizontal />
+                                          </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end">
+                                          <DropdownMenuItem
+                                            onSelect={() =>
+                                              setBranchDialog({
+                                                open: true,
+                                                code: branch.code,
+                                              })
+                                            }
+                                          >
+                                            Ubah dan atur alias
+                                          </DropdownMenuItem>
+                                          <DropdownMenuItem
+                                            variant={
+                                              branch.isActive
+                                                ? "destructive"
+                                                : "default"
+                                            }
+                                            onSelect={() =>
+                                              void toggleBranch(branch)
+                                            }
+                                          >
+                                            {branch.isActive
+                                              ? "Nonaktifkan"
+                                              : "Aktifkan kembali"}
+                                          </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                      </DropdownMenu>
+                                    </TableCell>
+                                  ) : null}
                                 </TableRow>
                               ))}
                             </TableBody>
@@ -559,14 +575,16 @@ export function DataMasterPage({ session, onLogout }: DataMasterPageProps) {
                   <CardHeader>
                     <div className="flex flex-wrap justify-between gap-2">
                       {refreshButton}
-                      <Button
-                        onClick={() =>
-                          setAreaDialog({ open: true, area: null })
-                        }
-                      >
-                        <Plus data-icon="inline-start" />
-                        Tambah area
-                      </Button>
+                      {!readOnly ? (
+                        <Button
+                          onClick={() =>
+                            setAreaDialog({ open: true, area: null })
+                          }
+                        >
+                          <Plus data-icon="inline-start" />
+                          Tambah area
+                        </Button>
+                      ) : null}
                     </div>
                   </CardHeader>
                   <CardContent>
@@ -586,7 +604,11 @@ export function DataMasterPage({ session, onLogout }: DataMasterPageProps) {
                                 Cabang
                               </TableHead>
                               <TableHead>Status</TableHead>
-                              <TableHead className="text-right">Aksi</TableHead>
+                              {!readOnly ? (
+                                <TableHead className="text-right">
+                                  Aksi
+                                </TableHead>
+                              ) : null}
                             </TableRow>
                           </TableHeader>
                           <TableBody>
@@ -602,40 +624,42 @@ export function DataMasterPage({ session, onLogout }: DataMasterPageProps) {
                                 <TableCell>
                                   <ActiveBadge isActive={area.isActive} />
                                 </TableCell>
-                                <TableCell className="text-right">
-                                  <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        aria-label={`Aksi area ${area.code}`}
-                                      >
-                                        <MoreHorizontal />
-                                      </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end">
-                                      <DropdownMenuItem
-                                        onSelect={() =>
-                                          setAreaDialog({ open: true, area })
-                                        }
-                                      >
-                                        Ubah nama
-                                      </DropdownMenuItem>
-                                      <DropdownMenuItem
-                                        variant={
-                                          area.isActive
-                                            ? "destructive"
-                                            : "default"
-                                        }
-                                        onSelect={() => void toggleArea(area)}
-                                      >
-                                        {area.isActive
-                                          ? "Nonaktifkan"
-                                          : "Aktifkan kembali"}
-                                      </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                  </DropdownMenu>
-                                </TableCell>
+                                {!readOnly ? (
+                                  <TableCell className="text-right">
+                                    <DropdownMenu>
+                                      <DropdownMenuTrigger asChild>
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          aria-label={`Aksi area ${area.code}`}
+                                        >
+                                          <MoreHorizontal />
+                                        </Button>
+                                      </DropdownMenuTrigger>
+                                      <DropdownMenuContent align="end">
+                                        <DropdownMenuItem
+                                          onSelect={() =>
+                                            setAreaDialog({ open: true, area })
+                                          }
+                                        >
+                                          Ubah nama
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                          variant={
+                                            area.isActive
+                                              ? "destructive"
+                                              : "default"
+                                          }
+                                          onSelect={() => void toggleArea(area)}
+                                        >
+                                          {area.isActive
+                                            ? "Nonaktifkan"
+                                            : "Aktifkan kembali"}
+                                        </DropdownMenuItem>
+                                      </DropdownMenuContent>
+                                    </DropdownMenu>
+                                  </TableCell>
+                                ) : null}
                               </TableRow>
                             ))}
                           </TableBody>
@@ -654,7 +678,7 @@ export function DataMasterPage({ session, onLogout }: DataMasterPageProps) {
               </TabsContent>
 
               <TabsContent value="stores">
-                <MasterStorePanel branches={branches} />
+                <MasterStorePanel branches={branches} readOnly={readOnly} />
               </TabsContent>
             </>
           ) : null}

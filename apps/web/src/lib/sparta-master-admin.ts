@@ -48,9 +48,17 @@ export type BranchFormInput = {
   areaCode: string | null
 }
 
-/** Halaman Data Master hanya untuk SYSTEM_ADMIN dan MASTER_ADMIN. */
-export function canManageMasterData(session: SpartaSession | null | undefined) {
+/** Edit Data Master hanya untuk SYSTEM_ADMIN dan MASTER_ADMIN. */
+export function canEditMasterData(session: SpartaSession | null | undefined) {
   return Boolean(session && SPARTA_MASTER_DATA_ROLES.includes(session.role))
+}
+
+/** Lihat Data Master: role master data atau admin modul (hanya baca). */
+export function canViewMasterData(session: SpartaSession | null | undefined) {
+  return Boolean(
+    session &&
+    (canEditMasterData(session) || (session.adminModules?.length ?? 0) > 0)
+  )
 }
 
 /**

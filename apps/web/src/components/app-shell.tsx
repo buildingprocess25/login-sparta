@@ -27,7 +27,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import type { SpartaSession } from "@/lib/sparta-auth"
-import { canManageMasterData } from "@/lib/sparta-master-admin"
+import { canViewMasterData } from "@/lib/sparta-master-admin"
 import { canManageUsers } from "@/lib/sparta-user-admin"
 import { cn } from "@/lib/utils"
 import { getCurrentRoute, ROUTES } from "@/routes"
@@ -53,7 +53,7 @@ function getNavItems(session: SpartaSession | null | undefined) {
   return [
     { href: ROUTES.modules, label: "Modul SPARTA" },
     { href: ROUTES.about, label: "Tentang SPARTA" },
-    ...(canManageMasterData(session)
+    ...(canViewMasterData(session)
       ? [{ href: ROUTES.dataMaster, label: "Data Master" }]
       : []),
     ...(canManageUsers(session)

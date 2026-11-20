@@ -25,6 +25,8 @@ export type AuthUserRecord = {
   lockedUntil: Date | null
   lastLoginAt: Date | null
   access: AuthAccessModuleId[]
+  /** Modul tempat user menjadi admin modul (ModuleRole.isModuleAdmin). */
+  adminModules: AuthAccessModuleId[]
 }
 
 export type CreateSessionInput = {
@@ -60,6 +62,34 @@ const moduleIdMap = {
 } as const
 
 type LaunchablePrismaModuleId = keyof typeof moduleIdMap
+
+/** Ambil role admin modul dari katalog bersama data modul. */
+export const adminRoleInclude = {
+  roles: { where: { isModuleAdmin: true }, select: { code: true } },
+} as const
+
+/**
+ * Modul tempat user menjadi admin: akses aktif yang role-nya ditandai
+ * isModuleAdmin di katalog ModuleRole modul tersebut.
+ */
+export function adminModulesOf(
+  accesses: Array<{
+    moduleId: SpartaModuleId
+    role: string
+    isActive: boolean
+    module: { isActive: boolean; roles: Array<{ code: string }> }
+  }>
+): AuthAccessModuleId[] {
+  return accesses
+    .filter(
+      (access) =>
+        access.isActive &&
+        access.module.isActive &&
+        access.moduleId in moduleIdMap &&
+        access.module.roles.some((role) => role.code === access.role)
+    )
+    .map((access) => moduleIdMap[access.moduleId as LaunchablePrismaModuleId])
+}
 
 function isLaunchableModule(
   moduleId: SpartaModuleId
@@ -102,6 +132,7 @@ function mapUserRecord(user: PrismaAuthUser): AuthUserRecord {
       })
       .sort((left, right) => left.module.sortOrder - right.module.sortOrder)
       .map((access) => moduleIdMap[access.moduleId as LaunchablePrismaModuleId]),
+    adminModules: adminModulesOf(user.accesses),
   }
 }
 
@@ -132,7 +163,7 @@ export class PrismaAuthRepository implements AuthRepository {
         branch: true,
         accesses: {
           where: { isActive: true },
-          include: { module: true },
+          include: { module: { include: adminRoleInclude } },
         },
       },
     })
@@ -151,7 +182,7 @@ export class PrismaAuthRepository implements AuthRepository {
         branch: true,
         accesses: {
           where: { isActive: true },
-          include: { module: true },
+          include: { module: { include: adminRoleInclude } },
         },
       },
     })
@@ -187,7 +218,7 @@ export class PrismaAuthRepository implements AuthRepository {
             branch: true,
             accesses: {
               where: { isActive: true },
-              include: { module: true },
+              include: { module: { include: adminRoleInclude } },
             },
           },
         },
@@ -210,7 +241,7 @@ export class PrismaAuthRepository implements AuthRepository {
             branch: true,
             accesses: {
               where: { isActive: true },
-              include: { module: true },
+              include: { module: { include: adminRoleInclude } },
             },
           },
         },

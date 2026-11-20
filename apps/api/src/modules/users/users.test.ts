@@ -236,6 +236,7 @@ function createUser(override: Partial<AuthUserRecord> = {}): AuthUserRecord {
     lockedUntil: null,
     lastLoginAt: null,
     access: ["building", "maintenance", "energy"],
+    adminModules: [],
     ...override,
   }
 }
@@ -701,5 +702,131 @@ describe("SPARTA admin users provisioning", () => {
     expect(response.body.data).toEqual([
       { moduleId: "energy", code: "AUDITOR", label: "Auditor" },
     ])
+  })
+})
+
+describe("module admin scope (admin per modul)", () => {
+  let authRepository: InMemoryAuthRepository
+  let usersRepository: InMemoryUsersRepository
+
+  beforeEach(() => {
+    authRepository = new InMemoryAuthRepository()
+    usersRepository = new InMemoryUsersRepository()
+    // Admin Energy: user biasa yang role Energy-nya ditandai isModuleAdmin.
+    authRepository.users.set(
+      "energy.admin@sparta.local",
+      createUser({
+        id: "auth-energy-admin",
+        email: "energy.admin@sparta.local",
+        role: "USER",
+        access: ["energy"],
+        adminModules: ["energy"],
+      })
+    )
+  })
+
+  async function login() {
+    const agent = request.agent(
+      createApp(testEnv, { authRepository, usersRepository })
+    )
+    await agent
+      .post("/v1/auth/login")
+      .send({ email: "energy.admin@sparta.local", password: "JAKARTA PUSAT" })
+    return agent
+  }
+
+  async function seed(email: string, moduleId: "energy" | "building") {
+    return usersRepository.createUser(
+      {
+        email,
+        employeeId: null,
+        fullName: email,
+        branchCode: "BDG",
+        branchName: "Bandung",
+        role: "USER",
+        modules: [{ moduleId, role: "USER" }],
+      },
+      "auth-user-1"
+    )
+  }
+
+  it("lists only users of the admin's module", async () => {
+    const agent = await login()
+    await seed("energi@sparta.local", "energy")
+    await seed("bangunan@sparta.local", "building")
+
+    const response = await agent.get("/v1/admin/users").expect(200)
+    expect(
+      response.body.data.map((user: { email: string }) => user.email)
+    ).toEqual(["energi@sparta.local"])
+  })
+
+  it("creates only regular users with access to the admin's module", async () => {
+    const agent = await login()
+    const base = {
+      fullName: "Baru",
+      employeeId: "EMP900",
+      branchCode: "BDG",
+      branchName: "Bandung",
+    }
+
+    await agent
+      .post("/v1/admin/users")
+      .send({ ...base, email: "a@sparta.local", modules: [{ moduleId: "building", role: "USER" }] })
+      .expect(403)
+    await agent
+      .post("/v1/admin/users")
+      .send({ ...base, email: "b@sparta.local", role: "SYSTEM_ADMIN", modules: [{ moduleId: "energy", role: "USER" }] })
+      .expect(403)
+    await agent
+      .post("/v1/admin/users")
+      .send({ ...base, email: "c@sparta.local", modules: [] })
+      .expect(403)
+    await agent
+      .post("/v1/admin/users")
+      .send({ ...base, email: "d@sparta.local", modules: [{ moduleId: "energy", role: "USER" }] })
+      .expect(201)
+  })
+
+  it("edits only name/NIK/branch of users in scope", async () => {
+    const agent = await login()
+    const inScope = await seed("energi@sparta.local", "energy")
+    const outside = await seed("bangunan@sparta.local", "building")
+
+    await agent.patch(`/v1/admin/users/${inScope.id}`).send({ fullName: "Nama Baru" }).expect(200)
+    await agent.patch(`/v1/admin/users/${inScope.id}`).send({ email: "x@sparta.local" }).expect(403)
+    await agent.patch(`/v1/admin/users/${inScope.id}`).send({ status: "INACTIVE" }).expect(403)
+    await agent.patch(`/v1/admin/users/${inScope.id}`).send({ role: "SYSTEM_ADMIN" }).expect(403)
+    await agent.patch(`/v1/admin/users/${outside.id}`).send({ fullName: "X" }).expect(403)
+  })
+
+  it("grants and revokes only the admin's module", async () => {
+    const agent = await login()
+    const user = await seed("energi@sparta.local", "energy")
+
+    await agent.put(`/v1/admin/users/${user.id}/access/building`).send({ role: "USER" }).expect(403)
+    await agent.delete(`/v1/admin/users/${user.id}/access/building`).expect(403)
+    await agent.put(`/v1/admin/users/${user.id}/access/energy`).send({ role: "USER" }).expect(200)
+    await agent.delete(`/v1/admin/users/${user.id}/access/energy`).expect(200)
+  })
+
+  it("can read but not change master data", async () => {
+    const agent = await login()
+    await agent
+      .post("/v1/admin/master/branches")
+      .send({ code: "XYZ", name: "Uji", address: null, areaCode: null })
+      .expect(403)
+    await agent.patch("/v1/admin/master/stores/T968").send({ isActive: false }).expect(403)
+  })
+
+  it("rejects users without any admin role", async () => {
+    authRepository.users.set(
+      "biasa@sparta.local",
+      createUser({ id: "auth-biasa", email: "biasa@sparta.local", role: "USER", adminModules: [] })
+    )
+    const agent = request.agent(createApp(testEnv, { authRepository, usersRepository }))
+    await agent.post("/v1/auth/login").send({ email: "biasa@sparta.local", password: "JAKARTA PUSAT" })
+    await agent.get("/v1/admin/users").expect(403)
+    await agent.get("/v1/admin/master/branches").expect(403)
   })
 })

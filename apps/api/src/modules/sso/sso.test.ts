@@ -79,6 +79,7 @@ function createUser(): SsoUserRecord {
     lockedUntil: null,
     lastLoginAt: null,
     access: ["building", "maintenance", "siaga"],
+    adminModules: [],
   }
 }
 

@@ -281,6 +281,9 @@ model ModuleRole {
   code      String
   label     String
   isActive  Boolean        @default(true)
+  /// Role ini menjadikan user admin modul: boleh membuka Manajemen User
+  /// (hanya modul ini) dan melihat Data Master (tanpa mengubah).
+  isModuleAdmin Boolean    @default(false)
   sortOrder Int            @default(0)
   module    AppModule      @relation(fields: [moduleId], references: [id])
   createdAt DateTime       @default(now())

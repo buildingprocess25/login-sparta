@@ -81,6 +81,7 @@ describe("halaman Data Master", () => {
           branch: "HEAD OFFICE",
           role: "MASTER_ADMIN",
           access: [],
+          adminModules: [],
           mustChangePassword: false,
         }}
         onLogout={() => {}}
@@ -88,5 +89,25 @@ describe("halaman Data Master", () => {
     )
     expect(html).toContain("Toko")
     expect(html).toContain("Cabang, area, dan toko")
+  })
+
+  it("menampilkan keterangan mode baca untuk admin modul", () => {
+    const html = renderToStaticMarkup(
+      <DataMasterPage
+        session={{
+          email: "energy.admin@sparta.local",
+          fullName: "Admin Energy",
+          branch: "HEAD OFFICE",
+          role: "USER",
+          access: ["energy"],
+          adminModules: ["energy"],
+          mustChangePassword: false,
+        }}
+        onLogout={() => {}}
+      />
+    )
+    expect(html).toContain(
+      "Anda melihat Data Master dalam mode baca. Perubahan dilakukan oleh admin sistem atau admin data master."
+    )
   })
 })

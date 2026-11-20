@@ -72,9 +72,10 @@ export class InMemoryProvisioningRepository implements ProvisioningRepository {
     return this.events.filter((event) => event.userId === userId)
   }
 
-  async requeue(id: string, now: Date) {
+  async requeue(id: string, now: Date, moduleIds?: string[]) {
     const event = this.events.find((entry) => entry.id === id)
     if (!event || event.status !== "FAILED") return false
+    if (moduleIds && !moduleIds.includes(event.moduleId)) return false
     Object.assign(event, { status: "PENDING", attempts: 0, nextAttemptAt: now })
     return true
   }

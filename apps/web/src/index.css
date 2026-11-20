@@ -48,7 +48,6 @@
   --color-auth-link: var(--auth-link);
   --color-fascia-red: var(--fascia-red);
   --color-fascia-yellow: var(--fascia-yellow);
-  --color-fascia-blue: var(--fascia-blue);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -99,7 +98,6 @@
   --auth-link: #c0000a;
   --fascia-red: #e6000b;
   --fascia-yellow: #ffc20e;
-  --fascia-blue: #0a4ea2;
 }
 
 /*

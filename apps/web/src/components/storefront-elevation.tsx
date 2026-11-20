@@ -1,5 +1,6 @@
 import { createContext, useContext, type CSSProperties } from "react"
 
+import alfamartLogo from "@/assets/alfamart-logo.png"
 import { cn } from "@/lib/utils"
 
 type StorefrontElevationProps = {
@@ -186,34 +187,50 @@ function StorefrontElevation({
           </g>
         ))}
 
-        {/* Papan fascia: merah, kuning, biru seperti toko Alfamart */}
+        {/* Papan fascia: merah dan kuning dengan emblem logo Alfamart di tengah */}
         <g className={fadeClass} style={delay(1.2)}>
           <rect
             x="120"
             y="142"
             width="560"
-            height="36"
+            height="38"
             className="fill-fascia-red"
             stroke="none"
           />
           <rect
             x="120"
-            y="178"
+            y="180"
             width="560"
-            height="7"
+            height="14"
             className="fill-fascia-yellow"
-            stroke="none"
-          />
-          <rect
-            x="120"
-            y="185"
-            width="560"
-            height="9"
-            className="fill-fascia-blue"
             stroke="none"
           />
         </g>
         <Stroke d={rect(120, 142, 560, 52)} at={0.45} width={1.5} />
+
+        {/* Papan nama Alfamart di tengah fascia: rangka digambar, lalu logo muncul */}
+        <rect
+          x="332"
+          y="147"
+          width="136"
+          height="42"
+          rx="4"
+          fill="#ffffff"
+          stroke="none"
+          className={fadeClass}
+          style={delay(1.25)}
+        />
+        <image
+          href={alfamartLogo}
+          x="342"
+          y="151"
+          width="116"
+          height="34"
+          preserveAspectRatio="xMidYMid meet"
+          className={fadeClass}
+          style={delay(1.3)}
+        />
+        <Stroke d={rect(332, 147, 136, 42)} at={0.62} width={1} />
 
         {/* Kanopi */}
         <Stroke

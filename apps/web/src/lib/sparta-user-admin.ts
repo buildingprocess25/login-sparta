@@ -29,9 +29,25 @@ export type ModuleAccessInput = {
   role: string
 }
 
-/** Backend hanya mengizinkan SYSTEM_ADMIN di /v1/admin/users. */
+/** SYSTEM_ADMIN atau admin modul (adminModules tidak kosong). */
 export function canManageUsers(session: SpartaSession | null | undefined) {
-  return session?.role === "SYSTEM_ADMIN"
+  return Boolean(
+    session &&
+    (session.role === "SYSTEM_ADMIN" ||
+      (session.adminModules?.length ?? 0) > 0)
+  )
+}
+
+export type UserAdminScope =
+  | { all: true }
+  | { all: false; modules: SpartaLaunchableModuleId[] }
+
+/** SYSTEM_ADMIN mengelola semua modul; admin modul hanya modulnya sendiri. */
+export function getUserAdminScope(
+  session: SpartaSession | null | undefined
+): UserAdminScope {
+  if (session?.role === "SYSTEM_ADMIN") return { all: true }
+  return { all: false, modules: session?.adminModules ?? [] }
 }
 
 export const USER_STATUS_LABEL: Record<SpartaUserStatus, string> = {

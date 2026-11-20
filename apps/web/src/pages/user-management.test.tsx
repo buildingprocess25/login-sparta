@@ -5,36 +5,45 @@ import { AppShell } from "@/components/app-shell"
 import { handleDevMockRequest } from "@/lib/dev-mock/mock-api"
 import type { SpartaSession } from "@/lib/sparta-auth"
 
-function sessionWithRole(role: SpartaSession["role"]): SpartaSession {
+function sessionWithRole(
+  role: SpartaSession["role"],
+  adminModules: SpartaSession["adminModules"] = []
+): SpartaSession {
   return {
     email: "uji@sparta.local",
     fullName: "Akun Uji",
     branch: "HEAD OFFICE",
     role,
     access: [],
+    adminModules,
     mustChangePassword: false,
   }
 }
 
-function renderNav(role: SpartaSession["role"]) {
+function renderNav(
+  role: SpartaSession["role"],
+  adminModules: SpartaSession["adminModules"] = []
+) {
   return renderToStaticMarkup(
-    <AppShell session={sessionWithRole(role)}>
+    <AppShell session={sessionWithRole(role, adminModules)}>
       <div />
     </AppShell>
   )
 }
 
 describe("navigasi Manajemen User", () => {
-  it("muncul hanya untuk SYSTEM_ADMIN", () => {
+  it("muncul untuk SYSTEM_ADMIN dan admin modul", () => {
     expect(renderNav("SYSTEM_ADMIN")).toContain("Manajemen User")
     expect(renderNav("MASTER_ADMIN")).not.toContain("Manajemen User")
     expect(renderNav("USER")).not.toContain("Manajemen User")
+    expect(renderNav("USER", ["energy"])).toContain("Manajemen User")
   })
 
-  it("Data Master tetap untuk SYSTEM_ADMIN dan MASTER_ADMIN", () => {
+  it("Data Master muncul untuk SYSTEM_ADMIN, MASTER_ADMIN, dan admin modul", () => {
     expect(renderNav("SYSTEM_ADMIN")).toContain("Data Master")
     expect(renderNav("MASTER_ADMIN")).toContain("Data Master")
     expect(renderNav("USER")).not.toContain("Data Master")
+    expect(renderNav("USER", ["energy"])).toContain("Data Master")
   })
 })
 

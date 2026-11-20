@@ -5,7 +5,11 @@ import type { z } from "zod"
 
 import type { AppEnv } from "../../config/env"
 import { requireSession } from "../../middleware/require-session"
-import { requireAdmin } from "../../middleware/require-admin"
+import {
+  requireUserAdmin,
+  scopeAllowsModule,
+  type UserAdminScope,
+} from "../../middleware/portal-access"
 import { requireInternalApiKey } from "../../middleware/require-internal-api-key"
 import {
   type AuthRepository,
@@ -64,6 +68,35 @@ function invalidPayload(response: Response) {
   })
 }
 
+function outOfScope(response: Response) {
+  response.status(403).json({
+    error: {
+      code: "FORBIDDEN_MODULE_SCOPE",
+      message: "Akses ditolak. Anda hanya admin untuk modul tertentu.",
+    },
+  })
+}
+
+/** User termasuk lingkup admin modul bila punya akses (aktif/nonaktif) ke modulnya. */
+function userInScope(
+  scope: UserAdminScope | undefined,
+  user: { modules: Array<{ moduleId: string }> }
+) {
+  return (
+    !!scope &&
+    (scope.all ||
+      user.modules.some((access) => scopeAllowsModule(scope, access.moduleId)))
+  )
+}
+
+/** Field yang boleh diubah admin modul; email, role, status berdampak ke semua modul. */
+const MODULE_ADMIN_EDITABLE = new Set([
+  "fullName",
+  "employeeId",
+  "branchCode",
+  "branchName",
+])
+
 function parseBody<TSchema extends z.ZodType>(
   schema: TSchema,
   body: unknown
@@ -96,7 +129,7 @@ export function createUsersRouter(
   router.get(
     "/module-roles",
     sessionMiddleware,
-    requireAdmin,
+    requireUserAdmin,
     async (_request, response, next) => {
       try {
         if (!provisioningService) {
@@ -113,7 +146,7 @@ export function createUsersRouter(
   router.post(
     "/provisioning-events/:eventId/retry",
     sessionMiddleware,
-    requireAdmin,
+    requireUserAdmin,
     async (request, response, next) => {
       try {
         const eventId = request.params.eventId
@@ -125,7 +158,11 @@ export function createUsersRouter(
           provisioningDisabled(response)
           return
         }
-        const requeued = await provisioningService.requeue(eventId)
+        const scope = request.userAdminScope
+        const requeued = await provisioningService.requeue(
+          eventId,
+          scope && !scope.all ? scope.modules : undefined
+        )
         if (!requeued) {
           response.status(404).json({
             error: {
@@ -145,7 +182,7 @@ export function createUsersRouter(
   router.get(
     "/:userId/provisioning-events",
     sessionMiddleware,
-    requireAdmin,
+    requireUserAdmin,
     async (request, response, next) => {
       try {
         const userId = request.params.userId
@@ -157,7 +194,17 @@ export function createUsersRouter(
           provisioningDisabled(response)
           return
         }
-        const events = await provisioningService.listEventsForUser(userId)
+        const scope = request.userAdminScope
+        if (scope && !scope.all) {
+          const target = await usersService.getUser(userId)
+          if (!target || !userInScope(scope, target)) {
+            outOfScope(response)
+            return
+          }
+        }
+        const events = (
+          await provisioningService.listEventsForUser(userId)
+        ).filter((event) => scopeAllowsModule(scope, event.moduleId))
         response.json({
           data: events.map((event) => ({
             id: event.id,
@@ -180,7 +227,7 @@ export function createUsersRouter(
   router.get(
     "/",
     sessionMiddleware,
-    requireAdmin,
+    requireUserAdmin,
     async (request, response, next) => {
       try {
         if (!request.spartaSession) {
@@ -188,8 +235,10 @@ export function createUsersRouter(
           return
         }
 
+        const scope = request.userAdminScope
+        const users = await usersService.listUsers()
         response.json({
-          data: await usersService.listUsers(),
+          data: users.filter((user) => userInScope(scope, user)),
         })
       } catch (error) {
         next(error)
@@ -264,11 +313,9 @@ export function createUsersRouter(
         const isValid = await authService.verifyPassword(user, payload.password)
 
         if (!isValid) {
-          response
-            .status(401)
-            .json({
-              error: { code: "INVALID_CREDENTIALS", message: "Password salah" },
-            })
+          response.status(401).json({
+            error: { code: "INVALID_CREDENTIALS", message: "Password salah" },
+          })
           return
         }
 
@@ -287,13 +334,28 @@ export function createUsersRouter(
   router.post(
     "/",
     sessionMiddleware,
-    requireAdmin,
+    requireUserAdmin,
     async (request, response, next) => {
       try {
         const payload = parseBody(createUserSchema, request.body)
 
         if (!payload || !request.spartaSession) {
           invalidPayload(response)
+          return
+        }
+
+        // Admin modul: hanya user biasa, dan akses awal hanya ke modulnya.
+        const scope = request.userAdminScope
+        if (
+          scope &&
+          !scope.all &&
+          (payload.role !== "USER" ||
+            payload.modules.length === 0 ||
+            payload.modules.some(
+              (module) => !scopeAllowsModule(scope, module.moduleId)
+            ))
+        ) {
+          outOfScope(response)
           return
         }
 
@@ -312,7 +374,7 @@ export function createUsersRouter(
   router.patch(
     "/:userId",
     sessionMiddleware,
-    requireAdmin,
+    requireUserAdmin,
     async (request, response, next) => {
       try {
         const userId = request.params.userId
@@ -327,6 +389,22 @@ export function createUsersRouter(
         if (!payload) {
           invalidPayload(response)
           return
+        }
+
+        // Admin modul: hanya user di lingkupnya dan hanya field tertentu.
+        const scope = request.userAdminScope
+        if (scope && !scope.all) {
+          const target = await usersService.getUser(userId)
+          if (
+            !target ||
+            !userInScope(scope, target) ||
+            Object.keys(payload).some(
+              (field) => !MODULE_ADMIN_EDITABLE.has(field)
+            )
+          ) {
+            outOfScope(response)
+            return
+          }
         }
 
         await usersService.updateUser(
@@ -345,7 +423,7 @@ export function createUsersRouter(
   router.put(
     "/:userId/access/:moduleId",
     sessionMiddleware,
-    requireAdmin,
+    requireUserAdmin,
     async (request, response, next) => {
       try {
         const userId = request.params.userId
@@ -360,6 +438,11 @@ export function createUsersRouter(
           !request.spartaSession
         ) {
           invalidPayload(response)
+          return
+        }
+
+        if (!scopeAllowsModule(request.userAdminScope, moduleId)) {
+          outOfScope(response)
           return
         }
 
@@ -382,7 +465,7 @@ export function createUsersRouter(
   router.delete(
     "/:userId/access/:moduleId",
     sessionMiddleware,
-    requireAdmin,
+    requireUserAdmin,
     async (request, response, next) => {
       try {
         const userId = request.params.userId
@@ -397,6 +480,11 @@ export function createUsersRouter(
           !request.spartaSession
         ) {
           invalidPayload(response)
+          return
+        }
+
+        if (!scopeAllowsModule(request.userAdminScope, moduleId)) {
+          outOfScope(response)
           return
         }
 

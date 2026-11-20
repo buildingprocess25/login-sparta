@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils"
-import alfamartEmblem from "@/assets/Alfamart-Emblem-small.png"
+import alfamartLogo from "@/assets/alfamart-logo.png"
 import spartaBuildingLogo from "@/assets/Building-Logo.png"
 
 type LogoProps = {
@@ -10,9 +10,9 @@ function Logo({ className }: LogoProps) {
   return (
     <div className={cn("flex shrink-0 items-center gap-4", className)}>
       <img
-        src={alfamartEmblem}
+        src={alfamartLogo}
         alt="Alfamart"
-        className="h-8 w-auto object-contain drop-shadow-sm md:h-10"
+        className="h-8 w-auto object-contain md:h-10"
       />
 
       <div className="h-7 w-px rounded-full bg-border md:h-8" />

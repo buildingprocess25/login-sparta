@@ -65,6 +65,8 @@ function mapUser(user: PrismaSsoLaunch["user"]): SsoUserRecord {
     failedLoginCount: user.failedLoginCount,
     lockedUntil: user.lockedUntil,
     lastLoginAt: user.lastLoginAt,
+    // Admin modul hanya dipakai halaman admin portal, tidak dikirim ke modul.
+    adminModules: [],
     access: user.accesses
       .filter(
         (access) => access.module.isActive && access.moduleId !== "ENGINEERING"

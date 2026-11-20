@@ -49,6 +49,7 @@ import {
   USER_STATUS_LABEL,
   type AdminUser,
   type ModuleRole,
+  type UserAdminScope,
 } from "@/lib/sparta-user-admin"
 
 type UserFormDialogProps = {
@@ -58,6 +59,8 @@ type UserFormDialogProps = {
   user: AdminUser | null
   branches: MasterBranch[]
   moduleRoles: ModuleRole[]
+  /** Ruang lingkup admin: semua modul (SYSTEM_ADMIN) atau modul tertentu. */
+  scope: UserAdminScope
   /** Dipanggil setelah data berubah agar daftar dimuat ulang. */
   onChanged: () => void
 }
@@ -85,9 +88,14 @@ export function UserFormDialog({
   user,
   branches,
   moduleRoles,
+  scope,
   onChanged,
 }: UserFormDialogProps) {
   const isEdit = user !== null
+  const isLimited = !scope.all
+  const allowedModules = scope.all
+    ? SPARTA_LAUNCHABLE_MODULE_IDS
+    : scope.modules
   // Form diisi dari props saat dialog dibuat. Pemanggil memberi `key` baru
   // setiap kali dialog dibuka, sehingga form selalu mulai dari data terbaru.
   const [fullName, setFullName] = React.useState(user?.fullName ?? "")
@@ -136,12 +144,16 @@ export function UserFormDialog({
       setFormError("Pilih cabang terlebih dahulu.")
       return
     }
-    const chosenModules = SPARTA_LAUNCHABLE_MODULE_IDS.filter(
-      (moduleId) => modules[moduleId].enabled
-    ).map((moduleId) => ({
-      moduleId,
-      role: modules[moduleId].role.trim(),
-    }))
+    const chosenModules = allowedModules
+      .filter((moduleId) => modules[moduleId].enabled)
+      .map((moduleId) => ({
+        moduleId,
+        role: modules[moduleId].role.trim(),
+      }))
+    if (!isEdit && isLimited && chosenModules.length === 0) {
+      setFormError("Pilih minimal satu modul.")
+      return
+    }
     if (chosenModules.some((module) => !module.role)) {
       setFormError("Setiap modul yang dipilih wajib punya role.")
       return
@@ -153,13 +165,21 @@ export function UserFormDialog({
       email: email.trim(),
       branchCode: selectedBranch.code,
       branchName: selectedBranch.name,
-      role,
+      role: isLimited ? ("USER" as const) : role,
     }
 
     setIsSaving(true)
     try {
       if (isEdit) {
-        await updateAdminUser(user.id, { ...profile, status })
+        const patch = isLimited
+          ? {
+              fullName: profile.fullName,
+              employeeId: profile.employeeId,
+              branchCode: profile.branchCode,
+              branchName: profile.branchName,
+            }
+          : { ...profile, status }
+        await updateAdminUser(user.id, patch)
         toast.success(`Data ${profile.fullName} diperbarui.`)
       } else {
         await createAdminUser({ ...profile, modules: chosenModules })
@@ -205,7 +225,9 @@ export function UserFormDialog({
               />
             </Field>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div
+              className={isLimited ? "grid gap-4" : "grid gap-4 sm:grid-cols-2"}
+            >
               <Field>
                 <FieldLabel htmlFor="user-nik">NIK</FieldLabel>
                 <Input
@@ -217,24 +239,28 @@ export function UserFormDialog({
                   autoComplete="off"
                 />
               </Field>
-              <Field>
-                <FieldLabel htmlFor="user-role">Role portal</FieldLabel>
-                <Select
-                  value={role}
-                  onValueChange={(value) => setRole(value as SpartaPortalRole)}
-                >
-                  <SelectTrigger id="user-role" className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {SPARTA_PORTAL_ROLES.map((value) => (
-                      <SelectItem key={value} value={value}>
-                        {PORTAL_ROLE_LABEL[value]}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </Field>
+              {!isLimited ? (
+                <Field>
+                  <FieldLabel htmlFor="user-role">Role portal</FieldLabel>
+                  <Select
+                    value={role}
+                    onValueChange={(value) =>
+                      setRole(value as SpartaPortalRole)
+                    }
+                  >
+                    <SelectTrigger id="user-role" className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {SPARTA_PORTAL_ROLES.map((value) => (
+                        <SelectItem key={value} value={value}>
+                          {PORTAL_ROLE_LABEL[value]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </Field>
+              ) : null}
             </div>
 
             <Field>
@@ -245,6 +271,7 @@ export function UserFormDialog({
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 required
+                disabled={isEdit && isLimited}
                 autoComplete="off"
               />
             </Field>
@@ -272,42 +299,46 @@ export function UserFormDialog({
             </Field>
 
             {isEdit ? (
-              <Field>
-                <FieldLabel htmlFor="user-status">Status</FieldLabel>
-                <Select
-                  value={status}
-                  onValueChange={(value) =>
-                    setStatus(value as SpartaUserStatus)
-                  }
-                >
-                  <SelectTrigger id="user-status" className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {STATUSES.map((value) => (
-                      <SelectItem key={value} value={value}>
-                        {USER_STATUS_LABEL[value]}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {willDeactivate ? (
-                  <FieldDescription>
-                    User tidak bisa login ke portal, dan modul menonaktifkan
-                    akun serta mengakhiri sesinya.
-                  </FieldDescription>
-                ) : null}
-              </Field>
+              !isLimited ? (
+                <Field>
+                  <FieldLabel htmlFor="user-status">Status</FieldLabel>
+                  <Select
+                    value={status}
+                    onValueChange={(value) =>
+                      setStatus(value as SpartaUserStatus)
+                    }
+                  >
+                    <SelectTrigger id="user-status" className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {STATUSES.map((value) => (
+                        <SelectItem key={value} value={value}>
+                          {USER_STATUS_LABEL[value]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {willDeactivate ? (
+                    <FieldDescription>
+                      User tidak bisa login ke portal, dan modul menonaktifkan
+                      akun serta mengakhiri sesinya.
+                    </FieldDescription>
+                  ) : null}
+                </Field>
+              ) : null
             ) : (
               <>
                 <FieldSeparator />
                 <FieldSet>
                   <FieldLegend variant="label">Akses modul</FieldLegend>
                   <FieldDescription>
-                    Bisa diatur nanti lewat tombol Akses di daftar user.
+                    {isLimited
+                      ? "Pilih minimal satu modul yang Anda kelola."
+                      : "Bisa diatur nanti lewat tombol Akses di daftar user."}
                   </FieldDescription>
                   <FieldGroup>
-                    {SPARTA_LAUNCHABLE_MODULE_IDS.map((moduleId) => {
+                    {allowedModules.map((moduleId) => {
                       const draft = modules[moduleId]
                       const switchId = `user-module-${moduleId}`
                       return (

@@ -48,6 +48,10 @@ export class UsersService {
     return this.repository.listUsers()
   }
 
+  async getUser(userId: string) {
+    return this.repository.findUserById(userId)
+  }
+
   async createUser(input: UsersServiceCreateInput, actorUserId: string) {
     for (const module of input.modules) {
       await this.assertRoleAllowed(module.moduleId, module.role)

@@ -50,6 +50,7 @@ import {
   type AdminUser,
   type ModuleRole,
   type ProvisioningEvent,
+  type UserAdminScope,
 } from "@/lib/sparta-user-admin"
 
 type UserAccessDialogProps = {
@@ -57,6 +58,8 @@ type UserAccessDialogProps = {
   onOpenChange: (open: boolean) => void
   user: AdminUser
   moduleRoles: ModuleRole[]
+  /** Ruang lingkup admin: semua modul (SYSTEM_ADMIN) atau modul tertentu. */
+  scope: UserAdminScope
   /** Dipanggil setelah akses berubah agar daftar user dimuat ulang. */
   onChanged: () => void
 }
@@ -97,8 +100,12 @@ export function UserAccessDialog({
   onOpenChange,
   user,
   moduleRoles,
+  scope,
   onChanged,
 }: UserAccessDialogProps) {
+  const allowedModules = scope.all
+    ? SPARTA_LAUNCHABLE_MODULE_IDS
+    : scope.modules
   const [roleDraft, setRoleDraft] = React.useState<
     Record<SpartaLaunchableModuleId, string>
   >(() => {
@@ -232,7 +239,7 @@ export function UserAccessDialog({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {SPARTA_LAUNCHABLE_MODULE_IDS.map((moduleId) => {
+                {allowedModules.map((moduleId) => {
                   const access = user.modules.find(
                     (m) => m.moduleId === moduleId && m.isActive
                   )

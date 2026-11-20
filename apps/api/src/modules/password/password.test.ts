@@ -208,6 +208,7 @@ function createBranchDefaultUser(
     lockedUntil: null,
     lastLoginAt: null,
     access: ["building", "maintenance"],
+    adminModules: [],
     ...override,
   }
 }

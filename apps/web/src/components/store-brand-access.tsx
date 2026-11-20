@@ -73,11 +73,16 @@ function errorMessage(error: unknown, fallback: string) {
   return error instanceof ApiClientError ? error.message : fallback
 }
 
+type StoreBrandAccessProps = {
+  /** Mode baca saja: sembunyikan tombol Atur dan dialog pengubahan. */
+  readOnly?: boolean
+}
+
 /**
  * Baris ringkas akses brand toko per modul (mis. LAWSON hanya Maintenance),
  * dengan dialog untuk mengubahnya. Berlaku pada sync malam modul berikutnya.
  */
-export function StoreBrandAccess() {
+export function StoreBrandAccess({ readOnly = false }: StoreBrandAccessProps) {
   const [brands, setBrands] = React.useState<StoreBrand[]>([])
   const [loadState, setLoadState] = React.useState<LoadState>({
     status: "loading",
@@ -166,7 +171,7 @@ export function StoreBrandAccess() {
           >
             Coba lagi
           </Button>
-        ) : (
+        ) : readOnly ? null : (
           <Button
             variant="link"
             size="sm"
