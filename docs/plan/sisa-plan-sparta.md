@@ -18,7 +18,7 @@ Catatan sisa pekerjaan setelah sesi 2026-11-19. Rencana lengkap ada di dokumen "
 | 1 | Modul menyimpan `spartaUserId` | Selesai di CarbonTrack dan Energy |
 | 2 | Master Cabang + Area + alias, halaman Data Master, mode dev tiruan | Selesai di portal. Modul belum mulai Fase 2 |
 | 2B | Manajemen user terpusat (provisioning) | Portal selesai (backend + UI). Modul: commit selesai, deploy belum |
-| 3 | Master Toko, sync Google Sheet pindah ke portal | Belum |
+| 3 | Master Toko, sync Google Sheet pindah ke portal | Portal: tabel, API, halaman selesai di lokal. Sumber Sheet dan modul belum |
 | 4 | Master Fasilitas (bandingkan CarbonTrack dan SIAGA) | Belum |
 
 ## Langkah berikutnya: Fase 2B
@@ -43,13 +43,16 @@ Catatan sisa pekerjaan setelah sesi 2026-11-19. Rencana lengkap ada di dokumen "
 
 ### Keputusan yang menunggu user
 
-- [ ] Tabel `users` Energy juga dipakai smart-energy-monitoring, yang belum mengecek `is_active`. Apakah user nonaktif juga harus ditolak di sana?
+- [x] (diputuskan user, dilaporkan sesi Energy 2026-11-20: YA, monitoring ikut menolak user nonaktif lewat `AND u.is_active` setelah migrasi is_active Energy jalan) Tabel `users` Energy juga dipakai smart-energy-monitoring, yang belum mengecek `is_active`. Apakah user nonaktif juga harus ditolak di sana?
 - [x] Energy membuat akun otomatis saat `access.granted` (diputuskan user 2026-11-19). CarbonTrack tidak membuat akun (balas `ignored`).
 - [ ] NIK wajib di `/sync` (ditunda atas permintaan user). Form Manajemen User sudah mewajibkan NIK.
 - [x] (diputuskan user 2026-11-20: YA, kode cabang Alfamart jadi kode resmi master Cabang) **Standar kode cabang resmi portal.** CarbonTrack menemukan data Scope 2 sudah memakai kode cabang Alfamart (BZ01 = BANDUNG, JZ01 = CILEUNGSI2, KZ01 = CIKOKOL, 33 kode). Apakah kode Alfamart dipakai sebagai kode resmi master Cabang? Fase 2 di semua modul menunggu keputusan ini.
 
 ## Fase 2 di modul (belum mulai)
 
+- [x] (2026-11-20, working tree CarbonTrack, belum commit/migrasi) CarbonTrack: sync /v1/master/areas, /branches (pakai aliases), /stores?moduleId=carbontrack dengan cursor syncedAt; isActive=false dinonaktifkan tanpa hapus; ownership REGULAR=R, FRANCHISE=F, UNKNOWN/null kosong; `STORE_MASTER_SOURCE=sheet` tetap bawaan sampai portal dideploy. Menunggu portal: konversi kode Alfamart, alias CILEUNGSI_2 dan nama lama, deploy /v1/master/*.
+- [x] (2026-11-20, working tree Energy, belum commit/migrasi) Energy: migrasi `20261120000000_sparta_branch_code`, ambil daftar cabang penuh tiap run (tanpa updatedSince, disetujui portal), dry-run nama tak terpetakan, `branch_code` baru ditulis setelah daftar kosong.
+- Cara konversi kode Alfamart (dijanjikan ke modul): kode lama TIDAK diubah atau dihapus. Buat cabang baru berkode Alfamart, nonaktifkan cabang lama, dan jadikan namanya alias cabang baru.
 - [ ] Tiap modul menambah kolom `branchCode` dan membaca `GET /v1/master/branches` lewat sync malam. Alias portal sudah menangani `HEAD OFFICE` dan nama cabang lama.
 - [x] (2026-11-20) `GET /v1/master/branches` mengirim `aliases: string[]`; tambah/hapus alias mengubah `updatedAt` cabang. Kontrak di `module-sso-contract.md`.
 - Syarat mulai: keputusan standar kode cabang + migrasi portal dideploy. CarbonTrack dan Energy sudah menyiapkan rencana dan menunggu kabar dari portal. Nama yang gagal dipetakan dilaporkan modul sebagai daftar, lalu admin membuat alias (contoh: `CILEUNGSI_2` ke cabang CILEUNGSI2).
@@ -57,7 +60,13 @@ Catatan sisa pekerjaan setelah sesi 2026-11-19. Rencana lengkap ada di dokumen "
 
 ## Fase 3: master Toko
 
-- [ ] Portal: master Toko, termasuk **sub-area toko** di dalam cabang (gaya Maintenance `Store.areaName`, mis. cabang CILEUNGSI: BEKASI, KARAWANG, CILEUNGSI 2, BOGOR). Berbeda dari Area portal (wilayah berisi cabang). Google Sheet tetap sumber baca saja (portal tidak pernah menulis ke Sheet), koreksi disimpan di DB portal, sync tiap malam.
+- [x] (2026-11-20, di working tree) Portal: master Toko. Tabel `Store` (migrasi `20261120024911_add_store_master`, baru dijalankan di `sparta_local`), API admin `/v1/admin/master/stores` (cari, saring cabang/status, paginasi server, tambah, ubah, audit), API modul `GET /v1/master/stores` (API key, `updatedSince`), tab Toko di Data Master. Lokal sudah diisi 22.530 toko Maintenance (read-only dari produksi), semua cabang dikenal.
+- [x] (2026-11-20, di working tree) Aturan brand toko per modul: tabel `StoreBrand` (migrasi `20261120030225_add_store_brand_modules`, awal ALFAMART semua modul, LAWSON hanya Maintenance), kartu "Akses modul per brand" di tab Toko, `GET /v1/master/stores` wajib `moduleId`. Toko yang ditutup aksesnya dikirim `isActive:false` di sync bertahap.
+- [ ] **Cek sebelum deploy:** zona waktu DB produksi. Laragon lokal `Asia/Bangkok` (UTC+7) membuat `now()` di SQL mentah tersimpan 7 jam ke depan (sudah terjadi di impor toko lokal, sudah dibetulkan). Prisma menulis UTC, tapi default `CURRENT_TIMESTAMP` di migrasi ikut zona waktu server. Kalau produksi bukan UTC, `updatedSince` modul bisa melewatkan data.
+- [ ] Ke depan: API key per modul, agar portal mengenali pemanggil tanpa parameter `moduleId`.
+- [ ] Sumber toko berikutnya: toko Energy yang tidak ada di Maintenance (476 kode) dan Building (118 kode); Google Sheet tetap rencana sumber resmi.
+- [ ] **Wajib sebelum deploy:** ganti kode cabang ke kode Alfamart (kontrak `/v1/master/stores` sudah menjanjikan `branchCode` Alfamart ke CarbonTrack). Toko ikut otomatis karena terhubung lewat ID cabang, bukan teks kode.
+- Catatan asal: master Toko, termasuk **sub-area toko** di dalam cabang (gaya Maintenance `Store.areaName`, mis. cabang CILEUNGSI: BEKASI, KARAWANG, CILEUNGSI 2, BOGOR). Berbeda dari Area portal (wilayah berisi cabang). Google Sheet tetap sumber baca saja (portal tidak pernah menulis ke Sheet), koreksi disimpan di DB portal, sync tiap malam.
 - [ ] Urutan pemakai: CarbonTrack, Maintenance, SIAGA, Audit, lalu Building (validasi kode toko). Building mengabari portal saat serah terima.
 - Syarat lanjut: jumlah toko aktif di portal sama dengan di Sheet.
 - Laporan data toko 2026-11-20 (baca saja dari produksi):
@@ -95,6 +104,11 @@ Catatan sisa pekerjaan setelah sesi 2026-11-19. Rencana lengkap ada di dokumen "
 - [ ] Rotate password DB `aku-sparta` (103.127.99.241). Password masih ada di riwayat git (`get-modules.js`, `check-users.ts`, `seed-users.ts` versi lama), jadi rotate wajib walau file sudah dibersihkan.
 - [x] (2026-11-20) `get-modules.js` dan `check-users.ts` dihapus. `seed-users.ts` membaca koneksi modul dari env (`SPARTA_BUILDING_DATABASE_URL`, `SPARTA_ENERGY_DATABASE_URL`, `SPARTA_MAINTENANCE_DATABASE_URL`) dan menolak jalan tanpa `SPARTA_SEED_USERS_CONFIRM=hapus-semua-user`.
 - [x] (2026-11-20) Seed mengisi katalog role modul, jadi database baru tidak lagi kosong (diuji di DB baru: 11 role).
+- [x] (2026-11-20) Password login terlihat di DevTools: dicek, bukan celah. Itu isi form user sendiri; jalurnya HTTPS (web dialihkan ke HTTPS, API HTTPS + HSTS), body tidak dicatat logger, password disimpan Argon2.
+- [x] (2026-11-20, working tree) Web: `apps/web/nginx.conf` menggantikan `sed` di Dockerfile (routing SPA + HSTS tanpa includeSubDomains, nosniff, Referrer-Policy, X-Frame-Options DENY). Sintaks diuji dengan nginx 1.22 Laragon. Alamat localhost dev dan env dev tidak lagi ikut ke bundle produksi.
+- [x] (2026-11-20, working tree) Password dikirim tersegel dari browser (permintaan user): `GET /v1/auth/credential-key`, middleware `openSealedCredentials`, RSA-OAEP + AES-GCM (Web Crypto). Dipakai di login, password pertama, lupa password, ganti password, ganti email. Request biasa tetap diterima (kompatibel), dan web jatuh ke kirim biasa bila Web Crypto tidak ada (HTTP non-localhost).
+- [ ] **Saat deploy API:** kalau API berjalan lebih dari satu instance, isi `SPARTA_CREDENTIAL_PRIVATE_KEY` (PEM RSA 2048) yang sama di semua instance. Tanpa itu tiap instance membuat kunci sendiri dan login bisa gagal bergantian.
+- [ ] Setelah deploy web: cek header HSTS muncul di https://sparta-alfamart.web.id, dan pastikan tidak ada modul yang memuat portal di dalam iframe (X-Frame-Options DENY akan memblokirnya).
 - [ ] `SPARTA_INTERNAL_API_KEY` punya nilai bawaan di `apps/api/src/config/env.ts`. Hapus nilai bawaan setelah semua server dipastikan mengisi env ini.
 - [ ] `changeEmailAndBroadcast` menulis langsung ke DB Building, Energy, dan Maintenance (lihat Fase 2B).
 - [ ] Dependensi npm `cn` yang tidak terpakai di `apps/web/package.json`.

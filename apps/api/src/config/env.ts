@@ -86,6 +86,10 @@ const envSchema = z.object({
   SPARTA_PROVISIONING_SECRET_ENERGY: provisioningSecret,
   SPARTA_PROVISIONING_SECRET_SIAGA: provisioningSecret,
   SPARTA_PROVISIONING_SECRET_CARBONTRACK: provisioningSecret,
+  // Kunci privat RSA (PEM) untuk membuka password tersegel dari browser.
+  // Wajib sama di semua instance bila API berjalan lebih dari satu instance;
+  // kosong = dibuat otomatis saat start (cukup untuk satu instance).
+  SPARTA_CREDENTIAL_PRIVATE_KEY: z.string().optional(),
 })
 
 export type AppEnv = z.infer<typeof envSchema>

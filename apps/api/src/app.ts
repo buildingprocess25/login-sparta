@@ -5,6 +5,11 @@ import helmet from "helmet"
 import pinoHttp from "pino-http"
 
 import { createCorsOptions } from "./config/cors"
+import { openSealedCredentials } from "./middleware/open-sealed-credentials"
+import {
+  type CredentialSealer,
+  getCredentialSealer,
+} from "./services/security/credential-sealer"
 import { loadEnv, type AppEnv } from "./config/env"
 import { errorHandler, notFoundHandler } from "./middleware/error-handler"
 import { requestContext } from "./middleware/request-context"
@@ -38,7 +43,9 @@ import {
   type UsersRouterOptions,
 } from "./modules/users/users.routes"
 
-export type AppOptions = AuthRouterOptions &
+export type AppOptions = {
+  credentialSealer?: CredentialSealer
+} & AuthRouterOptions &
   PasswordRouterOptions &
   ModulesRouterOptions &
   SsoRouterOptions &
@@ -70,6 +77,20 @@ export function createApp(env: AppEnv = loadEnv(), options: AppOptions = {}) {
   app.use(cors(createCorsOptions(env)))
   app.use(cookieParser())
   app.use(express.json({ limit: "100kb" }))
+
+  // Password dari browser dikirim tersegel (lihat credential-sealer.ts).
+  const credentialSealer =
+    options.credentialSealer ??
+    getCredentialSealer(env.SPARTA_CREDENTIAL_PRIVATE_KEY)
+  app.get("/v1/auth/credential-key", (_request, response) => {
+    response.json({
+      data: {
+        keyId: credentialSealer.keyId,
+        publicKey: credentialSealer.publicKey,
+      },
+    })
+  })
+  app.use(openSealedCredentials(credentialSealer))
 
   app.get("/healthz", (_request, response) => {
     response.json({ status: "ok" })

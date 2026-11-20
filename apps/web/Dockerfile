@@ -42,8 +42,8 @@ FROM nginx:alpine
 # Copy built assets from builder
 COPY --from=builder /app/apps/web/dist /usr/share/nginx/html
 
-# Configure Nginx for Single Page Application (SPA) routing
-RUN sed -i 's/location \/ {/location \/ { try_files $uri $uri\/ \/index.html; /' /etc/nginx/conf.d/default.conf
+# Nginx: routing SPA + header keamanan (HSTS, nosniff, dll.)
+COPY apps/web/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 

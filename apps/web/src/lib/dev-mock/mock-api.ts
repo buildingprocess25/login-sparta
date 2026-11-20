@@ -11,6 +11,7 @@ import {
   type AdminUserDto,
   type MasterAreaAdminDto,
   type MasterBranchAdminDto,
+  type MasterStoreAdminDto,
   type ModuleRoleDto,
   type ProvisioningEventDto,
   type SpartaLaunchableModuleId,
@@ -177,12 +178,165 @@ function recountAreas() {
   }
 }
 
+// Toko tiruan (bukan data sungguhan) untuk tab Toko di mode dev tiruan.
+const stores: MasterStoreAdminDto[] = [
+  ["C218", "CONTOH DUREN JAYA", "BDG", "BEKASI", "REGULAR", true],
+  ["T968", "CONTOH RUKO BATAVIA", "BDG", null, "REGULAR", true],
+  ["1SHO", "CONTOH CALABAI", "HEAD", null, "FRANCHISE", true],
+  ["OC53", "CONTOH TRIRENGGO", "BDG", "BOGOR", "FRANCHISE", false],
+].map(([code, name, branchCode, subArea, ownershipType, isActive]) => ({
+  code: code as string,
+  name: name as string,
+  branchCode: branchCode as string,
+  branchName: branchCode === "BDG" ? "Bandung" : "HEAD OFFICE",
+  subArea: subArea as string | null,
+  brand: "ALFAMART",
+  ownershipType: ownershipType as string,
+  latitude: null,
+  longitude: null,
+  isActive: isActive as boolean,
+  source: "MANUAL",
+  updatedAt: now(),
+}))
+
+const storeBrandRules = new Map<string, string[]>([
+  ["ALFAMART", ["building", "maintenance", "energy", "siaga", "carbontrack"]],
+  ["LAWSON", ["maintenance"]],
+])
+
+function handleStoreBrands(
+  method: string,
+  code: string | undefined,
+  body: Record<string, unknown>
+): MockResult {
+  if (method === "GET" && !code) {
+    return ok(
+      [...storeBrandRules.entries()].map(([brand, moduleIds]) => ({
+        code: brand,
+        name: brand,
+        moduleIds,
+        storeCount: stores.filter((s) => s.brand === brand).length,
+        hasRule: true,
+      }))
+    )
+  }
+  if (method === "PUT" && code && storeBrandRules.has(code)) {
+    storeBrandRules.set(code, (body.moduleIds as string[]) ?? [])
+    return ok({ code })
+  }
+  return fail(404, "MASTER_NOT_FOUND", `Brand ${code} tidak ditemukan.`)
+}
+
+function handleStores(
+  method: string,
+  code: string | undefined,
+  body: Record<string, unknown>,
+  search: URLSearchParams
+): MockResult {
+  if (method === "GET" && !code) {
+    const q = (search.get("q") ?? "").toUpperCase()
+    const branchCode = search.get("branchCode")
+    const brand = search.get("brand")
+    const status = search.get("status") ?? "all"
+    const page = Number(search.get("page") ?? 1)
+    const pageSize = Number(search.get("pageSize") ?? 20)
+    const filtered = stores.filter(
+      (s) =>
+        (!q || s.code.includes(q) || s.name.includes(q)) &&
+        (!branchCode || s.branchCode === branchCode) &&
+        (!brand || s.brand === brand) &&
+        (status === "all" || s.isActive === (status === "active"))
+    )
+    return {
+      status: 200,
+      body: {
+        data: filtered.slice((page - 1) * pageSize, page * pageSize),
+        meta: {
+          total: filtered.length,
+          page,
+          pageSize,
+          activeCount: stores.filter((s) => s.isActive).length,
+          inactiveCount: stores.filter((s) => !s.isActive).length,
+          withoutSubAreaCount: stores.filter((s) => !s.subArea).length,
+        },
+      },
+    }
+  }
+
+  if (method === "POST" && !code) {
+    const newCode = normalize(String(body.code ?? ""))
+    if (!/^[A-Z0-9]{3,10}$/.test(newCode)) {
+      return fail(
+        400,
+        "INVALID_MASTER_PAYLOAD",
+        "Kode toko hanya boleh huruf dan angka, 3-10 karakter."
+      )
+    }
+    if (stores.some((s) => s.code === newCode)) {
+      return fail(
+        409,
+        "MASTER_CODE_TAKEN",
+        `Kode toko ${newCode} sudah dipakai.`
+      )
+    }
+    const branch = branches.find((b) => b.code === body.branchCode)
+    if (!branch) {
+      return fail(400, "MASTER_BRANCH_UNKNOWN", "Cabang tidak ditemukan.")
+    }
+    stores.push({
+      code: newCode,
+      name: String(body.name ?? ""),
+      branchCode: branch.code,
+      branchName: branch.name,
+      subArea: (body.subArea as string | null) ?? null,
+      brand: (body.brand as string | null) ?? null,
+      ownershipType: (body.ownershipType as string | null) ?? null,
+      latitude: null,
+      longitude: null,
+      isActive: true,
+      source: "MANUAL",
+      updatedAt: now(),
+    })
+    return ok({ code: newCode }, 201)
+  }
+
+  const store = stores.find((s) => s.code === code)
+  if (!store)
+    return fail(404, "MASTER_NOT_FOUND", `Toko ${code} tidak ditemukan.`)
+  if (method === "PATCH") {
+    for (const key of [
+      "name",
+      "subArea",
+      "brand",
+      "ownershipType",
+      "isActive",
+    ] as const) {
+      if (body[key] !== undefined) Object.assign(store, { [key]: body[key] })
+    }
+    if (body.branchCode !== undefined) {
+      const branch = branches.find((b) => b.code === body.branchCode)
+      if (!branch) {
+        return fail(400, "MASTER_BRANCH_UNKNOWN", "Cabang tidak ditemukan.")
+      }
+      store.branchCode = branch.code
+      store.branchName = branch.name
+    }
+    store.updatedAt = now()
+    return ok({ code })
+  }
+  return fail(404, "NOT_FOUND", "Endpoint tiruan tidak tersedia.")
+}
+
 function handleMaster(
   method: string,
   parts: string[],
-  body: Record<string, unknown>
+  body: Record<string, unknown>,
+  search: URLSearchParams
 ): MockResult {
   const [resource, code, sub, subId] = parts
+
+  if (resource === "stores") return handleStores(method, code, body, search)
+  if (resource === "store-brands") return handleStoreBrands(method, code, body)
 
   if (resource === "branches") {
     if (method === "GET" && !code) return ok(branches)
@@ -612,7 +766,7 @@ export async function handleDevMockRequest(
     if (!["SYSTEM_ADMIN", "MASTER_ADMIN"].includes(session.role)) {
       return fail(403, "FORBIDDEN", "Akses ditolak.")
     }
-    return handleMaster(method, parts.slice(3), body)
+    return handleMaster(method, parts.slice(3), body, url.searchParams)
   }
 
   if (parts[0] === "v1" && parts[1] === "admin" && parts[2] === "users") {

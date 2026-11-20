@@ -107,6 +107,24 @@ Data master cabang dan area untuk sync malam. Parameter opsional `updatedSince` 
 
 Simpan `meta.syncedAt` dan pakai sebagai `updatedSince` di sync berikutnya. Waktu ini diambil sebelum query, jadi perubahan yang terjadi saat query berjalan tidak terlewat.
 
+### GET /v1/master/stores (API key internal, Fase 3)
+
+Master toko untuk sync malam, dengan `updatedSince` dan `meta.syncedAt` yang sama seperti cabang. Parameter **`moduleId` wajib** (`building`, `maintenance`, `energy`, `siaga`, `carbontrack`, `engineering`), contoh: `GET /v1/master/stores?moduleId=carbontrack&updatedSince=...`. Tanpa `moduleId` balasannya 400.
+
+Portal menyaring toko per brand: admin mengatur di Data Master brand mana yang dibuka untuk modul mana (awal: ALFAMART untuk semua modul, LAWSON hanya Maintenance). Sync penuh (tanpa `updatedSince`) hanya berisi toko yang dibuka untuk modul pemanggil. Sync bertahap juga mengirim toko yang baru ditutup aksesnya dengan `isActive: false`, jadi `isActive: false` bisa berarti toko tutup atau tidak lagi dibuka untuk modul ini. Keduanya ditangani sama: jangan tampilkan sebagai toko aktif, dan jangan hapus riwayatnya. `branchCode` menunjuk ke `code` di `/v1/master/branches`. `subArea` adalah pembagian toko di dalam cabang (mis. BEKASI di cabang CILEUNGSI), berbeda dari `areaCode` cabang. Toko yang tutup dikirim dengan `isActive: false`, tidak pernah dihapus.
+
+```json
+{
+  "data": [
+    { "code": "T968", "name": "RUKO BATAVIA", "branchCode": "KZ01", "subArea": "BALARAJA", "brand": "ALFAMART", "ownershipType": "REGULAR", "latitude": -6.2, "longitude": 106.5, "isActive": true, "updatedAt": "2026-11-20T03:00:00.000Z" }
+  ],
+  "meta": { "syncedAt": "2026-11-20T03:00:00.000Z", "count": 1 }
+}
+```
+
+- `branchCode` adalah kode cabang resmi Alfamart (keputusan user 2026-11-20), mis. `KZ01` untuk CIKOKOL. Catatan transisi: master Cabang portal belum dikonversi, jadi sebelum konversi selesai nilainya masih kode portal lama (mis. `CIKOKOL`). Konversi dilakukan sebelum endpoint ini dideploy ke produksi; modul cukup mencocokkan lewat `/v1/master/branches`, jangan memetakan kode sendiri.
+- `ownershipType` hanya berisi `REGULAR`, `FRANCHISE`, `UNKNOWN`, atau `null` (belum diisi). Data awal dari Maintenance: REGULAR 16.246, FRANCHISE 6.055, UNKNOWN 229. Modul sebaiknya memperlakukan `UNKNOWN` dan `null` sebagai tidak diketahui, bukan Reguler.
+
 `aliases` (hanya di `/branches`) berisi nama atau kode lama yang dipetakan admin ke cabang ini, sudah dinormalisasi: spasi dirapikan, huruf besar. Modul yang menyimpan nama cabang memetakan nama ke kode dengan urutan: cocokkan `code`, lalu `name` (huruf besar), lalu `aliases`. Menambah atau menghapus alias mengubah `updatedAt` cabang, jadi sync `updatedSince` ikut menerima daftar alias terbaru. Nama yang tetap tidak cocok dilaporkan ke admin portal untuk dibuatkan alias, jangan dibuat cabang baru di modul.
 
 ## Provisioning (Fase 2B, portal ke modul)

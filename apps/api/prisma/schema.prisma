@@ -74,11 +74,51 @@ model Branch {
   isActive  Boolean       @default(true)
   users     User[]
   aliases   BranchAlias[]
+  stores    Store[]
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
 
   @@index([areaId])
   @@index([isActive])
+}
+
+/// Master toko (Fase 3). Kode toko Alfamart tidak pernah diubah karena modul
+/// menyimpannya; toko yang tutup dinonaktifkan, bukan dihapus.
+model Store {
+  id            String   @id @default(cuid())
+  code          String   @unique
+  name          String
+  branchId      String
+  branch        Branch   @relation(fields: [branchId], references: [id])
+  /// Pembagian toko di dalam cabang (gaya Maintenance), mis. "BEKASI" di
+  /// cabang CILEUNGSI. Berbeda dari Area, yang mengelompokkan cabang.
+  subArea       String?
+  /// ALFAMART, LAWSON, dst.
+  brand         String?
+  /// REGULAR, FRANCHISE, UNKNOWN.
+  ownershipType String?
+  latitude      Float?
+  longitude     Float?
+  isActive      Boolean  @default(true)
+  /// Asal data awal: MAINTENANCE (impor), MANUAL (dibuat di portal), dst.
+  source        String   @default("MANUAL")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([branchId])
+  @@index([isActive])
+  @@index([updatedAt])
+}
+
+/// Aturan brand toko: modul mana yang menerima toko brand ini lewat
+/// GET /v1/master/stores. Brand tanpa aturan dikirim ke semua modul.
+model StoreBrand {
+  /// Sama dengan Store.brand, mis. "ALFAMART", "LAWSON".
+  code      String           @id
+  name      String
+  moduleIds SpartaModuleId[] @default([])
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
 }
 
 /// Nama atau kode cabang lama dari aplikasi lain (mis. "HEAD OFFICE" atau

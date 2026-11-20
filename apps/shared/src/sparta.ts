@@ -133,6 +133,49 @@ export type MasterAreaAdminDto = {
   updatedAt: string
 }
 
+/** Toko untuk halaman admin data master (GET /v1/admin/master/stores). */
+export type MasterStoreAdminDto = {
+  code: string
+  name: string
+  branchCode: string
+  branchName: string
+  /** Pembagian toko di dalam cabang, mis. "BEKASI" di cabang CILEUNGSI. */
+  subArea: string | null
+  brand: string | null
+  ownershipType: string | null
+  latitude: number | null
+  longitude: number | null
+  isActive: boolean
+  source: string
+  updatedAt: string
+}
+
+export type MasterStoreStatusFilter = "all" | "active" | "inactive"
+
+/**
+ * Brand toko dan modul yang menerima tokonya
+ * (GET /v1/admin/master/store-brands). Brand tanpa aturan (`hasRule: false`)
+ * dikirim ke semua modul.
+ */
+export type StoreBrandAdminDto = {
+  code: string
+  name: string
+  moduleIds: SpartaModuleId[]
+  storeCount: number
+  hasRule: boolean
+}
+
+/** Meta daftar toko: paginasi sisi server + hitungan untuk kartu angka. */
+export type MasterStoreListMeta = {
+  total: number
+  page: number
+  pageSize: number
+  /** Hitungan seluruh toko, tidak terpengaruh pencarian/saringan. */
+  activeCount: number
+  inactiveCount: number
+  withoutSubAreaCount: number
+}
+
 export type SpartaUserStatus = "ACTIVE" | "INACTIVE" | "LOCKED"
 
 /** User untuk halaman admin Manajemen User (GET /v1/admin/users). */

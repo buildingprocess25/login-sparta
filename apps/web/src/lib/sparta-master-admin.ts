@@ -3,6 +3,11 @@ import {
   type ApiSuccess,
   type MasterAreaAdminDto,
   type MasterBranchAdminDto,
+  type MasterStoreAdminDto,
+  type MasterStoreListMeta,
+  type MasterStoreStatusFilter,
+  type SpartaModuleId,
+  type StoreBrandAdminDto,
 } from "@sparta/shared"
 
 import { apiFetch } from "@/lib/api-client"
@@ -10,6 +15,32 @@ import type { SpartaSession } from "@/lib/sparta-auth"
 
 export type MasterBranch = MasterBranchAdminDto
 export type MasterArea = MasterAreaAdminDto
+export type MasterStore = MasterStoreAdminDto
+export type MasterStoreMeta = MasterStoreListMeta
+export type StoreBrand = StoreBrandAdminDto
+
+export const STORE_OWNERSHIP_LABEL: Record<string, string> = {
+  REGULAR: "Reguler",
+  FRANCHISE: "Waralaba",
+  UNKNOWN: "Belum diketahui",
+}
+
+export type StoreListParams = {
+  q: string
+  branchCode: string | null
+  brand: string | null
+  status: MasterStoreStatusFilter
+  page: number
+  pageSize: number
+}
+
+export type StoreFormInput = {
+  name: string
+  branchCode: string
+  subArea: string | null
+  brand: string | null
+  ownershipType: string | null
+}
 
 export type BranchFormInput = {
   name: string
@@ -96,5 +127,53 @@ export async function updateMasterArea(
   await apiFetch(path("areas", code), {
     method: "PATCH",
     body: JSON.stringify(patch),
+  })
+}
+
+export async function listMasterStores(params: StoreListParams) {
+  const search = new URLSearchParams({
+    status: params.status,
+    page: String(params.page),
+    pageSize: String(params.pageSize),
+  })
+  if (params.q.trim()) search.set("q", params.q.trim())
+  if (params.branchCode) search.set("branchCode", params.branchCode)
+  if (params.brand) search.set("brand", params.brand)
+  return apiFetch<{ data: MasterStore[]; meta: MasterStoreMeta }>(
+    `${path("stores")}?${search.toString()}`
+  )
+}
+
+export async function createMasterStore(
+  input: StoreFormInput & { code: string }
+) {
+  await apiFetch(path("stores"), {
+    method: "POST",
+    body: JSON.stringify(input),
+  })
+}
+
+export async function updateMasterStore(
+  code: string,
+  patch: Partial<StoreFormInput> & { isActive?: boolean }
+) {
+  await apiFetch(path("stores", code), {
+    method: "PATCH",
+    body: JSON.stringify(patch),
+  })
+}
+
+export async function listStoreBrands() {
+  const result = await apiFetch<ApiSuccess<StoreBrand[]>>(path("store-brands"))
+  return result.data
+}
+
+export async function setStoreBrandModules(
+  code: string,
+  moduleIds: SpartaModuleId[]
+) {
+  await apiFetch(path("store-brands", code), {
+    method: "PUT",
+    body: JSON.stringify({ moduleIds }),
   })
 }

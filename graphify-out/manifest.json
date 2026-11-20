@@ -96,9 +96,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/app.ts": {
-    "mtime": 1795074032.1636016,
-    "seen": 1795074552.0674968,
-    "ast_hash": "d3da698afd7b3884df5a1cb59c3edb9c",
+    "mtime": 1795145896.1170156,
+    "seen": 1795146004.5051682,
+    "ast_hash": "527b617d3251b6d2cf63294056129ac6",
     "semantic_hash": ""
   },
   "apps/api/src/config/cors.ts": {
@@ -108,9 +108,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/config/env.ts": {
-    "mtime": 1795137058.0037045,
-    "seen": 1795137140.8994975,
-    "ast_hash": "cb371ac23236b5ed163b5032388b877e",
+    "mtime": 1795145896.152534,
+    "seen": 1795146004.5051682,
+    "ast_hash": "5fa3b0d979788aef4663e4da633382a1",
     "semantic_hash": ""
   },
   "apps/api/src/db/prisma.ts": {
@@ -198,10 +198,10 @@
     "semantic_hash": ""
   },
   "apps/api/src/modules/master/master.routes.ts": {
-    "mtime": 1795073234.5776737,
-    "seen": 1795073715.3557007,
-    "ast_hash": "e8104b65fc5f661555ec9fa1b31eeacc",
-    "semantic_hash": "e8104b65fc5f661555ec9fa1b31eeacc"
+    "mtime": 1795143843.7772355,
+    "seen": 1795144025.2259092,
+    "ast_hash": "92368a5e191c72ba34261fee7a1d28bb",
+    "semantic_hash": ""
   },
   "apps/api/src/modules/master/master.test.ts": {
     "mtime": 1795136419.9734256,
@@ -324,8 +324,8 @@
     "semantic_hash": ""
   },
   "apps/api/src/scripts/seed-users.ts": {
-    "mtime": 1795142097.2888408,
-    "seen": 1795142174.5890522,
+    "mtime": 1795143121.5337534,
+    "seen": 1795143399.479588,
     "ast_hash": "0d704de3dfb8f918a43db552890901c7",
     "semantic_hash": ""
   },
@@ -408,9 +408,9 @@
     "semantic_hash": ""
   },
   "apps/shared/src/sparta.ts": {
-    "mtime": 1795135990.1213493,
-    "seen": 1795136572.0257876,
-    "ast_hash": "f41432fedee4f6c9c73960662d26053f",
+    "mtime": 1795143773.4423108,
+    "seen": 1795144025.2259092,
+    "ast_hash": "fe00e097fbb4d1034f32ae4c07650efb",
     "semantic_hash": ""
   },
   "apps/shared/src/validation.ts": {
@@ -648,9 +648,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/lib/api-client.ts": {
-    "mtime": 1795074832.8931043,
-    "seen": 1795074878.690689,
-    "ast_hash": "5eaeb83a8535069fc78430d4d61899a4",
+    "mtime": 1795145942.0682616,
+    "seen": 1795146004.5051682,
+    "ast_hash": "803705b3f672b78bccf124feab94b477",
     "semantic_hash": ""
   },
   "apps/web/src/lib/shared-contract-check.ts": {
@@ -666,9 +666,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/lib/sparta-auth.ts": {
-    "mtime": 1795137036.1302521,
-    "seen": 1795137140.8994975,
-    "ast_hash": "2c02e895fb9665bf78ef1bd38672f317",
+    "mtime": 1795145942.031062,
+    "seen": 1795146004.5051682,
+    "ast_hash": "6d52a9e6c0f7ac7035cfe179ae4165a6",
     "semantic_hash": ""
   },
   "apps/web/src/lib/sparta-team.ts": {
@@ -822,9 +822,9 @@
     "semantic_hash": "4f500ff6377f3e74ede86759f0b4cdd3"
   },
   "docs/integration/module-sso-contract.md": {
-    "mtime": 1795137073.2866259,
-    "seen": 1795137140.8994975,
-    "ast_hash": "7e59b16a1bee139835d957d1897a45c7",
+    "mtime": 1795143981.70928,
+    "seen": 1795144025.2259092,
+    "ast_hash": "e36cdfe84a202aaf2d63a3fc1ec7ca8e",
     "semantic_hash": ""
   },
   "docs/integration/sparta-building-sso-checklist.md": {
@@ -882,9 +882,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/modules/master/master-admin.routes.ts": {
-    "mtime": 1795074092.788767,
-    "seen": 1795074552.0674968,
-    "ast_hash": "7271f62a4f15cc99fec5431f6beed713",
+    "mtime": 1795143843.8059168,
+    "seen": 1795144025.2259092,
+    "ast_hash": "1306768b5c1477f6015178f6d12c4232",
     "semantic_hash": ""
   },
   "apps/api/src/modules/master/master-admin.schemas.ts": {
@@ -942,15 +942,15 @@
     "semantic_hash": ""
   },
   "apps/web/src/lib/sparta-master-admin.ts": {
-    "mtime": 1795074164.4180894,
-    "seen": 1795074552.0674968,
-    "ast_hash": "d9682d3933b6cb960cb387e36d4cefff",
+    "mtime": 1795144181.192785,
+    "seen": 1795144229.6071095,
+    "ast_hash": "0b3b397d9949cabf11fc6b5fa2ca2511",
     "semantic_hash": ""
   },
   "apps/web/src/pages/data-master-page.tsx": {
-    "mtime": 1795139910.482481,
-    "seen": 1795139974.6954834,
-    "ast_hash": "170dad6e28325404eb369d27d1644b81",
+    "mtime": 1795143261.3993058,
+    "seen": 1795143399.4805996,
+    "ast_hash": "5f4fadcdb54147eef84cda3d77d11116",
     "semantic_hash": ""
   },
   "apps/web/public/team/akmal.webp": {
@@ -1176,9 +1176,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/lib/dev-mock/mock-api.ts": {
-    "mtime": 1795136408.4510272,
-    "seen": 1795136572.0257876,
-    "ast_hash": "dcc311ff632ba8db38522fdbb75e8de7",
+    "mtime": 1795144181.3685107,
+    "seen": 1795144229.6071095,
+    "ast_hash": "2ba5a477b2266a5dad7c3933d5833a46",
     "semantic_hash": ""
   },
   "apps/api/prisma/migrations/20261119110000_add_module_roles_and_provisioning/migration.sql": {
@@ -1224,9 +1224,9 @@
     "semantic_hash": ""
   },
   "docs/plan/sisa-plan-sparta.md": {
-    "mtime": 1795142153.6354747,
-    "seen": 1795142174.5890522,
-    "ast_hash": "0859517b45ad6438e23cabb6273925ce",
+    "mtime": 1795145997.6568594,
+    "seen": 1795146004.5051682,
+    "ast_hash": "b89332f7622eec6d9aa3d6f8f7e57588",
     "semantic_hash": ""
   },
   "apps/web/src/components/module-role-select.tsx": {
@@ -1293,6 +1293,90 @@
     "mtime": 1795139952.2242768,
     "seen": 1795139974.6954834,
     "ast_hash": "daebdd8db8357971229650b5c455c41f",
+    "semantic_hash": ""
+  },
+  "apps/api/prisma/migrations/20261120024911_add_store_master/migration.sql": {
+    "mtime": 1795142951.974707,
+    "seen": 1795143399.479588,
+    "ast_hash": "b6e9b08badd2e6896a0334c4650a119a",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/master/store.repository.ts": {
+    "mtime": 1795144145.0604932,
+    "seen": 1795144229.6071095,
+    "ast_hash": "c788e621c0a2522ac5ff6fdcc7be2599",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/master/store.schemas.ts": {
+    "mtime": 1795144144.9543118,
+    "seen": 1795144229.6071095,
+    "ast_hash": "6a8d27cb772b7b69c03888f27b24f9f8",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/master/store.service.ts": {
+    "mtime": 1795143843.6687348,
+    "seen": 1795144025.2259092,
+    "ast_hash": "d6ea19fcbaaf28be516686a72747c2fd",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/master/store.test.ts": {
+    "mtime": 1795144145.1877217,
+    "seen": 1795144229.6071095,
+    "ast_hash": "73979492db8702f9f5b07cbf38d0b164",
+    "semantic_hash": ""
+  },
+  "apps/web/src/components/master-store-dialog.tsx": {
+    "mtime": 1795143199.3157804,
+    "seen": 1795143399.479588,
+    "ast_hash": "d1757f5624af0bf5ee4ee484454e418e",
+    "semantic_hash": ""
+  },
+  "apps/web/src/components/master-store-panel.tsx": {
+    "mtime": 1795144181.037429,
+    "seen": 1795144229.6071095,
+    "ast_hash": "b1639e94224a9cd3742f3e237da04e94",
+    "semantic_hash": ""
+  },
+  "apps/web/src/pages/data-master.test.tsx": {
+    "mtime": 1795143983.7248218,
+    "seen": 1795144025.2259092,
+    "ast_hash": "4889b5cc65f158ab30afb36b436ee057",
+    "semantic_hash": ""
+  },
+  "apps/api/prisma/migrations/20261120030225_add_store_brand_modules/migration.sql": {
+    "mtime": 1795143754.9335313,
+    "seen": 1795144025.2259092,
+    "ast_hash": "531a93a5803965b1aedb2331a531e6ff",
+    "semantic_hash": ""
+  },
+  "apps/web/src/components/store-brand-access.tsx": {
+    "mtime": 1795144130.8077097,
+    "seen": 1795144229.6071095,
+    "ast_hash": "d6871846964a673623aed2b2739ace5c",
+    "semantic_hash": ""
+  },
+  "apps/api/src/middleware/open-sealed-credentials.ts": {
+    "mtime": 1795145896.089694,
+    "seen": 1795146004.5051682,
+    "ast_hash": "83d4fb7c0d562cb050061fb0f693617f",
+    "semantic_hash": ""
+  },
+  "apps/api/src/services/security/credential-sealer.test.ts": {
+    "mtime": 1795145896.0590804,
+    "seen": 1795146004.5051682,
+    "ast_hash": "e3259a7a91ea834abae2f16ecbda0126",
+    "semantic_hash": ""
+  },
+  "apps/api/src/services/security/credential-sealer.ts": {
+    "mtime": 1795145896.0168948,
+    "seen": 1795146004.5051682,
+    "ast_hash": "764a663c53ddcbdbe9dba653752630fc",
+    "semantic_hash": ""
+  },
+  "apps/web/src/lib/credential-seal.ts": {
+    "mtime": 1795145981.795825,
+    "seen": 1795146004.5051682,
+    "ast_hash": "4af66effb1b219ad515dd19b7f221ff7",
     "semantic_hash": ""
   },
   "package-lock.json": {

@@ -9,6 +9,7 @@ import {
   Plus,
   RefreshCw,
   Search,
+  Store,
   TriangleAlert,
 } from "lucide-react"
 import { toast } from "sonner"
@@ -16,6 +17,7 @@ import { toast } from "sonner"
 import { AppShell } from "@/components/app-shell"
 import { MasterAreaDialog } from "@/components/master-area-dialog"
 import { MasterBranchDialog } from "@/components/master-branch-dialog"
+import { MasterStorePanel } from "@/components/master-store-panel"
 import { StatCard } from "@/components/stat-card"
 import { StatusBadge } from "@/components/status-badge"
 import { TablePagination } from "@/components/table-pagination"
@@ -116,6 +118,7 @@ export function DataMasterPage({ session, onLogout }: DataMasterPageProps) {
     status: "loading",
   })
   const [isRefreshing, setIsRefreshing] = React.useState(false)
+  const [tab, setTab] = React.useState("branches")
   const [query, setQuery] = React.useState("")
   const [filter, setFilter] = React.useState<BranchFilter>("all")
   const [branchPage, setBranchPage] = React.useState(1)
@@ -259,7 +262,7 @@ export function DataMasterPage({ session, onLogout }: DataMasterPageProps) {
 
   return (
     <AppShell session={session} onLogout={onLogout}>
-      <Tabs defaultValue="branches" className="min-w-0">
+      <Tabs value={tab} onValueChange={setTab} className="min-w-0">
         <div className="flex min-w-0 flex-col gap-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div className="flex flex-col gap-2">
@@ -267,9 +270,9 @@ export function DataMasterPage({ session, onLogout }: DataMasterPageProps) {
                 Data Master
               </h1>
               <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
-                Cabang dan area yang dipakai semua modul SPARTA. Kode tidak bisa
-                diubah setelah dibuat, dan data yang tidak dipakai lagi
-                dinonaktifkan, bukan dihapus.
+                Cabang, area, dan toko yang dipakai semua modul SPARTA. Kode
+                tidak bisa diubah setelah dibuat, dan data yang tidak dipakai
+                lagi dinonaktifkan, bukan dihapus.
               </p>
             </div>
             <TabsList>
@@ -280,6 +283,10 @@ export function DataMasterPage({ session, onLogout }: DataMasterPageProps) {
               <TabsTrigger value="areas">
                 <MapIcon data-icon="inline-start" />
                 Area
+              </TabsTrigger>
+              <TabsTrigger value="stores">
+                <Store data-icon="inline-start" />
+                Toko
               </TabsTrigger>
             </TabsList>
           </div>
@@ -307,36 +314,38 @@ export function DataMasterPage({ session, onLogout }: DataMasterPageProps) {
 
           {loadState.status === "ready" ? (
             <>
-              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                <StatCard
-                  label="Cabang aktif"
-                  value={activeBranchCount}
-                  icon={Building2}
-                  tone="success"
-                />
-                <StatCard
-                  label="Cabang nonaktif"
-                  value={branches.length - activeBranchCount}
-                  icon={CircleOff}
-                />
-                <StatCard
-                  label="Kode tidak baku"
-                  value={nonStandardCount}
-                  icon={TriangleAlert}
-                  tone={nonStandardCount > 0 ? "danger" : "neutral"}
-                  hint={
-                    nonStandardCount > 0
-                      ? "Perlu dipetakan ke alias"
-                      : undefined
-                  }
-                />
-                <StatCard
-                  label="Area aktif"
-                  value={activeAreaCount}
-                  icon={MapIcon}
-                  tone="primary"
-                />
-              </div>
+              {tab !== "stores" ? (
+                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                  <StatCard
+                    label="Cabang aktif"
+                    value={activeBranchCount}
+                    icon={Building2}
+                    tone="success"
+                  />
+                  <StatCard
+                    label="Cabang nonaktif"
+                    value={branches.length - activeBranchCount}
+                    icon={CircleOff}
+                  />
+                  <StatCard
+                    label="Kode tidak baku"
+                    value={nonStandardCount}
+                    icon={TriangleAlert}
+                    tone={nonStandardCount > 0 ? "danger" : "neutral"}
+                    hint={
+                      nonStandardCount > 0
+                        ? "Perlu dipetakan ke alias"
+                        : undefined
+                    }
+                  />
+                  <StatCard
+                    label="Area aktif"
+                    value={activeAreaCount}
+                    icon={MapIcon}
+                    tone="primary"
+                  />
+                </div>
+              ) : null}
 
               <TabsContent value="branches">
                 <Card>
@@ -642,6 +651,10 @@ export function DataMasterPage({ session, onLogout }: DataMasterPageProps) {
                     )}
                   </CardContent>
                 </Card>
+              </TabsContent>
+
+              <TabsContent value="stores">
+                <MasterStorePanel branches={branches} />
               </TabsContent>
             </>
           ) : null}

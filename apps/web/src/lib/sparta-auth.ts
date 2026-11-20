@@ -8,6 +8,7 @@ import type {
 } from "@sparta/shared"
 
 import { ApiClientError, apiFetch } from "@/lib/api-client"
+import { postWithSealedSecrets } from "@/lib/credential-seal"
 
 export { apiFetch }
 
@@ -84,7 +85,18 @@ export type ChangeEmailResult =
     }
 
 const DEFAULT_ERROR_MESSAGE = "Request SPARTA gagal."
-const defaultModuleLoginUrls = {
+const productionModuleLoginUrls = {
+  building: "https://building.sparta-alfamart.web.id",
+  maintenance: "https://maintenance.sparta-alfamart.web.id",
+  energy: "https://energy.sparta-alfamart.web.id",
+  siaga: "https://siaga.sparta-alfamart.web.id",
+  carbontrack: "https://grk.sparta-alfamart.web.id/login",
+  engineering: "https://engineering.sparta-alfamart.web.id",
+} satisfies Record<SpartaAppId, string>
+
+// Hanya untuk `pnpm dev`. import.meta.env.DEV bernilai false di build
+// produksi, sehingga daftar localhost ini dibuang dari bundle.
+const devModuleLoginUrls = {
   building: "http://localhost:5174/login",
   maintenance: "http://localhost:5175/login",
   energy: "http://localhost:5176/login",
@@ -172,24 +184,29 @@ export function isSpartaSsoEnabled() {
   return import.meta.env.VITE_SPARTA_SSO_ENABLED !== "false"
 }
 
+// Dibaca satu per satu (bukan import.meta.env[nama]) agar Vite hanya
+// menyisipkan variabel ini ke bundle, bukan seluruh isi env.
+const envModuleLoginUrls: Record<SpartaAppId, string | undefined> = {
+  building: import.meta.env.VITE_SPARTA_BUILDING_LOGIN_URL,
+  maintenance: import.meta.env.VITE_SPARTA_MAINTENANCE_LOGIN_URL,
+  energy: import.meta.env.VITE_SPARTA_ENERGY_LOGIN_URL,
+  siaga: import.meta.env.VITE_SPARTA_SIAGA_LOGIN_URL,
+  carbontrack: import.meta.env.VITE_SPARTA_CARBONTRACK_LOGIN_URL,
+  engineering: import.meta.env.VITE_SPARTA_ENGINEERING_LOGIN_URL,
+}
+
 export function getModuleLoginUrl(moduleId: SpartaAppId) {
-  const envKey = `VITE_SPARTA_${moduleId.toUpperCase()}_LOGIN_URL`
-  const envUrl = import.meta.env[envKey]
+  const envUrl = envModuleLoginUrls[moduleId]
 
   if (typeof envUrl === "string" && envUrl.trim()) {
     return envUrl
   }
 
-  if (import.meta.env.PROD || import.meta.env.VITE_APP_ENV === "production") {
-    if (moduleId === "siaga") return "https://siaga.sparta-alfamart.web.id"
-    if (moduleId === "building") return "https://building.sparta-alfamart.web.id"
-    if (moduleId === "maintenance") return "https://maintenance.sparta-alfamart.web.id"
-    if (moduleId === "energy") return "https://energy.sparta-alfamart.web.id"
-    if (moduleId === "carbontrack") return "https://grk.sparta-alfamart.web.id/login"
-    if (moduleId === "engineering") return "https://engineering.sparta-alfamart.web.id"
+  if (import.meta.env.DEV && import.meta.env.VITE_APP_ENV !== "production") {
+    return devModuleLoginUrls[moduleId]
   }
 
-  return defaultModuleLoginUrls[moduleId]
+  return productionModuleLoginUrls[moduleId]
 }
 
 export async function getCurrentSpartaSession() {
@@ -209,13 +226,9 @@ export async function getCurrentSpartaSession() {
 
 export async function loginToSparta(input: LoginInput): Promise<LoginResult> {
   try {
-    const result = await apiFetch<ApiSuccess<{ session: SpartaSession }>>(
-      "/v1/auth/login",
-      {
-        method: "POST",
-        body: JSON.stringify(input),
-      }
-    )
+    const result = await postWithSealedSecrets<
+      ApiSuccess<{ session: SpartaSession }>
+    >("/v1/auth/login", input, ["password"])
 
     return {
       ok: true,
@@ -239,10 +252,11 @@ export async function updateUserPassword(
   input: PasswordUpdateInput
 ): Promise<PasswordUpdateResult> {
   try {
-    await apiFetch<ApiSuccess<{ ok: true }>>("/v1/auth/first-password", {
-      method: "POST",
-      body: JSON.stringify(input),
-    })
+    await postWithSealedSecrets<ApiSuccess<{ ok: true }>>(
+      "/v1/auth/first-password",
+      input,
+      ["newPassword"]
+    )
 
     return {
       ok: true,
@@ -305,10 +319,11 @@ export async function resetPasswordWithOtp(
   input: PasswordResetWithOtpInput
 ): Promise<PasswordUpdateResult> {
   try {
-    await apiFetch<ApiSuccess<{ ok: true }>>("/v1/password/forgot/reset", {
-      method: "POST",
-      body: JSON.stringify(input),
-    })
+    await postWithSealedSecrets<ApiSuccess<{ ok: true }>>(
+      "/v1/password/forgot/reset",
+      input,
+      ["newPassword"]
+    )
 
     return {
       ok: true,
@@ -348,10 +363,11 @@ export async function confirmChangePasswordWithOtp(
   input: ChangePasswordWithOtpInput
 ): Promise<PasswordUpdateResult> {
   try {
-    await apiFetch<ApiSuccess<{ ok: true }>>("/v1/password/change/confirm", {
-      method: "POST",
-      body: JSON.stringify(input),
-    })
+    await postWithSealedSecrets<ApiSuccess<{ ok: true }>>(
+      "/v1/password/change/confirm",
+      input,
+      ["newPassword"]
+    )
 
     return {
       ok: true,
@@ -369,10 +385,11 @@ export async function changeEmail(input: {
   password: string
 }): Promise<ChangeEmailResult> {
   try {
-    await apiFetch<ApiSuccess<{ ok: true }>>("/v1/admin/users/change-email", {
-      method: "POST",
-      body: JSON.stringify(input),
-    })
+    await postWithSealedSecrets<ApiSuccess<{ ok: true }>>(
+      "/v1/admin/users/change-email",
+      input,
+      ["password"]
+    )
 
     return { ok: true }
   } catch (error) {

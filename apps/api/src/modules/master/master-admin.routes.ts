@@ -23,10 +23,19 @@ import {
   updateBranchSchema,
 } from "./master-admin.schemas"
 import { MasterAdminService } from "./master-admin.service"
+import { type StoreRepository, PrismaStoreRepository } from "./store.repository"
+import {
+  createStoreSchema,
+  listStoresQuerySchema,
+  setBrandModulesSchema,
+  updateStoreSchema,
+} from "./store.schemas"
+import { StoreService } from "./store.service"
 
 export type MasterAdminRouterOptions = {
   authRepository?: AuthRepository
   masterAdminRepository?: MasterAdminRepository
+  storeRepository?: StoreRepository
 }
 
 function parseBody<TSchema extends z.ZodType>(
@@ -63,6 +72,10 @@ export function createMasterAdminRouter(
   )
   const service = new MasterAdminService(
     options.masterAdminRepository ?? new PrismaMasterAdminRepository()
+  )
+
+  const storeService = new StoreService(
+    options.storeRepository ?? new PrismaStoreRepository()
   )
 
   router.use(
@@ -151,6 +164,66 @@ export function createMasterAdminRouter(
       const patch = parseBody(updateAreaSchema, request.body, response)
       if (!patch) return
       await service.updateArea(request.params.code, patch, actorId(request))
+      response.json({ data: { code: request.params.code } })
+    } catch (error) {
+      next(error)
+    }
+  })
+
+  // Toko: daftar dipaginasi di server karena jumlahnya puluhan ribu.
+  router.get("/stores", async (request, response, next) => {
+    try {
+      const query = parseBody(listStoresQuerySchema, request.query, response)
+      if (!query) return
+      response.json(await storeService.listStores(query))
+    } catch (error) {
+      next(error)
+    }
+  })
+
+  router.get("/store-brands", async (_request, response, next) => {
+    try {
+      response.json({ data: await storeService.listBrands() })
+    } catch (error) {
+      next(error)
+    }
+  })
+
+  router.put("/store-brands/:code", async (request, response, next) => {
+    try {
+      const input = parseBody(setBrandModulesSchema, request.body, response)
+      if (!input) return
+      await storeService.setBrandModules(
+        request.params.code,
+        input,
+        actorId(request)
+      )
+      response.json({ data: { code: request.params.code } })
+    } catch (error) {
+      next(error)
+    }
+  })
+
+  router.post("/stores", async (request, response, next) => {
+    try {
+      const input = parseBody(createStoreSchema, request.body, response)
+      if (!input) return
+      await storeService.createStore(input, actorId(request))
+      response.status(201).json({ data: { code: input.code } })
+    } catch (error) {
+      next(error)
+    }
+  })
+
+  router.patch("/stores/:code", async (request, response, next) => {
+    try {
+      const patch = parseBody(updateStoreSchema, request.body, response)
+      if (!patch) return
+      await storeService.updateStore(
+        request.params.code,
+        patch,
+        actorId(request)
+      )
       response.json({ data: { code: request.params.code } })
     } catch (error) {
       next(error)

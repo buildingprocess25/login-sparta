@@ -27,6 +27,10 @@ function getApiUrl(path: string) {
 const isDevMock =
   import.meta.env.DEV && import.meta.env.VITE_SPARTA_DEV_MOCK === "true"
 
+export function isDevMockEnabled() {
+  return isDevMock
+}
+
 export async function apiFetch<T>(
   path: string,
   init: RequestInit = {}
