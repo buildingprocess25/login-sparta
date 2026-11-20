@@ -468,9 +468,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/components/app-shell.tsx": {
-    "mtime": 1795136420.9360728,
-    "seen": 1795136572.0257876,
-    "ast_hash": "b6ac41aa98c3164e62e5e49ea9c3de65",
+    "mtime": 1795147782.7493865,
+    "seen": 1795147825.6782043,
+    "ast_hash": "a5b470badc1ad3109b0d1d9b3739ca44",
     "semantic_hash": ""
   },
   "apps/web/src/components/change-email-dialog.tsx": {
@@ -702,9 +702,9 @@
     "semantic_hash": "249e72c5fe76ee0ccb5409aba98d1b4f"
   },
   "apps/web/src/pages/module-launcher-page.tsx": {
-    "mtime": 1795137062.2283866,
-    "seen": 1795137140.8994975,
-    "ast_hash": "6f6b0172d601b8a8dd1a38b148fcbc20",
+    "mtime": 1795147767.2867186,
+    "seen": 1795147825.6782043,
+    "ast_hash": "708359097e099457063be6a9b28620c6",
     "semantic_hash": ""
   },
   "apps/web/src/pages/password-reset-page.tsx": {
@@ -1377,6 +1377,12 @@
     "mtime": 1795145981.795825,
     "seen": 1795146004.5051682,
     "ast_hash": "4af66effb1b219ad515dd19b7f221ff7",
+    "semantic_hash": ""
+  },
+  "apps/web/src/components/portal-backdrop.tsx": {
+    "mtime": 1795147764.449677,
+    "seen": 1795147825.6782043,
+    "ast_hash": "df06171fcf9d6d1e741ab1e0cd0bdac9",
     "semantic_hash": ""
   },
   "package-lock.json": {

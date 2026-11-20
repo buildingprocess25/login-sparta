@@ -1,8 +1,8 @@
 import * as React from "react"
 import { ChevronDown, ChevronUp, KeyRound, LogOut, Mail } from "lucide-react"
 
-import { ChangePasswordDialog } from "@/components/change-password-dialog"
 import { ChangeEmailDialog } from "@/components/change-email-dialog"
+import { ChangePasswordDialog } from "@/components/change-password-dialog"
 import { Logo } from "@/components/logo"
 import {
   AlertDialog,
@@ -39,10 +39,14 @@ type AppShellProps = {
   showHeader?: boolean
   /** Kunci tinggi halaman ke viewport; konten hanya scroll di layar yang terlalu pendek. */
   fitViewport?: boolean
+  /** Lapisan latar dekoratif penuh layar di belakang konten. */
+  backdrop?: React.ReactNode
+  /** Warna latar permukaan utama halaman. */
+  surface?: "default" | "panel"
 }
 
 const NAV_LINK_CLASS =
-  "relative py-1 font-medium transition-colors after:absolute after:bottom-[-2px] after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-[width] after:duration-500 after:ease-out hover:text-foreground hover:after:w-full focus-visible:outline-none focus-visible:after:w-full"
+  "relative py-1 font-medium transition-colors hover:text-foreground focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
 
 /** Menu utama. Halaman admin hanya muncul untuk role yang boleh membukanya. */
 function getNavItems(session: SpartaSession | null | undefined) {
@@ -74,6 +78,8 @@ function AppShell({
   onLogout,
   showHeader,
   fitViewport = false,
+  backdrop,
+  surface = "default",
 }: AppShellProps) {
   const [isMobileProfileMenuOpen, setIsMobileProfileMenuOpen] =
     React.useState(false)
@@ -99,136 +105,47 @@ function AppShell({
   return (
     <main
       className={cn(
-        "bg-background text-foreground",
+        "relative",
+        surface === "panel"
+          ? "bg-panel text-panel-foreground"
+          : "bg-background text-foreground",
         // overflow-x-clip: latar selebar layar tidak memicu scroll samping
         // (berbeda dengan overflow-hidden, tidak memutus elemen sticky).
         fitViewport ? "h-svh overflow-hidden" : "min-h-svh overflow-x-clip"
       )}
     >
+      {backdrop}
       <div
         className={cn(
-          "mx-auto flex w-full max-w-7xl flex-col",
+          "relative z-10 mx-auto flex w-full max-w-7xl flex-col",
           fitViewport ? "h-svh" : "min-h-svh"
         )}
       >
         {session || showHeader ? (
-          <header className="shrink-0 border-b px-4 py-3 sm:px-6 sm:py-4">
-            <div className="flex items-center justify-between lg:hidden">
-              <Logo />
-              {session ? (
-                <DropdownMenu
-                  open={isMobileProfileMenuOpen}
-                  onOpenChange={setIsMobileProfileMenuOpen}
-                >
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      className="size-10 p-0"
-                      aria-label={`Profil ${session.fullName}`}
-                    >
-                      <Avatar className="size-8">
-                        <AvatarFallback>
-                          {getInitials(session.fullName)}
-                        </AvatarFallback>
-                      </Avatar>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-64">
-                    <DropdownMenuLabel>
-                      <span className="flex items-center justify-between gap-2">
-                        <span className="font-medium text-foreground">
-                          {session.fullName}
-                        </span>
-                        <Badge>{session.branch}</Badge>
-                      </span>
-                      <span className="block">{session.email}</span>
-                    </DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuGroup>
-                      <DropdownMenuItem
-                        onSelect={() => {
-                          setIsMobileProfileMenuOpen(false)
-                          setIsChangePasswordOpen(true)
-                        }}
-                      >
-                        <KeyRound />
-                        Ganti Password
-                      </DropdownMenuItem>
-                      {onLogout ? (
-                        <DropdownMenuItem
-                          variant="destructive"
-                          onSelect={() => {
-                            setIsMobileProfileMenuOpen(false)
-                            setIsLogoutConfirmOpen(true)
-                          }}
-                        >
-                          <LogOut />
-                          Logout
-                        </DropdownMenuItem>
-                      ) : null}
-                    </DropdownMenuGroup>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              ) : null}
-            </div>
-            <nav className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-3 lg:hidden">
-              {navItems.map((item) => (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  aria-current={activeRoute === item.href ? "page" : undefined}
-                  className={cn(
-                    NAV_LINK_CLASS,
-                    "text-xs whitespace-nowrap sm:text-sm",
-                    activeRoute === item.href
-                      ? "text-foreground after:w-full"
-                      : "text-muted-foreground"
-                  )}
-                >
-                  {item.label}
-                </a>
-              ))}
-            </nav>
-            <div className="hidden items-center justify-between gap-4 lg:flex">
-              <Logo />
-              <nav className="flex items-center gap-5">
-                {navItems.map((item) => (
-                  <a
-                    key={item.href}
-                    href={item.href}
-                    aria-current={
-                      activeRoute === item.href ? "page" : undefined
-                    }
-                    className={cn(
-                      NAV_LINK_CLASS,
-                      "text-sm",
-                      activeRoute === item.href
-                        ? "text-foreground after:w-full"
-                        : "text-muted-foreground"
-                    )}
-                  >
-                    {item.label}
-                  </a>
-                ))}
+          <header className="shrink-0 px-4 pt-3 sm:px-6 sm:pt-4 lg:px-10 lg:pt-5">
+            {/* Kapsul navbar mengambang: putih solid di HP (ringan), frosted ringan di desktop */}
+            <div className="rounded-2xl border border-foreground/10 bg-background/95 px-4 py-2.5 shadow-[0_1px_2px_rgb(16_24_32/0.05),0_12px_32px_-16px_rgb(16_24_32/0.16)] lg:rounded-full lg:bg-background/85 lg:py-2 lg:pr-2.5 lg:pl-6 lg:backdrop-blur-md">
+              {/* Mobile top row */}
+              <div className="flex items-center justify-between lg:hidden">
+                <Logo />
                 {session ? (
                   <DropdownMenu
-                    open={isProfileMenuOpen}
-                    onOpenChange={setIsProfileMenuOpen}
+                    open={isMobileProfileMenuOpen}
+                    onOpenChange={setIsMobileProfileMenuOpen}
                   >
                     <DropdownMenuTrigger asChild>
-                      <Button type="button" variant="ghost">
-                        <Avatar size="sm">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="rounded-full"
+                        aria-label={`Profil ${session.fullName}`}
+                      >
+                        <Avatar className="size-8">
                           <AvatarFallback>
                             {getInitials(session.fullName)}
                           </AvatarFallback>
                         </Avatar>
-                        <span>{session.fullName}</span>
-                        {isProfileMenuOpen ? (
-                          <ChevronUp data-icon="inline-end" />
-                        ) : (
-                          <ChevronDown data-icon="inline-end" />
-                        )}
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-64">
@@ -245,7 +162,7 @@ function AppShell({
                       <DropdownMenuGroup>
                         <DropdownMenuItem
                           onSelect={() => {
-                            setIsProfileMenuOpen(false)
+                            setIsMobileProfileMenuOpen(false)
                             setIsChangePasswordOpen(true)
                           }}
                         >
@@ -254,7 +171,7 @@ function AppShell({
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onSelect={() => {
-                            setIsProfileMenuOpen(false)
+                            setIsMobileProfileMenuOpen(false)
                             setIsChangeEmailOpen(true)
                           }}
                         >
@@ -265,7 +182,7 @@ function AppShell({
                           <DropdownMenuItem
                             variant="destructive"
                             onSelect={() => {
-                              setIsProfileMenuOpen(false)
+                              setIsMobileProfileMenuOpen(false)
                               setIsLogoutConfirmOpen(true)
                             }}
                           >
@@ -277,8 +194,174 @@ function AppShell({
                     </DropdownMenuContent>
                   </DropdownMenu>
                 ) : null}
+              </div>
+
+              {/* Mobile nav links */}
+              <nav
+                aria-label="Navigasi utama"
+                className="mt-2.5 flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1.5 border-t border-border/70 pt-2.5 lg:hidden"
+              >
+                {navItems.map((item, index) => (
+                  <React.Fragment key={item.href}>
+                    {index > 0 ? (
+                      <span
+                        aria-hidden="true"
+                        className="size-1 rounded-full bg-primary/70"
+                      />
+                    ) : null}
+                    <a
+                      href={item.href}
+                      aria-current={
+                        activeRoute === item.href ? "page" : undefined
+                      }
+                      className={cn(
+                        NAV_LINK_CLASS,
+                        "px-1 text-xs whitespace-nowrap sm:text-sm",
+                        activeRoute === item.href
+                          ? "font-semibold text-foreground"
+                          : "text-muted-foreground"
+                      )}
+                    >
+                      {item.label}
+                    </a>
+                  </React.Fragment>
+                ))}
               </nav>
+
+              {/* Desktop floating pill bar: Logo | Centered dot-separated nav | Profile capsule */}
+              <div className="hidden items-center justify-between gap-6 lg:grid lg:grid-cols-[1fr_auto_1fr]">
+                <div className="flex items-center justify-start">
+                  <Logo />
+                </div>
+
+                <nav
+                  aria-label="Navigasi utama"
+                  className="flex items-center justify-center gap-4"
+                >
+                  {navItems.map((item, index) => (
+                    <React.Fragment key={item.href}>
+                      {index > 0 ? (
+                        <span
+                          aria-hidden="true"
+                          className="size-1.5 rounded-full bg-primary/80"
+                        />
+                      ) : null}
+                      <a
+                        href={item.href}
+                        aria-current={
+                          activeRoute === item.href ? "page" : undefined
+                        }
+                        className={cn(
+                          NAV_LINK_CLASS,
+                          "text-sm whitespace-nowrap",
+                          activeRoute === item.href
+                            ? "font-semibold text-foreground"
+                            : "text-muted-foreground"
+                        )}
+                      >
+                        {item.label}
+                      </a>
+                    </React.Fragment>
+                  ))}
+                </nav>
+
+                <div className="flex items-center justify-end">
+                  {session ? (
+                    <DropdownMenu
+                      open={isProfileMenuOpen}
+                      onOpenChange={setIsProfileMenuOpen}
+                    >
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          size="lg"
+                          className="rounded-full border border-foreground/8 bg-muted/80 hover:bg-muted"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <span className="flex flex-col items-end text-right leading-tight">
+                              <span className="text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
+                                {session.branch}
+                              </span>
+                              <span className="max-w-36 truncate text-xs font-semibold text-foreground">
+                                {session.fullName}
+                              </span>
+                            </span>
+                            <span className="relative inline-flex shrink-0">
+                              <Avatar size="sm">
+                                <AvatarFallback className="bg-primary text-xs font-semibold text-primary-foreground">
+                                  {getInitials(session.fullName)}
+                                </AvatarFallback>
+                              </Avatar>
+                              <span
+                                aria-hidden="true"
+                                className="absolute -right-0.5 -bottom-0.5 size-2.5 rounded-full bg-emerald-500 ring-2 ring-background"
+                              />
+                            </span>
+                            {isProfileMenuOpen ? (
+                              <ChevronUp
+                                data-icon="inline-end"
+                                className="size-3.5 text-muted-foreground"
+                              />
+                            ) : (
+                              <ChevronDown
+                                data-icon="inline-end"
+                                className="size-3.5 text-muted-foreground"
+                              />
+                            )}
+                          </div>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-64">
+                        <DropdownMenuLabel>
+                          <span className="flex items-center justify-between gap-2">
+                            <span className="font-medium text-foreground">
+                              {session.fullName}
+                            </span>
+                            <Badge>{session.branch}</Badge>
+                          </span>
+                          <span className="block">{session.email}</span>
+                        </DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuGroup>
+                          <DropdownMenuItem
+                            onSelect={() => {
+                              setIsProfileMenuOpen(false)
+                              setIsChangePasswordOpen(true)
+                            }}
+                          >
+                            <KeyRound />
+                            Ganti Password
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onSelect={() => {
+                              setIsProfileMenuOpen(false)
+                              setIsChangeEmailOpen(true)
+                            }}
+                          >
+                            <Mail />
+                            Ganti Email
+                          </DropdownMenuItem>
+                          {onLogout ? (
+                            <DropdownMenuItem
+                              variant="destructive"
+                              onSelect={() => {
+                                setIsProfileMenuOpen(false)
+                                setIsLogoutConfirmOpen(true)
+                              }}
+                            >
+                              <LogOut />
+                              Logout
+                            </DropdownMenuItem>
+                          ) : null}
+                        </DropdownMenuGroup>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  ) : null}
+                </div>
+              </div>
             </div>
+
             {session ? (
               <ChangePasswordDialog
                 open={isChangePasswordOpen}

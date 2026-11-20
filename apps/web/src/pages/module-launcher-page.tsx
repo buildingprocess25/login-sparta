@@ -3,6 +3,7 @@ import { ArrowUpRight, Loader2, Lock } from "lucide-react"
 import { toast } from "sonner"
 
 import { AppShell } from "@/components/app-shell"
+import { PortalBackdrop } from "@/components/portal-backdrop"
 import { Badge } from "@/components/ui/badge"
 import {
   Item,
@@ -88,6 +89,23 @@ function ModuleLauncherPage({ session, onLogout }: ModuleLauncherPageProps) {
   )
   const [launchingAppId, setLaunchingAppId] =
     React.useState<SpartaAppId | null>(null)
+  const [hoveredAppId, setHoveredAppId] = React.useState<SpartaAppId | null>(
+    null
+  )
+
+  const activeAccentColor = React.useMemo(() => {
+    const activeId = launchingAppId ?? hoveredAppId
+    if (activeId) {
+      return moduleThemeStyles[activeId]["--primary"]
+    }
+
+    const firstAccessible = apps.find(
+      (app) => app.id !== "engineering" && app.hasAccess
+    )
+    return firstAccessible
+      ? moduleThemeStyles[firstAccessible.id]["--primary"]
+      : moduleThemeStyles.building["--primary"]
+  }, [apps, hoveredAppId, launchingAppId])
 
   React.useEffect(() => {
     if (!ssoEnabled) {
@@ -157,13 +175,23 @@ function ModuleLauncherPage({ session, onLogout }: ModuleLauncherPageProps) {
       onLogout={onLogout}
       showHeader={!ssoEnabled}
       fitViewport
+      surface="panel"
+      backdrop={
+        <PortalBackdrop
+          accentColor={activeAccentColor}
+          caption="BME · PORTAL MODUL SPARTA"
+        />
+      }
     >
       <section className="flex flex-1 flex-col justify-center gap-5 lg:grid lg:grid-cols-[0.8fr_1.2fr] lg:items-center lg:gap-12">
         <div className="flex animate-in flex-col gap-2 text-center duration-500 fill-mode-both fade-in slide-in-from-bottom-2 motion-reduce:animate-none sm:gap-3 sm:text-left">
+          <p className="text-xs font-medium text-panel-foreground/65 sm:text-sm">
+            Building, Maintenance &amp; Energy
+          </p>
           <h1 className="mx-auto max-w-md font-heading text-2xl font-medium text-balance sm:mx-0 sm:text-3xl lg:text-5xl">
             Pilih modul SPARTA anda.
           </h1>
-          <p className="mx-auto max-w-sm text-xs leading-5 text-muted-foreground sm:mx-0 sm:text-sm sm:leading-6">
+          <p className="mx-auto max-w-sm text-xs leading-5 text-panel-foreground/70 sm:mx-0 sm:text-sm sm:leading-6">
             {ssoEnabled
               ? "Buka modul Building, Maintenance, Energy, SIAGA, atau Carbontrack sesuai akses yang terhubung dengan akun internal Anda."
               : "Pilih modul SPARTA untuk menuju halaman login aplikasi terkait."}
@@ -230,13 +258,25 @@ function ModuleLauncherPage({ session, onLogout }: ModuleLauncherPageProps) {
                 role="listitem"
                 className={cn(
                   itemAnimation,
-                  "cursor-pointer bg-primary/5 text-left transition duration-200 ease-out hover:-translate-y-0.5 hover:border-primary/40 hover:bg-primary/10 hover:shadow-md hover:shadow-primary/10 active:translate-y-0 active:shadow-none disabled:cursor-wait disabled:opacity-70 disabled:hover:translate-y-0 disabled:hover:shadow-none"
+                  "cursor-pointer border-panel-foreground/10 bg-background/85 text-left transition duration-200 ease-out hover:-translate-y-0.5 hover:border-primary/40 hover:bg-background hover:shadow-md hover:shadow-primary/10 active:translate-y-0 active:shadow-none disabled:cursor-wait disabled:opacity-70 disabled:hover:translate-y-0 disabled:hover:shadow-none"
                 )}
                 style={itemStyle}
               >
                 <button
                   type="button"
                   disabled={Boolean(launchingAppId)}
+                  onMouseEnter={() => setHoveredAppId(app.id)}
+                  onMouseLeave={() =>
+                    setHoveredAppId((current) =>
+                      current === app.id ? null : current
+                    )
+                  }
+                  onFocus={() => setHoveredAppId(app.id)}
+                  onBlur={() =>
+                    setHoveredAppId((current) =>
+                      current === app.id ? null : current
+                    )
+                  }
                   onClick={() => {
                     void handleLaunchModule(app.id)
                   }}
@@ -250,7 +290,10 @@ function ModuleLauncherPage({ session, onLogout }: ModuleLauncherPageProps) {
                 variant="outline"
                 role="listitem"
                 aria-disabled="true"
-                className={cn(itemAnimation, "bg-primary/5 opacity-50")}
+                className={cn(
+                  itemAnimation,
+                  "border-panel-foreground/10 bg-background/60 opacity-55"
+                )}
                 style={itemStyle}
               >
                 {content}

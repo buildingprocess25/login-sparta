@@ -96,9 +96,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/app.ts": {
-    "mtime": 1795074032.1636016,
-    "seen": 1795074552.0674968,
-    "ast_hash": "d3da698afd7b3884df5a1cb59c3edb9c",
+    "mtime": 1795145896.1170156,
+    "seen": 1795146004.5051682,
+    "ast_hash": "527b617d3251b6d2cf63294056129ac6",
     "semantic_hash": ""
   },
   "apps/api/src/config/cors.ts": {
@@ -108,9 +108,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/config/env.ts": {
-    "mtime": 1795137058.0037045,
-    "seen": 1795137140.8994975,
-    "ast_hash": "cb371ac23236b5ed163b5032388b877e",
+    "mtime": 1795145896.152534,
+    "seen": 1795146004.5051682,
+    "ast_hash": "5fa3b0d979788aef4663e4da633382a1",
     "semantic_hash": ""
   },
   "apps/api/src/db/prisma.ts": {
@@ -468,9 +468,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/components/app-shell.tsx": {
-    "mtime": 1795136420.9360728,
-    "seen": 1795136572.0257876,
-    "ast_hash": "b6ac41aa98c3164e62e5e49ea9c3de65",
+    "mtime": 1795147288.4731052,
+    "seen": 1795147358.7008538,
+    "ast_hash": "4050b145609280fead58aa8cb2d97224",
     "semantic_hash": ""
   },
   "apps/web/src/components/change-email-dialog.tsx": {
@@ -648,9 +648,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/lib/api-client.ts": {
-    "mtime": 1795074832.8931043,
-    "seen": 1795074878.690689,
-    "ast_hash": "5eaeb83a8535069fc78430d4d61899a4",
+    "mtime": 1795145942.0682616,
+    "seen": 1795146004.5051682,
+    "ast_hash": "803705b3f672b78bccf124feab94b477",
     "semantic_hash": ""
   },
   "apps/web/src/lib/shared-contract-check.ts": {
@@ -666,9 +666,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/lib/sparta-auth.ts": {
-    "mtime": 1795145441.65528,
-    "seen": 1795145492.316323,
-    "ast_hash": "8de77df36be2dc894873e213c6e1ae2e",
+    "mtime": 1795145942.031062,
+    "seen": 1795146004.5051682,
+    "ast_hash": "6d52a9e6c0f7ac7035cfe179ae4165a6",
     "semantic_hash": ""
   },
   "apps/web/src/lib/sparta-team.ts": {
@@ -702,9 +702,9 @@
     "semantic_hash": "249e72c5fe76ee0ccb5409aba98d1b4f"
   },
   "apps/web/src/pages/module-launcher-page.tsx": {
-    "mtime": 1795137062.2283866,
-    "seen": 1795137140.8994975,
-    "ast_hash": "6f6b0172d601b8a8dd1a38b148fcbc20",
+    "mtime": 1795147311.5873053,
+    "seen": 1795147358.7008538,
+    "ast_hash": "7985c5da920a49adf604938423e3aeab",
     "semantic_hash": ""
   },
   "apps/web/src/pages/password-reset-page.tsx": {
@@ -1224,9 +1224,9 @@
     "semantic_hash": ""
   },
   "docs/plan/sisa-plan-sparta.md": {
-    "mtime": 1795145481.8667061,
-    "seen": 1795145492.316323,
-    "ast_hash": "ce76a1d937e0ffcfcc52a51ea4e8a83a",
+    "mtime": 1795145997.6568594,
+    "seen": 1795146004.5051682,
+    "ast_hash": "b89332f7622eec6d9aa3d6f8f7e57588",
     "semantic_hash": ""
   },
   "apps/web/src/components/module-role-select.tsx": {
@@ -1353,6 +1353,36 @@
     "mtime": 1795144130.8077097,
     "seen": 1795144229.6071095,
     "ast_hash": "d6871846964a673623aed2b2739ace5c",
+    "semantic_hash": ""
+  },
+  "apps/api/src/middleware/open-sealed-credentials.ts": {
+    "mtime": 1795145896.089694,
+    "seen": 1795146004.5051682,
+    "ast_hash": "83d4fb7c0d562cb050061fb0f693617f",
+    "semantic_hash": ""
+  },
+  "apps/api/src/services/security/credential-sealer.test.ts": {
+    "mtime": 1795145896.0590804,
+    "seen": 1795146004.5051682,
+    "ast_hash": "e3259a7a91ea834abae2f16ecbda0126",
+    "semantic_hash": ""
+  },
+  "apps/api/src/services/security/credential-sealer.ts": {
+    "mtime": 1795145896.0168948,
+    "seen": 1795146004.5051682,
+    "ast_hash": "764a663c53ddcbdbe9dba653752630fc",
+    "semantic_hash": ""
+  },
+  "apps/web/src/lib/credential-seal.ts": {
+    "mtime": 1795145981.795825,
+    "seen": 1795146004.5051682,
+    "ast_hash": "4af66effb1b219ad515dd19b7f221ff7",
+    "semantic_hash": ""
+  },
+  "apps/web/src/components/portal-backdrop.tsx": {
+    "mtime": 1795147282.4624262,
+    "seen": 1795147358.7008538,
+    "ast_hash": "23ed77ac62d60ecc18021b03b4f2c85a",
     "semantic_hash": ""
   },
   "package-lock.json": {
