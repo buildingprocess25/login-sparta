@@ -183,15 +183,15 @@ function ModuleLauncherPage({ session, onLogout }: ModuleLauncherPageProps) {
         />
       }
     >
-      <section className="flex flex-1 flex-col justify-center gap-5 lg:grid lg:grid-cols-[0.8fr_1.2fr] lg:items-center lg:gap-12">
-        <div className="flex animate-in flex-col gap-2 text-center duration-500 fill-mode-both fade-in slide-in-from-bottom-2 motion-reduce:animate-none sm:gap-3 sm:text-left">
+      <section className="flex flex-1 flex-col justify-start gap-5 pt-2 pb-4 lg:grid lg:grid-cols-[0.8fr_1.2fr] lg:items-center lg:gap-12 lg:py-0">
+        <div className="flex animate-in flex-col gap-1.5 text-left duration-500 fill-mode-both fade-in slide-in-from-bottom-2 motion-reduce:animate-none sm:gap-3">
           <p className="text-xs font-medium text-panel-foreground/65 sm:text-sm">
             Building, Maintenance &amp; Energy
           </p>
-          <h1 className="mx-auto max-w-md font-heading text-2xl font-medium text-balance sm:mx-0 sm:text-3xl lg:text-5xl">
+          <h1 className="max-w-md font-heading text-2xl font-medium text-balance sm:text-3xl lg:text-5xl">
             Pilih modul SPARTA anda.
           </h1>
-          <p className="mx-auto max-w-sm text-xs leading-5 text-panel-foreground/70 sm:mx-0 sm:text-sm sm:leading-6">
+          <p className="max-w-sm text-xs leading-5 text-panel-foreground/70 sm:text-sm sm:leading-6">
             {ssoEnabled
               ? "Buka modul Building, Maintenance, Energy, SIAGA, atau Carbontrack sesuai akses yang terhubung dengan akun internal Anda."
               : "Pilih modul SPARTA untuk menuju halaman login aplikasi terkait."}

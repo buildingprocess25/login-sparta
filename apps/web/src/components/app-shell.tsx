@@ -122,11 +122,11 @@ function AppShell({
         )}
       >
         {session || showHeader ? (
-          <header className="shrink-0 px-4 pt-3 sm:px-6 sm:pt-4 lg:px-10 lg:pt-5">
+          <header className="relative z-20 shrink-0 px-4 pt-3 sm:px-6 sm:pt-4 lg:px-10 lg:pt-5">
             {/* Kapsul navbar mengambang: putih solid di HP (ringan), frosted ringan di desktop */}
-            <div className="rounded-2xl border border-foreground/10 bg-background/95 px-4 py-2.5 shadow-[0_1px_2px_rgb(16_24_32/0.05),0_12px_32px_-16px_rgb(16_24_32/0.16)] lg:rounded-full lg:bg-background/85 lg:py-2 lg:pr-2.5 lg:pl-6 lg:backdrop-blur-md">
+            <div className="rounded-2xl border border-foreground/10 bg-background px-3.5 py-2.5 shadow-[0_1px_2px_rgb(16_24_32/0.05),0_12px_32px_-16px_rgb(16_24_32/0.16)] lg:rounded-full lg:bg-background/85 lg:py-2 lg:pr-2.5 lg:pl-6 lg:backdrop-blur-md">
               {/* Mobile top row */}
-              <div className="flex items-center justify-between lg:hidden">
+              <div className="flex items-center justify-between gap-2 lg:hidden">
                 <Logo />
                 {session ? (
                   <DropdownMenu
@@ -136,16 +136,22 @@ function AppShell({
                     <DropdownMenuTrigger asChild>
                       <Button
                         type="button"
-                        variant="ghost"
+                        variant="secondary"
                         size="icon"
-                        className="rounded-full"
+                        className="size-11 rounded-full border border-foreground/8 bg-muted/80"
                         aria-label={`Profil ${session.fullName}`}
                       >
-                        <Avatar className="size-8">
-                          <AvatarFallback>
-                            {getInitials(session.fullName)}
-                          </AvatarFallback>
-                        </Avatar>
+                        <span className="relative inline-flex shrink-0">
+                          <Avatar size="sm">
+                            <AvatarFallback className="bg-primary text-xs font-semibold text-primary-foreground">
+                              {getInitials(session.fullName)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span
+                            aria-hidden="true"
+                            className="absolute -right-0.5 -bottom-0.5 size-2 rounded-full bg-emerald-500 ring-2 ring-background"
+                          />
+                        </span>
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-64">
@@ -196,36 +202,29 @@ function AppShell({
                 ) : null}
               </div>
 
-              {/* Mobile nav links */}
+              {/* Mobile nav: satu baris horizontal scrollable (tanpa orphan wrap & target sentuh >= 44px) */}
               <nav
                 aria-label="Navigasi utama"
-                className="mt-2.5 flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1.5 border-t border-border/70 pt-2.5 lg:hidden"
+                className="mt-2.5 flex items-center gap-1 overflow-x-auto border-t border-border/70 pt-2 [scrollbar-width:none] lg:hidden [&::-webkit-scrollbar]:hidden"
               >
-                {navItems.map((item, index) => (
-                  <React.Fragment key={item.href}>
-                    {index > 0 ? (
-                      <span
-                        aria-hidden="true"
-                        className="size-1 rounded-full bg-primary/70"
-                      />
-                    ) : null}
+                {navItems.map((item) => {
+                  const isActive = activeRoute === item.href
+                  return (
                     <a
+                      key={item.href}
                       href={item.href}
-                      aria-current={
-                        activeRoute === item.href ? "page" : undefined
-                      }
+                      aria-current={isActive ? "page" : undefined}
                       className={cn(
-                        NAV_LINK_CLASS,
-                        "px-1 text-xs whitespace-nowrap sm:text-sm",
-                        activeRoute === item.href
-                          ? "font-semibold text-foreground"
-                          : "text-muted-foreground"
+                        "inline-flex min-h-11 shrink-0 items-center rounded-full px-3 text-xs font-medium whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+                        isActive
+                          ? "bg-primary/10 font-semibold text-primary"
+                          : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"
                       )}
                     >
                       {item.label}
                     </a>
-                  </React.Fragment>
-                ))}
+                  )
+                })}
               </nav>
 
               {/* Desktop floating pill bar: Logo | Centered dot-separated nav | Profile capsule */}

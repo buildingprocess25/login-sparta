@@ -280,11 +280,11 @@ function AboutSpartaPage({
                kiri-kanan dari atas sampai bawah. */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -top-16 -bottom-16 left-1/2 -z-10 w-screen -translate-x-1/2 bg-[linear-gradient(to_right,rgb(29_34_38/0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgb(29_34_38/0.05)_1px,transparent_1px)] [mask-image:linear-gradient(to_right,transparent,black_18%,black_82%,transparent)] bg-[size:56px_56px]"
+          className="pointer-events-none absolute -top-4 -bottom-16 left-1/2 -z-10 w-screen -translate-x-1/2 bg-[linear-gradient(to_right,rgb(29_34_38/0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgb(29_34_38/0.05)_1px,transparent_1px)] [mask-image:linear-gradient(to_right,transparent,black_18%,black_82%,transparent)] bg-[size:56px_56px] lg:-top-16"
         />
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -top-16 -bottom-16 left-1/2 -z-10 w-screen -translate-x-1/2 bg-[radial-gradient(52rem_36rem_at_82%_12rem,rgb(230_0_11/0.08),transparent_70%),radial-gradient(48rem_34rem_at_6%_32%,rgb(230_0_11/0.05),transparent_70%),radial-gradient(52rem_36rem_at_94%_58%,rgb(230_0_11/0.06),transparent_70%),radial-gradient(48rem_34rem_at_4%_86%,rgb(230_0_11/0.05),transparent_70%)]"
+          className="pointer-events-none absolute -top-4 -bottom-16 left-1/2 -z-10 w-screen -translate-x-1/2 bg-[radial-gradient(52rem_36rem_at_82%_12rem,rgb(230_0_11/0.08),transparent_70%),radial-gradient(48rem_34rem_at_6%_32%,rgb(230_0_11/0.05),transparent_70%),radial-gradient(52rem_36rem_at_94%_58%,rgb(230_0_11/0.06),transparent_70%),radial-gradient(48rem_34rem_at_4%_86%,rgb(230_0_11/0.05),transparent_70%)] lg:-top-16"
         />
         <section className="flex flex-col gap-8">
           {!session && !showHeader ? (

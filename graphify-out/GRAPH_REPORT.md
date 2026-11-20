@@ -1,7 +1,7 @@
 # Graph Report - login-sparta  (2026-11-20)
 
 ## Corpus Check
-- 193 files · ~79,265 words
+- 193 files · ~79,300 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 13 file(s) not represented in the graph (top: (none) 5, .example 2, .toml 1)
 
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `cf3954d3`
+- Built from commit: `dea927ed`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
