@@ -1,1 +1,319 @@
-{"nodes": [{"id": "docs_integration_module_sso_contract_module_sso_contract", "label": "Module SSO Contract", "file_type": "document", "source_file": "docs/integration/module-sso-contract.md", "source_location": "L1", "source_url": null, "captured_at": null, "author": null, "contributor": null}, {"id": "docs_integration_module_sso_contract_sso_flow", "label": "SSO Launch-and-Exchange Flow", "file_type": "concept", "source_file": "docs/integration/module-sso-contract.md", "source_location": "L5", "source_url": null, "captured_at": null, "author": null, "contributor": null}, {"id": "docs_integration_module_sso_contract_post_v1_modules_launch", "label": "POST /v1/modules/:moduleId/launch", "file_type": "concept", "source_file": "docs/integration/module-sso-contract.md", "source_location": "L9", "source_url": null, "captured_at": null, "author": null, "contributor": null}, {"id": "docs_integration_module_sso_contract_launch_token", "label": "One-time Launch Token (TTL 2 min)", "file_type": "concept", "source_file": "docs/integration/module-sso-contract.md", "source_location": "L10", "source_url": null, "captured_at": null, "author": null, "contributor": null}, {"id": "docs_integration_module_sso_contract_post_v1_sso_exchange", "label": "POST /v1/sso/exchange", "file_type": "concept", "source_file": "docs/integration/module-sso-contract.md", "source_location": "L29", "source_url": null, "captured_at": null, "author": null, "contributor": null}, {"id": "docs_integration_module_sso_contract_sparta_sso_user_payload_v2", "label": "SpartaSsoUserPayload (contract v2)", "file_type": "concept", "source_file": "docs/integration/module-sso-contract.md", "source_location": "L38", "source_url": null, "captured_at": null, "author": null, "contributor": null, "rationale": "v2 adds contractVersion, spartaUserId, employeeId, branchCode while keeping v1 fields; modules must accept v1 during transition."}, {"id": "docs_integration_module_sso_contract_user_matching_order", "label": "User matching order: spartaUserId, employeeId, email", "file_type": "rationale", "source_file": "docs/integration/module-sso-contract.md", "source_location": "L21", "source_url": null, "captured_at": null, "author": null, "contributor": null, "rationale": "spartaUserId never changes; email can change via portal, so storing spartaUserId keeps accounts linked after email changes."}, {"id": "docs_integration_module_sso_contract_sso_error_codes", "label": "SSO error codes (INVALID_SSO_TOKEN, SSO_TOKEN_CONSUMED, SSO_TOKEN_EXPIRED, SSO_MODULE_MISMATCH)", "file_type": "concept", "source_file": "docs/integration/module-sso-contract.md", "source_location": "L72", "source_url": null, "captured_at": null, "author": null, "contributor": null}, {"id": "docs_integration_module_sso_contract_admin_users_sync", "label": "POST /v1/admin/users/sync", "file_type": "concept", "source_file": "docs/integration/module-sso-contract.md", "source_location": "L81", "source_url": null, "captured_at": null, "author": null, "contributor": null, "rationale": "Email is portal-owned; module sync never changes portal email for users that already have spartaUserId."}, {"id": "docs_integration_module_sso_contract_admin_users_sync_delete", "label": "POST /v1/admin/users/sync-delete", "file_type": "concept", "source_file": "docs/integration/module-sso-contract.md", "source_location": "L87", "source_url": null, "captured_at": null, "author": null, "contributor": null}, {"id": "docs_integration_module_sso_contract_master_branches_areas", "label": "GET /v1/master/branches and /v1/master/areas (updatedSince sync)", "file_type": "concept", "source_file": "docs/integration/module-sso-contract.md", "source_location": "L95", "source_url": null, "captured_at": null, "author": null, "contributor": null, "rationale": "meta.syncedAt is captured before the query so changes during the query are not missed on the next incremental sync."}, {"id": "docs_integration_module_sso_contract_module_owned_authorization", "label": "Module-owned authorization (portal only guarantees identity + module list)", "file_type": "rationale", "source_file": "docs/integration/module-sso-contract.md", "source_location": "L115", "source_url": null, "captured_at": null, "author": null, "contributor": null}], "edges": [{"source": "docs_integration_module_sso_contract_module_sso_contract", "target": "docs_integration_module_sso_contract_sso_flow", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "docs/integration/module-sso-contract.md", "source_location": "L5", "weight": 1.0}, {"source": "docs_integration_module_sso_contract_sso_flow", "target": "docs_integration_module_sso_contract_post_v1_modules_launch", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "docs/integration/module-sso-contract.md", "source_location": "L9", "weight": 1.0}, {"source": "docs_integration_module_sso_contract_post_v1_modules_launch", "target": "docs_integration_module_sso_contract_launch_token", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "docs/integration/module-sso-contract.md", "source_location": "L10", "weight": 1.0}, {"source": "docs_integration_module_sso_contract_sso_flow", "target": "docs_integration_module_sso_contract_post_v1_sso_exchange", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "docs/integration/module-sso-contract.md", "source_location": "L14", "weight": 1.0}, {"source": "docs_integration_module_sso_contract_post_v1_sso_exchange", "target": "docs_integration_module_sso_contract_launch_token", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "docs/integration/module-sso-contract.md", "source_location": "L19", "weight": 1.0}, {"source": "docs_integration_module_sso_contract_post_v1_sso_exchange", "target": "docs_integration_module_sso_contract_sparta_sso_user_payload_v2", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "docs/integration/module-sso-contract.md", "source_location": "L38", "weight": 1.0}, {"source": "docs_integration_module_sso_contract_post_v1_sso_exchange", "target": "docs_integration_module_sso_contract_sso_error_codes", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "docs/integration/module-sso-contract.md", "source_location": "L72", "weight": 1.0}, {"source": "docs_integration_module_sso_contract_user_matching_order", "target": "docs_integration_module_sso_contract_sparta_sso_user_payload_v2", "relation": "rationale_for", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "docs/integration/module-sso-contract.md", "source_location": "L21", "weight": 1.0}, {"source": "docs_integration_module_sso_contract_module_sso_contract", "target": "docs_integration_module_sso_contract_admin_users_sync", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "docs/integration/module-sso-contract.md", "source_location": "L81", "weight": 1.0}, {"source": "docs_integration_module_sso_contract_module_sso_contract", "target": "docs_integration_module_sso_contract_admin_users_sync_delete", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "docs/integration/module-sso-contract.md", "source_location": "L87", "weight": 1.0}, {"source": "docs_integration_module_sso_contract_module_sso_contract", "target": "docs_integration_module_sso_contract_master_branches_areas", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "docs/integration/module-sso-contract.md", "source_location": "L95", "weight": 1.0}, {"source": "docs_integration_module_sso_contract_module_sso_contract", "target": "docs_integration_module_sso_contract_module_owned_authorization", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "docs/integration/module-sso-contract.md", "source_location": "L115", "weight": 1.0}, {"source": "docs_integration_module_sso_contract_admin_users_sync", "target": "docs_integration_module_sso_contract_sparta_sso_user_payload_v2", "relation": "shares_data_with", "confidence": "INFERRED", "confidence_score": 0.85, "source_file": "docs/integration/module-sso-contract.md", "source_location": null, "weight": 1.0}, {"source": "docs_integration_module_sso_contract_sparta_sso_user_payload_v2", "target": "readme_sparta_shared_package", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "docs/integration/module-sso-contract.md", "source_location": "L68", "weight": 1.0}, {"source": "docs_integration_module_sso_contract_launch_token", "target": "docs_superpowers_plans_2026_06_17_sparta_backend_monorepo_spec_module_launch_model", "relation": "shares_data_with", "confidence": "INFERRED", "confidence_score": 0.95, "source_file": "docs/integration/module-sso-contract.md", "source_location": null, "weight": 1.0}, {"source": "docs_integration_module_sso_contract_module_sso_contract", "target": "docs_superpowers_plans_2026_06_17_sparta_backend_monorepo_spec_backend_monorepo_plan", "relation": "implements", "confidence": "INFERRED", "confidence_score": 0.95, "source_file": "docs/integration/module-sso-contract.md", "source_location": null, "weight": 1.0}], "hyperedges": [{"id": "sparta_sso_launch_exchange_flow", "label": "SPARTA SSO launch-token exchange flow", "nodes": ["docs_integration_module_sso_contract_post_v1_modules_launch", "docs_integration_module_sso_contract_launch_token", "docs_integration_module_sso_contract_post_v1_sso_exchange", "docs_integration_module_sso_contract_user_matching_order", "docs_superpowers_plans_2026_06_17_sparta_backend_monorepo_spec_module_launch_model"], "relation": "participate_in", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "docs/integration/module-sso-contract.md"}]}
+{
+  "nodes": [
+    {
+      "id": "docs_integration_module_sso_contract_module_sso_contract",
+      "label": "Module SSO Contract",
+      "file_type": "document",
+      "source_file": "docs/integration/module-sso-contract.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_integration_module_sso_contract_sso_flow",
+      "label": "SSO Launch-and-Exchange Flow",
+      "file_type": "concept",
+      "source_file": "docs/integration/module-sso-contract.md",
+      "source_location": "L5",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_integration_module_sso_contract_post_v1_modules_launch",
+      "label": "POST /v1/modules/:moduleId/launch",
+      "file_type": "concept",
+      "source_file": "docs/integration/module-sso-contract.md",
+      "source_location": "L9",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_integration_module_sso_contract_launch_token",
+      "label": "One-time Launch Token (TTL 2 min)",
+      "file_type": "concept",
+      "source_file": "docs/integration/module-sso-contract.md",
+      "source_location": "L10",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_integration_module_sso_contract_post_v1_sso_exchange",
+      "label": "POST /v1/sso/exchange",
+      "file_type": "concept",
+      "source_file": "docs/integration/module-sso-contract.md",
+      "source_location": "L29",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_integration_module_sso_contract_sparta_sso_user_payload_v2",
+      "label": "SpartaSsoUserPayload (contract v2)",
+      "file_type": "concept",
+      "source_file": "docs/integration/module-sso-contract.md",
+      "source_location": "L38",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "v2 adds contractVersion, spartaUserId, employeeId, branchCode while keeping v1 fields; modules must accept v1 during transition."
+    },
+    {
+      "id": "docs_integration_module_sso_contract_user_matching_order",
+      "label": "User matching order: spartaUserId, employeeId, email",
+      "file_type": "rationale",
+      "source_file": "docs/integration/module-sso-contract.md",
+      "source_location": "L21",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "spartaUserId never changes; email can change via portal, so storing spartaUserId keeps accounts linked after email changes."
+    },
+    {
+      "id": "docs_integration_module_sso_contract_sso_error_codes",
+      "label": "SSO error codes (INVALID_SSO_TOKEN, SSO_TOKEN_CONSUMED, SSO_TOKEN_EXPIRED, SSO_MODULE_MISMATCH)",
+      "file_type": "concept",
+      "source_file": "docs/integration/module-sso-contract.md",
+      "source_location": "L72",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_integration_module_sso_contract_admin_users_sync",
+      "label": "POST /v1/admin/users/sync",
+      "file_type": "concept",
+      "source_file": "docs/integration/module-sso-contract.md",
+      "source_location": "L81",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Email is portal-owned; module sync never changes portal email for users that already have spartaUserId."
+    },
+    {
+      "id": "docs_integration_module_sso_contract_admin_users_sync_delete",
+      "label": "POST /v1/admin/users/sync-delete",
+      "file_type": "concept",
+      "source_file": "docs/integration/module-sso-contract.md",
+      "source_location": "L87",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_integration_module_sso_contract_master_branches_areas",
+      "label": "GET /v1/master/branches and /v1/master/areas (updatedSince sync)",
+      "file_type": "concept",
+      "source_file": "docs/integration/module-sso-contract.md",
+      "source_location": "L95",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "meta.syncedAt is captured before the query so changes during the query are not missed on the next incremental sync."
+    },
+    {
+      "id": "docs_integration_module_sso_contract_module_owned_authorization",
+      "label": "Module-owned authorization (portal only guarantees identity + module list)",
+      "file_type": "rationale",
+      "source_file": "docs/integration/module-sso-contract.md",
+      "source_location": "L115",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_integration_module_sso_contract_module_sso_contract",
+      "target": "docs_integration_module_sso_contract_sso_flow",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/integration/module-sso-contract.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_integration_module_sso_contract_sso_flow",
+      "target": "docs_integration_module_sso_contract_post_v1_modules_launch",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/integration/module-sso-contract.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_integration_module_sso_contract_post_v1_modules_launch",
+      "target": "docs_integration_module_sso_contract_launch_token",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/integration/module-sso-contract.md",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_integration_module_sso_contract_sso_flow",
+      "target": "docs_integration_module_sso_contract_post_v1_sso_exchange",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/integration/module-sso-contract.md",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_integration_module_sso_contract_post_v1_sso_exchange",
+      "target": "docs_integration_module_sso_contract_launch_token",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/integration/module-sso-contract.md",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_integration_module_sso_contract_post_v1_sso_exchange",
+      "target": "docs_integration_module_sso_contract_sparta_sso_user_payload_v2",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/integration/module-sso-contract.md",
+      "source_location": "L38",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_integration_module_sso_contract_post_v1_sso_exchange",
+      "target": "docs_integration_module_sso_contract_sso_error_codes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/integration/module-sso-contract.md",
+      "source_location": "L72",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_integration_module_sso_contract_user_matching_order",
+      "target": "docs_integration_module_sso_contract_sparta_sso_user_payload_v2",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/integration/module-sso-contract.md",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_integration_module_sso_contract_module_sso_contract",
+      "target": "docs_integration_module_sso_contract_admin_users_sync",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/integration/module-sso-contract.md",
+      "source_location": "L81",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_integration_module_sso_contract_module_sso_contract",
+      "target": "docs_integration_module_sso_contract_admin_users_sync_delete",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/integration/module-sso-contract.md",
+      "source_location": "L87",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_integration_module_sso_contract_module_sso_contract",
+      "target": "docs_integration_module_sso_contract_master_branches_areas",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/integration/module-sso-contract.md",
+      "source_location": "L95",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_integration_module_sso_contract_module_sso_contract",
+      "target": "docs_integration_module_sso_contract_module_owned_authorization",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/integration/module-sso-contract.md",
+      "source_location": "L115",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_integration_module_sso_contract_admin_users_sync",
+      "target": "docs_integration_module_sso_contract_sparta_sso_user_payload_v2",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/integration/module-sso-contract.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_integration_module_sso_contract_sparta_sso_user_payload_v2",
+      "target": "readme_sparta_shared_package",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/integration/module-sso-contract.md",
+      "source_location": "L68",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_integration_module_sso_contract_launch_token",
+      "target": "docs_superpowers_plans_2026_06_17_sparta_backend_monorepo_spec_module_launch_model",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "docs/integration/module-sso-contract.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_integration_module_sso_contract_module_sso_contract",
+      "target": "docs_superpowers_plans_2026_06_17_sparta_backend_monorepo_spec_backend_monorepo_plan",
+      "relation": "implements",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "docs/integration/module-sso-contract.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "sparta_sso_launch_exchange_flow",
+      "label": "SPARTA SSO launch-token exchange flow",
+      "nodes": [
+        "docs_integration_module_sso_contract_post_v1_modules_launch",
+        "docs_integration_module_sso_contract_launch_token",
+        "docs_integration_module_sso_contract_post_v1_sso_exchange",
+        "docs_integration_module_sso_contract_user_matching_order",
+        "docs_superpowers_plans_2026_06_17_sparta_backend_monorepo_spec_module_launch_model"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/integration/module-sso-contract.md"
+    }
+  ]
+}

@@ -211,6 +211,12 @@ export function MasterBranchDialog({
                   ))}
                 </SelectContent>
               </Select>
+              {selectableAreas.length === 0 ? (
+                <FieldDescription>
+                  Belum ada area aktif. Buat area dulu di tab Area, lalu pilih
+                  area di sini. Cabang tetap bisa disimpan tanpa area.
+                </FieldDescription>
+              ) : null}
             </Field>
 
             {isEdit ? (

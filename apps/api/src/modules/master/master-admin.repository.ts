@@ -181,14 +181,25 @@ export class PrismaMasterAdminRepository implements MasterAdminRepository {
     await this.client.area.update({ where: { code }, data: patch })
   }
 
+  // Alias ditulis lewat cabangnya agar Branch.updatedAt ikut berubah: modul
+  // yang sync dengan `updatedSince` perlu menerima ulang daftar aliasnya.
   async createAlias(branchCode: string, alias: string, source: string) {
-    await this.client.branchAlias.create({
-      data: { alias, source, branch: { connect: { code: branchCode } } },
+    await this.client.branch.update({
+      where: { code: branchCode },
+      data: { aliases: { create: { alias, source } } },
     })
   }
 
   async deleteAlias(aliasId: string) {
-    await this.client.branchAlias.delete({ where: { id: aliasId } })
+    const alias = await this.client.branchAlias.findUnique({
+      where: { id: aliasId },
+      select: { branchId: true },
+    })
+    if (!alias) return
+    await this.client.branch.update({
+      where: { id: alias.branchId },
+      data: { aliases: { delete: { id: aliasId } } },
+    })
   }
 
   async createAuditEvent(input: {

@@ -99,13 +99,15 @@ Data master cabang dan area untuk sync malam. Parameter opsional `updatedSince` 
 ```json
 {
   "data": [
-    { "code": "BDG", "name": "Bandung", "address": null, "areaCode": "JABAR", "isActive": true, "updatedAt": "2026-11-18T00:00:00.000Z" }
+    { "code": "BDG", "name": "Bandung", "address": null, "areaCode": "JABAR", "isActive": true, "aliases": ["BANDUNG", "CABANG BANDUNG"], "updatedAt": "2026-11-18T00:00:00.000Z" }
   ],
   "meta": { "syncedAt": "2026-11-19T01:00:00.000Z", "count": 1 }
 }
 ```
 
 Simpan `meta.syncedAt` dan pakai sebagai `updatedSince` di sync berikutnya. Waktu ini diambil sebelum query, jadi perubahan yang terjadi saat query berjalan tidak terlewat.
+
+`aliases` (hanya di `/branches`) berisi nama atau kode lama yang dipetakan admin ke cabang ini, sudah dinormalisasi: spasi dirapikan, huruf besar. Modul yang menyimpan nama cabang memetakan nama ke kode dengan urutan: cocokkan `code`, lalu `name` (huruf besar), lalu `aliases`. Menambah atau menghapus alias mengubah `updatedAt` cabang, jadi sync `updatedSince` ikut menerima daftar alias terbaru. Nama yang tetap tidak cocok dilaporkan ke admin portal untuk dibuatkan alias, jangan dibuat cabang baru di modul.
 
 ## Provisioning (Fase 2B, portal ke modul)
 

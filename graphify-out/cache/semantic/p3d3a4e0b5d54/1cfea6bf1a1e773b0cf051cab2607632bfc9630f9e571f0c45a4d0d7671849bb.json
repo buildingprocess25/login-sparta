@@ -1,1 +1,38 @@
-{"nodes": [{"id": "apps_web_index_html_entry", "label": "apps/web index.html (SPARTA SPA entry)", "file_type": "code", "source_file": "apps/web/index.html", "source_location": "L1", "source_url": null, "captured_at": null, "author": null, "contributor": null}], "edges": [{"source": "apps_web_index_html_entry", "target": "readme_sparta_web_package", "relation": "conceptually_related_to", "confidence": "INFERRED", "confidence_score": 0.85, "source_file": "apps/web/index.html", "source_location": null, "weight": 1.0}, {"source": "apps_web_index_html_entry", "target": "docs_superpowers_plans_2026_06_17_sparta_backend_monorepo_spec_app_module_model", "relation": "shares_data_with", "confidence": "INFERRED", "confidence_score": 0.55, "source_file": "apps/web/index.html", "source_location": "L10", "weight": 1.0}], "hyperedges": []}
+{
+  "nodes": [
+    {
+      "id": "apps_web_index_html_entry",
+      "label": "apps/web index.html (SPARTA SPA entry)",
+      "file_type": "code",
+      "source_file": "apps/web/index.html",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "apps_web_index_html_entry",
+      "target": "readme_sparta_web_package",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "apps/web/index.html",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_web_index_html_entry",
+      "target": "docs_superpowers_plans_2026_06_17_sparta_backend_monorepo_spec_app_module_model",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.55,
+      "source_file": "apps/web/index.html",
+      "source_location": "L10",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

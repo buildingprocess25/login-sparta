@@ -1,1 +1,111 @@
-{"nodes": [{"id": "setup_guide_setup_guide", "label": "Panduan Setup SPARTA Login Portal", "file_type": "document", "source_file": "SETUP_GUIDE.md", "source_location": "L1", "source_url": null, "captured_at": null, "author": null, "contributor": null}, {"id": "setup_guide_api_env_config", "label": "API .env.development config (DATABASE_URL, SESSION_SECRET, OTP_PEPPER, Gmail, module callbacks)", "file_type": "concept", "source_file": "SETUP_GUIDE.md", "source_location": "L25", "source_url": null, "captured_at": null, "author": null, "contributor": null}, {"id": "setup_guide_web_env_config", "label": "Web .env.development config (VITE_API_BASE_URL, module login URLs)", "file_type": "concept", "source_file": "SETUP_GUIDE.md", "source_location": "L61", "source_url": null, "captured_at": null, "author": null, "contributor": null}, {"id": "setup_guide_prisma_database_setup", "label": "Prisma database setup (generate, migrate, seed)", "file_type": "concept", "source_file": "SETUP_GUIDE.md", "source_location": "L76", "source_url": null, "captured_at": null, "author": null, "contributor": null}], "edges": [{"source": "setup_guide_setup_guide", "target": "setup_guide_api_env_config", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "SETUP_GUIDE.md", "source_location": "L25", "weight": 1.0}, {"source": "setup_guide_setup_guide", "target": "setup_guide_web_env_config", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "SETUP_GUIDE.md", "source_location": "L61", "weight": 1.0}, {"source": "setup_guide_setup_guide", "target": "setup_guide_prisma_database_setup", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "SETUP_GUIDE.md", "source_location": "L76", "weight": 1.0}, {"source": "setup_guide_setup_guide", "target": "readme_sparta_login_portal", "relation": "semantically_similar_to", "confidence": "INFERRED", "confidence_score": 0.75, "source_file": "SETUP_GUIDE.md", "source_location": null, "weight": 1.0}, {"source": "setup_guide_api_env_config", "target": "docs_superpowers_plans_2026_06_17_sparta_backend_monorepo_spec_deployment_architecture", "relation": "shares_data_with", "confidence": "INFERRED", "confidence_score": 0.85, "source_file": "SETUP_GUIDE.md", "source_location": null, "weight": 1.0}, {"source": "setup_guide_api_env_config", "target": "docs_superpowers_plans_2026_06_17_sparta_backend_monorepo_spec_app_module_model", "relation": "shares_data_with", "confidence": "INFERRED", "confidence_score": 0.75, "source_file": "SETUP_GUIDE.md", "source_location": null, "weight": 1.0}], "hyperedges": []}
+{
+  "nodes": [
+    {
+      "id": "setup_guide_setup_guide",
+      "label": "Panduan Setup SPARTA Login Portal",
+      "file_type": "document",
+      "source_file": "SETUP_GUIDE.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "setup_guide_api_env_config",
+      "label": "API .env.development config (DATABASE_URL, SESSION_SECRET, OTP_PEPPER, Gmail, module callbacks)",
+      "file_type": "concept",
+      "source_file": "SETUP_GUIDE.md",
+      "source_location": "L25",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "setup_guide_web_env_config",
+      "label": "Web .env.development config (VITE_API_BASE_URL, module login URLs)",
+      "file_type": "concept",
+      "source_file": "SETUP_GUIDE.md",
+      "source_location": "L61",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "setup_guide_prisma_database_setup",
+      "label": "Prisma database setup (generate, migrate, seed)",
+      "file_type": "concept",
+      "source_file": "SETUP_GUIDE.md",
+      "source_location": "L76",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "setup_guide_setup_guide",
+      "target": "setup_guide_api_env_config",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "SETUP_GUIDE.md",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "setup_guide_setup_guide",
+      "target": "setup_guide_web_env_config",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "SETUP_GUIDE.md",
+      "source_location": "L61",
+      "weight": 1.0
+    },
+    {
+      "source": "setup_guide_setup_guide",
+      "target": "setup_guide_prisma_database_setup",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "SETUP_GUIDE.md",
+      "source_location": "L76",
+      "weight": 1.0
+    },
+    {
+      "source": "setup_guide_setup_guide",
+      "target": "readme_sparta_login_portal",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "SETUP_GUIDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "setup_guide_api_env_config",
+      "target": "docs_superpowers_plans_2026_06_17_sparta_backend_monorepo_spec_deployment_architecture",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "SETUP_GUIDE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "setup_guide_api_env_config",
+      "target": "docs_superpowers_plans_2026_06_17_sparta_backend_monorepo_spec_app_module_model",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "SETUP_GUIDE.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

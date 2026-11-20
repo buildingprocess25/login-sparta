@@ -1,1 +1,510 @@
-{"nodes": [{"id": "$graphify-root$_docs_plan_sisa_plan_sparta_md", "label": "sisa-plan-sparta.md", "file_type": "document", "node_kind": "page", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L1"}, {"id": "$graphify-root$_docs_plan_sisa_plan_sparta_sisa_plan_sparta_lanjut_2026_11_20", "label": "Sisa Plan SPARTA (lanjut 2026-11-20)", "file_type": "document", "node_kind": "heading", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L1"}, {"id": "$graphify-root$_docs_plan_sisa_plan_sparta_aturan_kerja_berlaku_untuk_semua_sesi", "label": "Aturan kerja (berlaku untuk semua sesi)", "file_type": "document", "node_kind": "heading", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L5"}, {"id": "$graphify-root$_docs_plan_sisa_plan_sparta_status_fase", "label": "Status fase", "file_type": "document", "node_kind": "heading", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L13"}, {"id": "$graphify-root$_docs_plan_sisa_plan_sparta_langkah_berikutnya_fase_2b", "label": "Langkah berikutnya: Fase 2B", "file_type": "document", "node_kind": "heading", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L24"}, {"id": "$graphify-root$_docs_plan_sisa_plan_sparta_portal_sesi_ini", "label": "Portal (sesi ini)", "file_type": "document", "node_kind": "heading", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L26"}, {"id": "$graphify-root$_docs_plan_sisa_plan_sparta_modul_menunggu_izin_user", "label": "Modul (menunggu izin user)", "file_type": "document", "node_kind": "heading", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L33"}, {"id": "$graphify-root$_docs_plan_sisa_plan_sparta_keputusan_yang_menunggu_user", "label": "Keputusan yang menunggu user", "file_type": "document", "node_kind": "heading", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L43"}, {"id": "$graphify-root$_docs_plan_sisa_plan_sparta_fase_2_di_modul_belum_mulai", "label": "Fase 2 di modul (belum mulai)", "file_type": "document", "node_kind": "heading", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L49"}, {"id": "$graphify-root$_docs_plan_sisa_plan_sparta_fase_3_master_toko", "label": "Fase 3: master Toko", "file_type": "document", "node_kind": "heading", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L54"}, {"id": "$graphify-root$_docs_plan_sisa_plan_sparta_fase_4_master_fasilitas", "label": "Fase 4: master Fasilitas", "file_type": "document", "node_kind": "heading", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L60"}, {"id": "$graphify-root$_docs_plan_sisa_plan_sparta_migrasi_yang_belum_dijalankan_ke_database_mana_pun", "label": "Migrasi yang belum dijalankan ke database mana pun", "file_type": "document", "node_kind": "heading", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L64"}, {"id": "$graphify-root$_docs_plan_sisa_plan_sparta_catatan_keamanan_yang_belum_dibereskan", "label": "Catatan keamanan yang belum dibereskan", "file_type": "document", "node_kind": "heading", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L70"}, {"id": "$graphify-root$_docs_plan_sisa_plan_sparta_lingkungan_dev", "label": "Lingkungan dev", "file_type": "document", "node_kind": "heading", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L77"}], "edges": [{"source": "$graphify-root$_docs_plan_sisa_plan_sparta_md", "target": "$graphify-root$_docs_plan_sisa_plan_sparta_sisa_plan_sparta_lanjut_2026_11_20", "relation": "contains", "confidence": "EXTRACTED", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L1", "weight": 1.0}, {"source": "$graphify-root$_docs_plan_sisa_plan_sparta_md", "target": "$graphify-root$_docs_integration_module_sso_contract_md", "relation": "references", "confidence": "EXTRACTED", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L3", "weight": 1.0, "target_file": "$graphify-root$/docs/integration/module-sso-contract.md"}, {"source": "$graphify-root$_docs_plan_sisa_plan_sparta_sisa_plan_sparta_lanjut_2026_11_20", "target": "$graphify-root$_docs_plan_sisa_plan_sparta_aturan_kerja_berlaku_untuk_semua_sesi", "relation": "contains", "confidence": "EXTRACTED", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L5", "weight": 1.0}, {"source": "$graphify-root$_docs_plan_sisa_plan_sparta_sisa_plan_sparta_lanjut_2026_11_20", "target": "$graphify-root$_docs_plan_sisa_plan_sparta_status_fase", "relation": "contains", "confidence": "EXTRACTED", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L13", "weight": 1.0}, {"source": "$graphify-root$_docs_plan_sisa_plan_sparta_sisa_plan_sparta_lanjut_2026_11_20", "target": "$graphify-root$_docs_plan_sisa_plan_sparta_langkah_berikutnya_fase_2b", "relation": "contains", "confidence": "EXTRACTED", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L24", "weight": 1.0}, {"source": "$graphify-root$_docs_plan_sisa_plan_sparta_langkah_berikutnya_fase_2b", "target": "$graphify-root$_docs_plan_sisa_plan_sparta_portal_sesi_ini", "relation": "contains", "confidence": "EXTRACTED", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L26", "weight": 1.0}, {"source": "$graphify-root$_docs_plan_sisa_plan_sparta_langkah_berikutnya_fase_2b", "target": "$graphify-root$_docs_plan_sisa_plan_sparta_modul_menunggu_izin_user", "relation": "contains", "confidence": "EXTRACTED", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L33", "weight": 1.0}, {"source": "$graphify-root$_docs_plan_sisa_plan_sparta_langkah_berikutnya_fase_2b", "target": "$graphify-root$_docs_plan_sisa_plan_sparta_keputusan_yang_menunggu_user", "relation": "contains", "confidence": "EXTRACTED", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L43", "weight": 1.0}, {"source": "$graphify-root$_docs_plan_sisa_plan_sparta_sisa_plan_sparta_lanjut_2026_11_20", "target": "$graphify-root$_docs_plan_sisa_plan_sparta_fase_2_di_modul_belum_mulai", "relation": "contains", "confidence": "EXTRACTED", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L49", "weight": 1.0}, {"source": "$graphify-root$_docs_plan_sisa_plan_sparta_sisa_plan_sparta_lanjut_2026_11_20", "target": "$graphify-root$_docs_plan_sisa_plan_sparta_fase_3_master_toko", "relation": "contains", "confidence": "EXTRACTED", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L54", "weight": 1.0}, {"source": "$graphify-root$_docs_plan_sisa_plan_sparta_sisa_plan_sparta_lanjut_2026_11_20", "target": "$graphify-root$_docs_plan_sisa_plan_sparta_fase_4_master_fasilitas", "relation": "contains", "confidence": "EXTRACTED", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L60", "weight": 1.0}, {"source": "$graphify-root$_docs_plan_sisa_plan_sparta_sisa_plan_sparta_lanjut_2026_11_20", "target": "$graphify-root$_docs_plan_sisa_plan_sparta_migrasi_yang_belum_dijalankan_ke_database_mana_pun", "relation": "contains", "confidence": "EXTRACTED", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L64", "weight": 1.0}, {"source": "$graphify-root$_docs_plan_sisa_plan_sparta_sisa_plan_sparta_lanjut_2026_11_20", "target": "$graphify-root$_docs_plan_sisa_plan_sparta_catatan_keamanan_yang_belum_dibereskan", "relation": "contains", "confidence": "EXTRACTED", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L70", "weight": 1.0}, {"source": "$graphify-root$_docs_plan_sisa_plan_sparta_sisa_plan_sparta_lanjut_2026_11_20", "target": "$graphify-root$_docs_plan_sisa_plan_sparta_lingkungan_dev", "relation": "contains", "confidence": "EXTRACTED", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L77", "weight": 1.0}], "raw_calls": [{"caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_status_fase", "callee": "spartaUserId", "is_member_call": false, "language": "markdown", "context": "spartaUserId", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L17"}, {"caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_status_fase", "callee": "employeeId", "is_member_call": false, "language": "markdown", "context": "employeeId", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L17"}, {"caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_status_fase", "callee": "branchCode", "is_member_call": false, "language": "markdown", "context": "branchCode", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L17"}, {"caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_portal_sesi_ini", "callee": "SYSTEM_ADMIN", "is_member_call": false, "language": "markdown", "context": "SYSTEM_ADMIN", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L30"}, {"caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_portal_sesi_ini", "callee": "changeEmailAndBroadcast", "is_member_call": false, "language": "markdown", "context": "changeEmailAndBroadcast", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L31"}, {"caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_modul_menunggu_izin_user", "callee": "is_active", "is_member_call": false, "language": "markdown", "context": "app_user.is_active", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L35", "qualifiers": ["app_user"]}, {"caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_modul_menunggu_izin_user", "callee": "applied", "is_member_call": false, "language": "markdown", "context": "applied", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L35"}, {"caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_modul_menunggu_izin_user", "callee": "ignored", "is_member_call": false, "language": "markdown", "context": "ignored", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L35"}, {"caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_modul_menunggu_izin_user", "callee": "unknown_user", "is_member_call": false, "language": "markdown", "context": "unknown_user", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L35"}, {"caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_modul_menunggu_izin_user", "callee": "stale_event", "is_member_call": false, "language": "markdown", "context": "stale_event", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L35"}, {"caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_modul_menunggu_izin_user", "callee": "provisioningUrl", "is_member_call": false, "language": "markdown", "context": "AppModule.provisioningUrl", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L36", "qualifiers": ["AppModule"]}, {"caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_modul_menunggu_izin_user", "callee": "SPARTA_PROVISIONING_SECRET_CARBONTRACK", "is_member_call": false, "language": "markdown", "context": "SPARTA_PROVISIONING_SECRET_CARBONTRACK", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L36"}, {"caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_modul_menunggu_izin_user", "callee": "SPARTA_PROVISIONING_SECRET", "is_member_call": false, "language": "markdown", "context": "SPARTA_PROVISIONING_SECRET", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L36"}, {"caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_modul_menunggu_izin_user", "callee": "granted", "is_member_call": false, "language": "markdown", "context": "access.granted", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L37", "qualifiers": ["access"]}, {"caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_modul_menunggu_izin_user", "callee": "role", "is_member_call": false, "language": "markdown", "context": "access.role", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L37", "qualifiers": ["access"]}, {"caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_modul_menunggu_izin_user", "callee": "updated", "is_member_call": false, "language": "markdown", "context": "user.updated", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L37", "qualifiers": ["user"]}, {"caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_modul_menunggu_izin_user", "callee": "SPARTA_PROVISIONING_SECRET_ENERGY", "is_member_call": false, "language": "markdown", "context": "SPARTA_PROVISIONING_SECRET_ENERGY", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L38"}, {"caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_modul_menunggu_izin_user", "callee": "changeEmailAndBroadcast", "is_member_call": false, "language": "markdown", "context": "changeEmailAndBroadcast", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L39"}, {"caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_modul_menunggu_izin_user", "callee": "branchCode", "is_member_call": false, "language": "markdown", "context": "branchCode", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L39"}, {"caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_keputusan_yang_menunggu_user", "callee": "users", "is_member_call": false, "language": "markdown", "context": "users", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L45"}, {"caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_keputusan_yang_menunggu_user", "callee": "is_active", "is_member_call": false, "language": "markdown", "context": "is_active", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L45"}, {"caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_keputusan_yang_menunggu_user", "callee": "granted", "is_member_call": false, "language": "markdown", "context": "access.granted", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L46", "qualifiers": ["access"]}, {"caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_keputusan_yang_menunggu_user", "callee": "ignored", "is_member_call": false, "language": "markdown", "context": "ignored", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L46"}, {"caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_fase_2_di_modul_belum_mulai", "callee": "branchCode", "is_member_call": false, "language": "markdown", "context": "branchCode", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L51"}, {"caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_catatan_keamanan_yang_belum_dibereskan", "callee": "SPARTA_INTERNAL_API_KEY", "is_member_call": false, "language": "markdown", "context": "SPARTA_INTERNAL_API_KEY", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L73"}, {"caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_catatan_keamanan_yang_belum_dibereskan", "callee": "changeEmailAndBroadcast", "is_member_call": false, "language": "markdown", "context": "changeEmailAndBroadcast", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L74"}, {"caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_catatan_keamanan_yang_belum_dibereskan", "callee": "cn", "is_member_call": false, "language": "markdown", "context": "cn", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L75"}, {"caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_lingkungan_dev", "callee": "VITE_SPARTA_DEV_ROLE", "is_member_call": false, "language": "markdown", "context": "VITE_SPARTA_DEV_ROLE", "source_file": "docs/plan/sisa-plan-sparta.md", "source_location": "L79"}], "input_tokens": 0, "output_tokens": 0, "_cached_target_files": ["$graphify-root$/docs/integration/module-sso-contract.md"]}
+{
+  "nodes": [
+    {
+      "id": "$graphify-root$_docs_plan_sisa_plan_sparta_md",
+      "label": "sisa-plan-sparta.md",
+      "file_type": "document",
+      "node_kind": "page",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "$graphify-root$_docs_plan_sisa_plan_sparta_sisa_plan_sparta_lanjut_2026_11_20",
+      "label": "Sisa Plan SPARTA (lanjut 2026-11-20)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "$graphify-root$_docs_plan_sisa_plan_sparta_aturan_kerja_berlaku_untuk_semua_sesi",
+      "label": "Aturan kerja (berlaku untuk semua sesi)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "$graphify-root$_docs_plan_sisa_plan_sparta_status_fase",
+      "label": "Status fase",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "$graphify-root$_docs_plan_sisa_plan_sparta_langkah_berikutnya_fase_2b",
+      "label": "Langkah berikutnya: Fase 2B",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L24"
+    },
+    {
+      "id": "$graphify-root$_docs_plan_sisa_plan_sparta_portal_sesi_ini",
+      "label": "Portal (sesi ini)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L26"
+    },
+    {
+      "id": "$graphify-root$_docs_plan_sisa_plan_sparta_modul_menunggu_izin_user",
+      "label": "Modul (menunggu izin user)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L33"
+    },
+    {
+      "id": "$graphify-root$_docs_plan_sisa_plan_sparta_keputusan_yang_menunggu_user",
+      "label": "Keputusan yang menunggu user",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L43"
+    },
+    {
+      "id": "$graphify-root$_docs_plan_sisa_plan_sparta_fase_2_di_modul_belum_mulai",
+      "label": "Fase 2 di modul (belum mulai)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L49"
+    },
+    {
+      "id": "$graphify-root$_docs_plan_sisa_plan_sparta_fase_3_master_toko",
+      "label": "Fase 3: master Toko",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L54"
+    },
+    {
+      "id": "$graphify-root$_docs_plan_sisa_plan_sparta_fase_4_master_fasilitas",
+      "label": "Fase 4: master Fasilitas",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L60"
+    },
+    {
+      "id": "$graphify-root$_docs_plan_sisa_plan_sparta_migrasi_yang_belum_dijalankan_ke_database_mana_pun",
+      "label": "Migrasi yang belum dijalankan ke database mana pun",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L64"
+    },
+    {
+      "id": "$graphify-root$_docs_plan_sisa_plan_sparta_catatan_keamanan_yang_belum_dibereskan",
+      "label": "Catatan keamanan yang belum dibereskan",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L70"
+    },
+    {
+      "id": "$graphify-root$_docs_plan_sisa_plan_sparta_lingkungan_dev",
+      "label": "Lingkungan dev",
+      "file_type": "document",
+      "node_kind": "heading",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L77"
+    }
+  ],
+  "edges": [
+    {
+      "source": "$graphify-root$_docs_plan_sisa_plan_sparta_md",
+      "target": "$graphify-root$_docs_plan_sisa_plan_sparta_sisa_plan_sparta_lanjut_2026_11_20",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "$graphify-root$_docs_plan_sisa_plan_sparta_md",
+      "target": "$graphify-root$_docs_integration_module_sso_contract_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L3",
+      "weight": 1.0,
+      "target_file": "$graphify-root$/docs/integration/module-sso-contract.md"
+    },
+    {
+      "source": "$graphify-root$_docs_plan_sisa_plan_sparta_sisa_plan_sparta_lanjut_2026_11_20",
+      "target": "$graphify-root$_docs_plan_sisa_plan_sparta_aturan_kerja_berlaku_untuk_semua_sesi",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "$graphify-root$_docs_plan_sisa_plan_sparta_sisa_plan_sparta_lanjut_2026_11_20",
+      "target": "$graphify-root$_docs_plan_sisa_plan_sparta_status_fase",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "$graphify-root$_docs_plan_sisa_plan_sparta_sisa_plan_sparta_lanjut_2026_11_20",
+      "target": "$graphify-root$_docs_plan_sisa_plan_sparta_langkah_berikutnya_fase_2b",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "$graphify-root$_docs_plan_sisa_plan_sparta_langkah_berikutnya_fase_2b",
+      "target": "$graphify-root$_docs_plan_sisa_plan_sparta_portal_sesi_ini",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "$graphify-root$_docs_plan_sisa_plan_sparta_langkah_berikutnya_fase_2b",
+      "target": "$graphify-root$_docs_plan_sisa_plan_sparta_modul_menunggu_izin_user",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "$graphify-root$_docs_plan_sisa_plan_sparta_langkah_berikutnya_fase_2b",
+      "target": "$graphify-root$_docs_plan_sisa_plan_sparta_keputusan_yang_menunggu_user",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
+      "source": "$graphify-root$_docs_plan_sisa_plan_sparta_sisa_plan_sparta_lanjut_2026_11_20",
+      "target": "$graphify-root$_docs_plan_sisa_plan_sparta_fase_2_di_modul_belum_mulai",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "$graphify-root$_docs_plan_sisa_plan_sparta_sisa_plan_sparta_lanjut_2026_11_20",
+      "target": "$graphify-root$_docs_plan_sisa_plan_sparta_fase_3_master_toko",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L54",
+      "weight": 1.0
+    },
+    {
+      "source": "$graphify-root$_docs_plan_sisa_plan_sparta_sisa_plan_sparta_lanjut_2026_11_20",
+      "target": "$graphify-root$_docs_plan_sisa_plan_sparta_fase_4_master_fasilitas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L60",
+      "weight": 1.0
+    },
+    {
+      "source": "$graphify-root$_docs_plan_sisa_plan_sparta_sisa_plan_sparta_lanjut_2026_11_20",
+      "target": "$graphify-root$_docs_plan_sisa_plan_sparta_migrasi_yang_belum_dijalankan_ke_database_mana_pun",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L64",
+      "weight": 1.0
+    },
+    {
+      "source": "$graphify-root$_docs_plan_sisa_plan_sparta_sisa_plan_sparta_lanjut_2026_11_20",
+      "target": "$graphify-root$_docs_plan_sisa_plan_sparta_catatan_keamanan_yang_belum_dibereskan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L70",
+      "weight": 1.0
+    },
+    {
+      "source": "$graphify-root$_docs_plan_sisa_plan_sparta_sisa_plan_sparta_lanjut_2026_11_20",
+      "target": "$graphify-root$_docs_plan_sisa_plan_sparta_lingkungan_dev",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L77",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_status_fase",
+      "callee": "spartaUserId",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "spartaUserId",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L17"
+    },
+    {
+      "caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_status_fase",
+      "callee": "employeeId",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "employeeId",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L17"
+    },
+    {
+      "caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_status_fase",
+      "callee": "branchCode",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "branchCode",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L17"
+    },
+    {
+      "caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_portal_sesi_ini",
+      "callee": "SYSTEM_ADMIN",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "SYSTEM_ADMIN",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L30"
+    },
+    {
+      "caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_portal_sesi_ini",
+      "callee": "changeEmailAndBroadcast",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "changeEmailAndBroadcast",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L31"
+    },
+    {
+      "caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_modul_menunggu_izin_user",
+      "callee": "is_active",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "app_user.is_active",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L35",
+      "qualifiers": ["app_user"]
+    },
+    {
+      "caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_modul_menunggu_izin_user",
+      "callee": "applied",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "applied",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L35"
+    },
+    {
+      "caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_modul_menunggu_izin_user",
+      "callee": "ignored",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "ignored",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L35"
+    },
+    {
+      "caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_modul_menunggu_izin_user",
+      "callee": "unknown_user",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "unknown_user",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L35"
+    },
+    {
+      "caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_modul_menunggu_izin_user",
+      "callee": "stale_event",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "stale_event",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L35"
+    },
+    {
+      "caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_modul_menunggu_izin_user",
+      "callee": "provisioningUrl",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "AppModule.provisioningUrl",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L36",
+      "qualifiers": ["AppModule"]
+    },
+    {
+      "caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_modul_menunggu_izin_user",
+      "callee": "SPARTA_PROVISIONING_SECRET_CARBONTRACK",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "SPARTA_PROVISIONING_SECRET_CARBONTRACK",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L36"
+    },
+    {
+      "caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_modul_menunggu_izin_user",
+      "callee": "SPARTA_PROVISIONING_SECRET",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "SPARTA_PROVISIONING_SECRET",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L36"
+    },
+    {
+      "caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_modul_menunggu_izin_user",
+      "callee": "granted",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "access.granted",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L37",
+      "qualifiers": ["access"]
+    },
+    {
+      "caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_modul_menunggu_izin_user",
+      "callee": "role",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "access.role",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L37",
+      "qualifiers": ["access"]
+    },
+    {
+      "caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_modul_menunggu_izin_user",
+      "callee": "updated",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "user.updated",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L37",
+      "qualifiers": ["user"]
+    },
+    {
+      "caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_modul_menunggu_izin_user",
+      "callee": "SPARTA_PROVISIONING_SECRET_ENERGY",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "SPARTA_PROVISIONING_SECRET_ENERGY",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L38"
+    },
+    {
+      "caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_modul_menunggu_izin_user",
+      "callee": "changeEmailAndBroadcast",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "changeEmailAndBroadcast",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L39"
+    },
+    {
+      "caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_modul_menunggu_izin_user",
+      "callee": "branchCode",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "branchCode",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L39"
+    },
+    {
+      "caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_keputusan_yang_menunggu_user",
+      "callee": "users",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "users",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L45"
+    },
+    {
+      "caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_keputusan_yang_menunggu_user",
+      "callee": "is_active",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "is_active",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L45"
+    },
+    {
+      "caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_keputusan_yang_menunggu_user",
+      "callee": "granted",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "access.granted",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L46",
+      "qualifiers": ["access"]
+    },
+    {
+      "caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_keputusan_yang_menunggu_user",
+      "callee": "ignored",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "ignored",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L46"
+    },
+    {
+      "caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_fase_2_di_modul_belum_mulai",
+      "callee": "branchCode",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "branchCode",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L51"
+    },
+    {
+      "caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_catatan_keamanan_yang_belum_dibereskan",
+      "callee": "SPARTA_INTERNAL_API_KEY",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "SPARTA_INTERNAL_API_KEY",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L73"
+    },
+    {
+      "caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_catatan_keamanan_yang_belum_dibereskan",
+      "callee": "changeEmailAndBroadcast",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "changeEmailAndBroadcast",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L74"
+    },
+    {
+      "caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_catatan_keamanan_yang_belum_dibereskan",
+      "callee": "cn",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "cn",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L75"
+    },
+    {
+      "caller_nid": "$graphify-root$_docs_plan_sisa_plan_sparta_lingkungan_dev",
+      "callee": "VITE_SPARTA_DEV_ROLE",
+      "is_member_call": false,
+      "language": "markdown",
+      "context": "VITE_SPARTA_DEV_ROLE",
+      "source_file": "docs/plan/sisa-plan-sparta.md",
+      "source_location": "L79"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "_cached_target_files": [
+    "$graphify-root$/docs/integration/module-sso-contract.md"
+  ]
+}

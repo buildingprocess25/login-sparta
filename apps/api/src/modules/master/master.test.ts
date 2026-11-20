@@ -42,6 +42,7 @@ class InMemoryMasterRepository implements MasterRepository {
       address: null,
       areaCode: null,
       isActive: true,
+      aliases: [],
       updatedAt: new Date("2026-11-01T00:00:00Z"),
     },
     {
@@ -50,6 +51,7 @@ class InMemoryMasterRepository implements MasterRepository {
       address: "Jl. Soekarno-Hatta",
       areaCode: "JABAR",
       isActive: true,
+      aliases: ["BANDUNG"],
       updatedAt: new Date("2026-11-18T00:00:00Z"),
     },
   ]
@@ -99,6 +101,7 @@ describe("SPARTA master data routes", () => {
       name: "Bandung",
       areaCode: "JABAR",
       isActive: true,
+      aliases: ["BANDUNG"],
     })
     expect(response.body.meta.count).toBe(2)
     expect(Date.parse(response.body.meta.syncedAt)).not.toBeNaN()

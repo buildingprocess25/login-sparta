@@ -8,6 +8,8 @@ export type MasterBranchRecord = {
   address: string | null
   areaCode: string | null
   isActive: boolean
+  /** Nama/kode lama yang dipetakan ke cabang ini (sudah dinormalisasi huruf besar). */
+  aliases: string[]
   updatedAt: Date
 }
 
@@ -40,7 +42,10 @@ export class PrismaMasterRepository implements MasterRepository {
       where: filter.updatedSince
         ? { updatedAt: { gt: filter.updatedSince } }
         : undefined,
-      include: { area: { select: { code: true } } },
+      include: {
+        area: { select: { code: true } },
+        aliases: { select: { alias: true }, orderBy: { alias: "asc" } },
+      },
       orderBy: { code: "asc" },
     })
 
@@ -50,6 +55,7 @@ export class PrismaMasterRepository implements MasterRepository {
       address: branch.address,
       areaCode: branch.area?.code ?? null,
       isActive: branch.isActive,
+      aliases: branch.aliases.map((entry) => entry.alias),
       updatedAt: branch.updatedAt,
     }))
   }

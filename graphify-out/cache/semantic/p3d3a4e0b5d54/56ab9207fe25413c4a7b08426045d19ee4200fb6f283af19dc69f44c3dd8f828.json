@@ -1,1 +1,110 @@
-{"nodes": [{"id": "docs_integration_sparta_maintenance_sso_checklist_maintenance_sso_checklist", "label": "SPARTA Maintenance SSO Checklist", "file_type": "document", "source_file": "docs/integration/sparta-maintenance-sso-checklist.md", "source_location": "L1", "source_url": null, "captured_at": null, "author": null, "contributor": null}, {"id": "docs_integration_sparta_maintenance_sso_checklist_maintenance_role_mapping", "label": "Maintenance role mapping (ADMIN, BMS, BMC, BNM, MANAGER, USER)", "file_type": "concept", "source_file": "docs/integration/sparta-maintenance-sso-checklist.md", "source_location": "L18", "source_url": null, "captured_at": null, "author": null, "contributor": null}, {"id": "docs_integration_sparta_maintenance_sso_checklist_pjum_authorization", "label": "Maintenance report/dashboard/PJUM authorization", "file_type": "concept", "source_file": "docs/integration/sparta-maintenance-sso-checklist.md", "source_location": "L68", "source_url": null, "captured_at": null, "author": null, "contributor": null}], "edges": [{"source": "docs_integration_sparta_maintenance_sso_checklist_maintenance_sso_checklist", "target": "docs_integration_module_sso_contract_module_sso_contract", "relation": "cites", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "docs/integration/sparta-maintenance-sso-checklist.md", "source_location": "L56", "weight": 1.0}, {"source": "docs_integration_sparta_maintenance_sso_checklist_maintenance_sso_checklist", "target": "docs_integration_module_sso_contract_post_v1_sso_exchange", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "docs/integration/sparta-maintenance-sso-checklist.md", "source_location": "L51", "weight": 1.0}, {"source": "docs_integration_sparta_maintenance_sso_checklist_maintenance_sso_checklist", "target": "docs_integration_sparta_maintenance_sso_checklist_maintenance_role_mapping", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "docs/integration/sparta-maintenance-sso-checklist.md", "source_location": "L18", "weight": 1.0}, {"source": "docs_integration_sparta_maintenance_sso_checklist_maintenance_sso_checklist", "target": "docs_integration_sparta_maintenance_sso_checklist_pjum_authorization", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "docs/integration/sparta-maintenance-sso-checklist.md", "source_location": "L73", "weight": 1.0}, {"source": "docs_integration_sparta_maintenance_sso_checklist_maintenance_sso_checklist", "target": "docs_superpowers_plans_2026_06_17_sparta_backend_monorepo_spec_spartauserid_module_mapping", "relation": "implements", "confidence": "INFERRED", "confidence_score": 0.95, "source_file": "docs/integration/sparta-maintenance-sso-checklist.md", "source_location": "L37", "weight": 1.0}, {"source": "docs_integration_sparta_maintenance_sso_checklist_maintenance_role_mapping", "target": "docs_integration_sparta_energy_sso_checklist_energy_role_mapping", "relation": "semantically_similar_to", "confidence": "INFERRED", "confidence_score": 0.75, "source_file": "docs/integration/sparta-maintenance-sso-checklist.md", "source_location": null, "weight": 1.0}, {"source": "docs_integration_sparta_maintenance_sso_checklist_maintenance_role_mapping", "target": "docs_superpowers_plans_2026_06_17_sparta_backend_monorepo_spec_user_module_access_model", "relation": "conceptually_related_to", "confidence": "INFERRED", "confidence_score": 0.75, "source_file": "docs/integration/sparta-maintenance-sso-checklist.md", "source_location": null, "weight": 1.0}], "hyperedges": []}
+{
+  "nodes": [
+    {
+      "id": "docs_integration_sparta_maintenance_sso_checklist_maintenance_sso_checklist",
+      "label": "SPARTA Maintenance SSO Checklist",
+      "file_type": "document",
+      "source_file": "docs/integration/sparta-maintenance-sso-checklist.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_integration_sparta_maintenance_sso_checklist_maintenance_role_mapping",
+      "label": "Maintenance role mapping (ADMIN, BMS, BMC, BNM, MANAGER, USER)",
+      "file_type": "concept",
+      "source_file": "docs/integration/sparta-maintenance-sso-checklist.md",
+      "source_location": "L18",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_integration_sparta_maintenance_sso_checklist_pjum_authorization",
+      "label": "Maintenance report/dashboard/PJUM authorization",
+      "file_type": "concept",
+      "source_file": "docs/integration/sparta-maintenance-sso-checklist.md",
+      "source_location": "L68",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_integration_sparta_maintenance_sso_checklist_maintenance_sso_checklist",
+      "target": "docs_integration_module_sso_contract_module_sso_contract",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/integration/sparta-maintenance-sso-checklist.md",
+      "source_location": "L56",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_integration_sparta_maintenance_sso_checklist_maintenance_sso_checklist",
+      "target": "docs_integration_module_sso_contract_post_v1_sso_exchange",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/integration/sparta-maintenance-sso-checklist.md",
+      "source_location": "L51",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_integration_sparta_maintenance_sso_checklist_maintenance_sso_checklist",
+      "target": "docs_integration_sparta_maintenance_sso_checklist_maintenance_role_mapping",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/integration/sparta-maintenance-sso-checklist.md",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_integration_sparta_maintenance_sso_checklist_maintenance_sso_checklist",
+      "target": "docs_integration_sparta_maintenance_sso_checklist_pjum_authorization",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/integration/sparta-maintenance-sso-checklist.md",
+      "source_location": "L73",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_integration_sparta_maintenance_sso_checklist_maintenance_sso_checklist",
+      "target": "docs_superpowers_plans_2026_06_17_sparta_backend_monorepo_spec_spartauserid_module_mapping",
+      "relation": "implements",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "docs/integration/sparta-maintenance-sso-checklist.md",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_integration_sparta_maintenance_sso_checklist_maintenance_role_mapping",
+      "target": "docs_integration_sparta_energy_sso_checklist_energy_role_mapping",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/integration/sparta-maintenance-sso-checklist.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_integration_sparta_maintenance_sso_checklist_maintenance_role_mapping",
+      "target": "docs_superpowers_plans_2026_06_17_sparta_backend_monorepo_spec_user_module_access_model",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/integration/sparta-maintenance-sso-checklist.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

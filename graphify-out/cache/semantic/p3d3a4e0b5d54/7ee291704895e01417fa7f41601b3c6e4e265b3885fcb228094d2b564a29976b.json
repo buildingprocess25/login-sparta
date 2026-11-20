@@ -1,1 +1,80 @@
-{"nodes": [{"id": "docs_integration_sparta_building_sso_checklist_building_sso_checklist", "label": "SPARTA Building SSO Checklist", "file_type": "document", "source_file": "docs/integration/sparta-building-sso-checklist.md", "source_location": "L1", "source_url": null, "captured_at": null, "author": null, "contributor": null}, {"id": "docs_integration_sparta_building_sso_checklist_replace_local_login", "label": "Replace local login with redirect to SPARTA Login Portal", "file_type": "rationale", "source_file": "docs/integration/sparta-building-sso-checklist.md", "source_location": "L44", "source_url": null, "captured_at": null, "author": null, "contributor": null, "rationale": "Do not delete local auth logic until SSO is verified in production; keep old login page for rollback."}], "edges": [{"source": "docs_integration_sparta_building_sso_checklist_building_sso_checklist", "target": "docs_integration_module_sso_contract_module_sso_contract", "relation": "cites", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "docs/integration/sparta-building-sso-checklist.md", "source_location": "L42", "weight": 1.0}, {"source": "docs_integration_sparta_building_sso_checklist_building_sso_checklist", "target": "docs_integration_module_sso_contract_post_v1_sso_exchange", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "docs/integration/sparta-building-sso-checklist.md", "source_location": "L37", "weight": 1.0}, {"source": "docs_integration_sparta_building_sso_checklist_building_sso_checklist", "target": "docs_superpowers_plans_2026_06_17_sparta_backend_monorepo_spec_spartauserid_module_mapping", "relation": "implements", "confidence": "INFERRED", "confidence_score": 0.95, "source_file": "docs/integration/sparta-building-sso-checklist.md", "source_location": "L23", "weight": 1.0}, {"source": "docs_integration_sparta_building_sso_checklist_building_sso_checklist", "target": "docs_integration_sparta_building_sso_checklist_replace_local_login", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "docs/integration/sparta-building-sso-checklist.md", "source_location": "L44", "weight": 1.0}, {"source": "docs_integration_sparta_building_sso_checklist_building_sso_checklist", "target": "docs_integration_module_sso_contract_module_owned_authorization", "relation": "conceptually_related_to", "confidence": "INFERRED", "confidence_score": 0.95, "source_file": "docs/integration/sparta-building-sso-checklist.md", "source_location": "L54", "weight": 1.0}], "hyperedges": []}
+{
+  "nodes": [
+    {
+      "id": "docs_integration_sparta_building_sso_checklist_building_sso_checklist",
+      "label": "SPARTA Building SSO Checklist",
+      "file_type": "document",
+      "source_file": "docs/integration/sparta-building-sso-checklist.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_integration_sparta_building_sso_checklist_replace_local_login",
+      "label": "Replace local login with redirect to SPARTA Login Portal",
+      "file_type": "rationale",
+      "source_file": "docs/integration/sparta-building-sso-checklist.md",
+      "source_location": "L44",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Do not delete local auth logic until SSO is verified in production; keep old login page for rollback."
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_integration_sparta_building_sso_checklist_building_sso_checklist",
+      "target": "docs_integration_module_sso_contract_module_sso_contract",
+      "relation": "cites",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/integration/sparta-building-sso-checklist.md",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_integration_sparta_building_sso_checklist_building_sso_checklist",
+      "target": "docs_integration_module_sso_contract_post_v1_sso_exchange",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/integration/sparta-building-sso-checklist.md",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_integration_sparta_building_sso_checklist_building_sso_checklist",
+      "target": "docs_superpowers_plans_2026_06_17_sparta_backend_monorepo_spec_spartauserid_module_mapping",
+      "relation": "implements",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "docs/integration/sparta-building-sso-checklist.md",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_integration_sparta_building_sso_checklist_building_sso_checklist",
+      "target": "docs_integration_sparta_building_sso_checklist_replace_local_login",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/integration/sparta-building-sso-checklist.md",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_integration_sparta_building_sso_checklist_building_sso_checklist",
+      "target": "docs_integration_module_sso_contract_module_owned_authorization",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "docs/integration/sparta-building-sso-checklist.md",
+      "source_location": "L54",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

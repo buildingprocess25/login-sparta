@@ -1,1 +1,12 @@
-{"nodes": [{"id": "$graphify-root$_apps_api_prisma_migrations_20261119100100_add_master_admin_role_migration_sql", "label": "migration.sql", "file_type": "code", "source_file": "apps/api/prisma/migrations/20261119100100_add_master_admin_role/migration.sql", "source_location": null}], "edges": []}
+{
+  "nodes": [
+    {
+      "id": "$graphify-root$_apps_api_prisma_migrations_20261119100100_add_master_admin_role_migration_sql",
+      "label": "migration.sql",
+      "file_type": "code",
+      "source_file": "apps/api/prisma/migrations/20261119100100_add_master_admin_role/migration.sql",
+      "source_location": null
+    }
+  ],
+  "edges": []
+}

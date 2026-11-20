@@ -13,6 +13,7 @@ import { LoginPage } from "@/pages/login-page"
 import { ModuleLauncherPage } from "@/pages/module-launcher-page"
 import { PasswordResetPage } from "@/pages/password-reset-page"
 import { AboutSpartaPage } from "@/pages/tentang-sparta-page"
+import { UserManagementPage } from "@/pages/user-management-page"
 import { getCurrentRoute, getDefaultRoute, navigateTo, ROUTES } from "@/routes"
 
 export function App() {
@@ -148,6 +149,10 @@ export function App() {
 
   if (route === ROUTES.dataMaster) {
     return <DataMasterPage session={session} onLogout={handleLogout} />
+  }
+
+  if (route === ROUTES.userManagement) {
+    return <UserManagementPage session={session} onLogout={handleLogout} />
   }
 
   return <ModuleLauncherPage session={session} onLogout={handleLogout} />

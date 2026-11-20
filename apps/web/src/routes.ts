@@ -6,6 +6,7 @@ export const ROUTES = {
   about: "#/tentang-sparta",
   arta: "#/tanya-arta",
   dataMaster: "#/data-master",
+  userManagement: "#/manajemen-user",
 } as const
 
 export type AppRoute = (typeof ROUTES)[keyof typeof ROUTES]

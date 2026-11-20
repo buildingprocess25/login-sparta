@@ -1,1 +1,122 @@
-{"nodes": [{"id": "readme_sparta_login_portal", "label": "SPARTA Login Portal README", "file_type": "document", "source_file": "README.md", "source_location": "L1", "source_url": null, "captured_at": null, "author": null, "contributor": null}, {"id": "readme_sparta_web_package", "label": "@sparta/web (apps/web)", "file_type": "concept", "source_file": "README.md", "source_location": "L9", "source_url": null, "captured_at": null, "author": null, "contributor": null}, {"id": "readme_sparta_api_package", "label": "@sparta/api (apps/api Express backend)", "file_type": "concept", "source_file": "README.md", "source_location": "L10", "source_url": null, "captured_at": null, "author": null, "contributor": null}, {"id": "readme_sparta_shared_package", "label": "@sparta/shared (apps/shared types & validation)", "file_type": "concept", "source_file": "README.md", "source_location": "L11", "source_url": null, "captured_at": null, "author": null, "contributor": null}, {"id": "readme_deployment", "label": "Deployment: Vercel (web) + Render (api)", "file_type": "concept", "source_file": "README.md", "source_location": "L51", "source_url": null, "captured_at": null, "author": null, "contributor": null}], "edges": [{"source": "readme_sparta_login_portal", "target": "readme_sparta_web_package", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "README.md", "source_location": "L9", "weight": 1.0}, {"source": "readme_sparta_login_portal", "target": "readme_sparta_api_package", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "README.md", "source_location": "L10", "weight": 1.0}, {"source": "readme_sparta_login_portal", "target": "readme_sparta_shared_package", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "README.md", "source_location": "L11", "weight": 1.0}, {"source": "readme_sparta_login_portal", "target": "readme_deployment", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "README.md", "source_location": "L51", "weight": 1.0}, {"source": "readme_deployment", "target": "docs_superpowers_plans_2026_06_17_sparta_backend_monorepo_spec_deployment_architecture", "relation": "implements", "confidence": "INFERRED", "confidence_score": 0.95, "source_file": "README.md", "source_location": null, "weight": 1.0}, {"source": "readme_sparta_shared_package", "target": "docs_superpowers_plans_2026_06_17_sparta_backend_monorepo_spec_shared_api_contracts", "relation": "implements", "confidence": "INFERRED", "confidence_score": 0.85, "source_file": "README.md", "source_location": null, "weight": 1.0}], "hyperedges": []}
+{
+  "nodes": [
+    {
+      "id": "readme_sparta_login_portal",
+      "label": "SPARTA Login Portal README",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_sparta_web_package",
+      "label": "@sparta/web (apps/web)",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": "L9",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_sparta_api_package",
+      "label": "@sparta/api (apps/api Express backend)",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": "L10",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_sparta_shared_package",
+      "label": "@sparta/shared (apps/shared types & validation)",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": "L11",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_deployment",
+      "label": "Deployment: Vercel (web) + Render (api)",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": "L51",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "readme_sparta_login_portal",
+      "target": "readme_sparta_web_package",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_sparta_login_portal",
+      "target": "readme_sparta_api_package",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_sparta_login_portal",
+      "target": "readme_sparta_shared_package",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_sparta_login_portal",
+      "target": "readme_deployment",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L51",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_deployment",
+      "target": "docs_superpowers_plans_2026_06_17_sparta_backend_monorepo_spec_deployment_architecture",
+      "relation": "implements",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "readme_sparta_shared_package",
+      "target": "docs_superpowers_plans_2026_06_17_sparta_backend_monorepo_spec_shared_api_contracts",
+      "relation": "implements",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

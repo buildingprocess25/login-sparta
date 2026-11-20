@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import type { SpartaSession } from "@/lib/sparta-auth"
 import { canManageMasterData } from "@/lib/sparta-master-admin"
+import { canManageUsers } from "@/lib/sparta-user-admin"
 import { cn } from "@/lib/utils"
 import { getCurrentRoute, ROUTES } from "@/routes"
 
@@ -38,6 +39,23 @@ type AppShellProps = {
   showHeader?: boolean
   /** Kunci tinggi halaman ke viewport; konten hanya scroll di layar yang terlalu pendek. */
   fitViewport?: boolean
+}
+
+const NAV_LINK_CLASS =
+  "relative py-1 font-medium transition-colors after:absolute after:bottom-[-2px] after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-[width] after:duration-500 after:ease-out hover:text-foreground hover:after:w-full focus-visible:outline-none focus-visible:after:w-full"
+
+/** Menu utama. Halaman admin hanya muncul untuk role yang boleh membukanya. */
+function getNavItems(session: SpartaSession | null | undefined) {
+  return [
+    { href: ROUTES.modules, label: "Modul SPARTA" },
+    { href: ROUTES.about, label: "Tentang SPARTA" },
+    ...(canManageMasterData(session)
+      ? [{ href: ROUTES.dataMaster, label: "Data Master" }]
+      : []),
+    ...(canManageUsers(session)
+      ? [{ href: ROUTES.userManagement, label: "Manajemen User" }]
+      : []),
+  ]
 }
 
 function getInitials(name: string) {
@@ -64,6 +82,7 @@ function AppShell({
   const [isChangeEmailOpen, setIsChangeEmailOpen] = React.useState(false)
   const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = React.useState(false)
   const [activeRoute, setActiveRoute] = React.useState(getCurrentRoute)
+  const navItems = getNavItems(session)
 
   React.useEffect(() => {
     const handleHashChange = () => {
@@ -154,96 +173,44 @@ function AppShell({
               ) : null}
             </div>
             <nav className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-3 lg:hidden">
-              <a
-                href={ROUTES.modules}
-                aria-current={
-                  activeRoute === ROUTES.modules ? "page" : undefined
-                }
-                className={cn(
-                  "relative py-1 text-xs font-medium whitespace-nowrap transition-colors after:absolute after:bottom-[-2px] after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-[width] after:duration-500 after:ease-out hover:text-foreground hover:after:w-full focus-visible:outline-none focus-visible:after:w-full sm:text-sm",
-                  activeRoute === ROUTES.modules
-                    ? "text-foreground after:w-full"
-                    : "text-muted-foreground"
-                )}
-              >
-                Modul SPARTA
-              </a>
-              <a
-                href={ROUTES.about}
-                aria-current={activeRoute === ROUTES.about ? "page" : undefined}
-                className={cn(
-                  "relative py-1 text-xs font-medium whitespace-nowrap transition-colors after:absolute after:bottom-[-2px] after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-[width] after:duration-500 after:ease-out hover:text-foreground hover:after:w-full focus-visible:outline-none focus-visible:after:w-full sm:text-sm",
-                  activeRoute === ROUTES.about
-                    ? "text-foreground after:w-full"
-                    : "text-muted-foreground"
-                )}
-              >
-                Tentang SPARTA
-              </a>
-              {canManageMasterData(session) ? (
+              {navItems.map((item) => (
                 <a
-                  href={ROUTES.dataMaster}
-                  aria-current={
-                    activeRoute === ROUTES.dataMaster ? "page" : undefined
-                  }
+                  key={item.href}
+                  href={item.href}
+                  aria-current={activeRoute === item.href ? "page" : undefined}
                   className={cn(
-                    "relative py-1 text-xs font-medium whitespace-nowrap transition-colors after:absolute after:bottom-[-2px] after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-[width] after:duration-500 after:ease-out hover:text-foreground hover:after:w-full focus-visible:outline-none focus-visible:after:w-full sm:text-sm",
-                    activeRoute === ROUTES.dataMaster
+                    NAV_LINK_CLASS,
+                    "text-xs whitespace-nowrap sm:text-sm",
+                    activeRoute === item.href
                       ? "text-foreground after:w-full"
                       : "text-muted-foreground"
                   )}
                 >
-                  Data Master
+                  {item.label}
                 </a>
-              ) : null}
+              ))}
             </nav>
             <div className="hidden items-center justify-between gap-4 lg:flex">
               <Logo />
               <nav className="flex items-center gap-5">
-                <a
-                  href={ROUTES.modules}
-                  aria-current={
-                    activeRoute === ROUTES.modules ? "page" : undefined
-                  }
-                  className={cn(
-                    "relative py-1 text-sm font-medium transition-colors after:absolute after:bottom-[-2px] after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-[width] after:duration-500 after:ease-out hover:text-foreground hover:after:w-full focus-visible:outline-none focus-visible:after:w-full",
-                    activeRoute === ROUTES.modules
-                      ? "text-foreground after:w-full"
-                      : "text-muted-foreground"
-                  )}
-                >
-                  Modul SPARTA
-                </a>
-                <a
-                  href={ROUTES.about}
-                  aria-current={
-                    activeRoute === ROUTES.about ? "page" : undefined
-                  }
-                  className={cn(
-                    "relative py-1 text-sm font-medium transition-colors after:absolute after:bottom-[-2px] after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-[width] after:duration-500 after:ease-out hover:text-foreground hover:after:w-full focus-visible:outline-none focus-visible:after:w-full",
-                    activeRoute === ROUTES.about
-                      ? "text-foreground after:w-full"
-                      : "text-muted-foreground"
-                  )}
-                >
-                  Tentang SPARTA
-                </a>
-                {canManageMasterData(session) ? (
+                {navItems.map((item) => (
                   <a
-                    href={ROUTES.dataMaster}
+                    key={item.href}
+                    href={item.href}
                     aria-current={
-                      activeRoute === ROUTES.dataMaster ? "page" : undefined
+                      activeRoute === item.href ? "page" : undefined
                     }
                     className={cn(
-                      "relative py-1 text-sm font-medium transition-colors after:absolute after:bottom-[-2px] after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-[width] after:duration-500 after:ease-out hover:text-foreground hover:after:w-full focus-visible:outline-none focus-visible:after:w-full",
-                      activeRoute === ROUTES.dataMaster
+                      NAV_LINK_CLASS,
+                      "text-sm",
+                      activeRoute === item.href
                         ? "text-foreground after:w-full"
                         : "text-muted-foreground"
                     )}
                   >
-                    Data Master
+                    {item.label}
                   </a>
-                ) : null}
+                ))}
                 {session ? (
                   <DropdownMenu
                     open={isProfileMenuOpen}

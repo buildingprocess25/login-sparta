@@ -1,1 +1,12 @@
-{"nodes": [{"id": "$graphify-root$_apps_api_prisma_migrations_20261102120000_add_siaga_module_migration_sql", "label": "migration.sql", "file_type": "code", "source_file": "apps/api/prisma/migrations/20261102120000_add_siaga_module/migration.sql", "source_location": null}], "edges": []}
+{
+  "nodes": [
+    {
+      "id": "$graphify-root$_apps_api_prisma_migrations_20261102120000_add_siaga_module_migration_sql",
+      "label": "migration.sql",
+      "file_type": "code",
+      "source_file": "apps/api/prisma/migrations/20261102120000_add_siaga_module/migration.sql",
+      "source_location": null
+    }
+  ],
+  "edges": []
+}

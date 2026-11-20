@@ -133,6 +133,55 @@ export type MasterAreaAdminDto = {
   updatedAt: string
 }
 
+export type SpartaUserStatus = "ACTIVE" | "INACTIVE" | "LOCKED"
+
+/** User untuk halaman admin Manajemen User (GET /v1/admin/users). */
+export type AdminUserDto = {
+  id: string
+  email: string
+  employeeId: string | null
+  fullName: string
+  branchCode: string
+  branchName: string
+  validBranchNames: string[]
+  role: SpartaPortalRole
+  status: SpartaUserStatus
+  passwordState: "BRANCH_DEFAULT" | "USER_SET" | "RESET_REQUIRED"
+  lastLoginAt: string | null
+  createdAt: string
+  modules: Array<{
+    moduleId: SpartaLaunchableModuleId
+    role: string
+    isActive: boolean
+  }>
+}
+
+/** Katalog role per modul (GET /v1/admin/users/module-roles). */
+export type ModuleRoleDto = {
+  moduleId: SpartaModuleId
+  code: string
+  label: string
+}
+
+export type ProvisioningEventStatus =
+  | "PENDING"
+  | "DELIVERED"
+  | "FAILED"
+  | "SKIPPED"
+
+/** Riwayat event provisioning per user (GET /v1/admin/users/:id/provisioning-events). */
+export type ProvisioningEventDto = {
+  id: string
+  type: SpartaProvisioningEventType
+  moduleId: SpartaModuleId
+  status: ProvisioningEventStatus
+  attempts: number
+  lastError: string | null
+  nextAttemptAt: string
+  deliveredAt: string | null
+  createdAt: string
+}
+
 export type SpartaModuleDto = {
   id: SpartaModuleId
   name: string

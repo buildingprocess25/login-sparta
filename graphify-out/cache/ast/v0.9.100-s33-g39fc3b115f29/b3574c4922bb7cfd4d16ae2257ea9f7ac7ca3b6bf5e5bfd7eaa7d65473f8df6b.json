@@ -1,1 +1,20 @@
-{"nodes": [{"id": "$graphify-root$_apps_api_prisma_migrations_20261104163500_sync_engineering_and_valid_branches_migration_sql", "label": "migration.sql", "file_type": "code", "source_file": "apps/api/prisma/migrations/20261104163500_sync_engineering_and_valid_branches/migration.sql", "source_location": null}, {"id": "user", "label": "\"User\"", "file_type": "code", "source_file": "", "source_location": "", "origin_file": "$graphify-root$/apps/api/prisma/migrations/20261104163500_sync_engineering_and_valid_branches/migration.sql"}], "edges": []}
+{
+  "nodes": [
+    {
+      "id": "$graphify-root$_apps_api_prisma_migrations_20261104163500_sync_engineering_and_valid_branches_migration_sql",
+      "label": "migration.sql",
+      "file_type": "code",
+      "source_file": "apps/api/prisma/migrations/20261104163500_sync_engineering_and_valid_branches/migration.sql",
+      "source_location": null
+    },
+    {
+      "id": "user",
+      "label": "\"User\"",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "origin_file": "$graphify-root$/apps/api/prisma/migrations/20261104163500_sync_engineering_and_valid_branches/migration.sql"
+    }
+  ],
+  "edges": []
+}
