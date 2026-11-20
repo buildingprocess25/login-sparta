@@ -10,6 +10,8 @@ Catatan sisa pekerjaan setelah sesi 2026-11-19. Rencana lengkap ada di dokumen "
 - Database: hanya boleh query baca. Jangan mengubah data atau menjalankan migrasi tanpa izin.
 - Sesi lain: `test-14` = CarbonTrack (`c:\ALfa\Test`), `sparta-energy-83` = SPARTA Audit/Energy (`c:\ALfa\sparta-energy`). Kabari mereka setiap kali fase maju.
 
+Langkah deploy rinci: [deploy-checklist.md](deploy-checklist.md).
+
 ## Status fase
 
 | Fase | Isi | Status |
