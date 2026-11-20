@@ -1,10 +1,27 @@
 import { PrismaClient as SsoPrismaClient, SpartaModuleId, UserRole, PasswordState, UserStatus } from "@prisma/client";
 import { Client as PgClient } from "pg";
 
+// PERINGATAN: skrip ini MENGHAPUS semua user, akses, sesi dan audit di
+// database SSO tujuan (DATABASE_URL), lalu mengisinya ulang dari Building,
+// Energy dan Maintenance. Koneksi modul dibaca dari env, bukan ditulis di kode.
+function requireEnv(name: string) {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(`${name} wajib diisi.`);
+  }
+  return value;
+}
+
+if (process.env.SPARTA_SEED_USERS_CONFIRM !== "hapus-semua-user") {
+  throw new Error(
+    "Skrip ini menghapus semua user SSO. Set SPARTA_SEED_USERS_CONFIRM=hapus-semua-user untuk melanjutkan."
+  );
+}
+
 const ssoPrisma = new SsoPrismaClient();
 
 async function queryBuildingUsers() {
-  const client = new PgClient({ connectionString: 'postgresql://aku-sparta:0hhUTvTHKtgkN8TfLadC@103.127.99.241:5432/building?sslmode=disable' });
+  const client = new PgClient({ connectionString: requireEnv("SPARTA_BUILDING_DATABASE_URL") });
   await client.connect();
   const res = await client.query("SELECT email_sat, jabatan, nama_lengkap, cabang FROM user_cabang");
   await client.end();
@@ -17,7 +34,7 @@ async function queryBuildingUsers() {
 }
 
 async function queryEnergyUsers() {
-  const client = new PgClient({ connectionString: 'postgresql://aku-sparta:0hhUTvTHKtgkN8TfLadC@103.127.99.241:5432/energy?sslmode=disable' });
+  const client = new PgClient({ connectionString: requireEnv("SPARTA_ENERGY_DATABASE_URL") });
   await client.connect();
   const res = await client.query("SELECT email, role, full_name, branch FROM users");
   await client.end();
@@ -30,7 +47,7 @@ async function queryEnergyUsers() {
 }
 
 async function queryMaintenanceUsers() {
-  const client = new PgClient({ connectionString: 'postgresql://aku-sparta:0hhUTvTHKtgkN8TfLadC@103.127.99.241:5432/maintenance?sslmode=disable' });
+  const client = new PgClient({ connectionString: requireEnv("SPARTA_MAINTENANCE_DATABASE_URL") });
   await client.connect();
   const res = await client.query('SELECT email, role, name as "fullName", "branchNames" FROM "User"');
   await client.end();

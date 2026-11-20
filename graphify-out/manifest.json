@@ -72,9 +72,9 @@
     "semantic_hash": "ab825fac1d7790c99168c70e9b406ef3"
   },
   "apps/api/prisma/seed.ts": {
-    "mtime": 1795137057.772898,
-    "seen": 1795137140.898497,
-    "ast_hash": "83259c87ad6bed4ba692ac9e20927bbb",
+    "mtime": 1795142004.140957,
+    "seen": 1795142174.5885453,
+    "ast_hash": "49a1dceaf69d30f77408ae25c16922b8",
     "semantic_hash": ""
   },
   "apps/api/render.yaml": {
@@ -323,16 +323,10 @@
     "ast_hash": "1392d72345af7cc95b2a6e03f89b27bb",
     "semantic_hash": ""
   },
-  "apps/api/src/scripts/check-users.ts": {
-    "mtime": 1795137035.9562445,
-    "seen": 1795137140.8994975,
-    "ast_hash": "8c6a11af9d8e03c9ac8070580df3800f",
-    "semantic_hash": ""
-  },
   "apps/api/src/scripts/seed-users.ts": {
-    "mtime": 1795137036.0013878,
-    "seen": 1795137140.8994975,
-    "ast_hash": "98a926d0bd87d6ff68d76c2ee9830479",
+    "mtime": 1795142097.2888408,
+    "seen": 1795142174.5890522,
+    "ast_hash": "0d704de3dfb8f918a43db552890901c7",
     "semantic_hash": ""
   },
   "apps/api/src/server.ts": {
@@ -767,12 +761,6 @@
     "ast_hash": "dbdf49776be758917b9752502ab193ed",
     "semantic_hash": ""
   },
-  "get-modules.js": {
-    "mtime": 1794793556.4366744,
-    "seen": 1795073715.3557007,
-    "ast_hash": "8e4fa8f42520f32cb6bccce8853d062e",
-    "semantic_hash": "8e4fa8f42520f32cb6bccce8853d062e"
-  },
   "package.json": {
     "mtime": 1795137062.970402,
     "seen": 1795137140.8994975,
@@ -924,9 +912,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/components/master-branch-dialog.tsx": {
-    "mtime": 1795074371.742274,
-    "seen": 1795074552.0674968,
-    "ast_hash": "2585635c266e2f061a21f548bc2a84c7",
+    "mtime": 1795141066.8041742,
+    "seen": 1795142174.5890522,
+    "ast_hash": "bd2bd2c450b504bb0fe48416a9cbd053",
     "semantic_hash": ""
   },
   "apps/web/src/components/ui/select.tsx": {
@@ -1236,9 +1224,9 @@
     "semantic_hash": ""
   },
   "docs/plan/sisa-plan-sparta.md": {
-    "mtime": 1795139000.509907,
-    "seen": 1795139974.6954834,
-    "ast_hash": "ece73b5e76168f7c27b425fcbb955de3",
+    "mtime": 1795142153.6354747,
+    "seen": 1795142174.5890522,
+    "ast_hash": "0859517b45ad6438e23cabb6273925ce",
     "semantic_hash": ""
   },
   "apps/web/src/components/module-role-select.tsx": {

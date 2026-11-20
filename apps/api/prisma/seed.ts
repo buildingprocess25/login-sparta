@@ -85,6 +85,52 @@ const legacySeedEmails = [
   "raka.wijaya@sparta.local",
 ]
 
+// Sama dengan isi migrasi 20261119110000. Migrasi hanya mengisi katalog untuk
+// modul yang sudah ada di AppModule, jadi di database baru (modul dibuat seed
+// setelah migrasi) katalog kosong. Seed mengisinya ulang tanpa mengubah baris
+// yang sudah ada.
+const moduleRoleSeeds: Array<[SpartaModuleId, string, string]> = [
+  [SpartaModuleId.ENERGY, "USER", "User toko"],
+  [SpartaModuleId.ENERGY, "AUDITOR", "Auditor"],
+  [SpartaModuleId.ENERGY, "GS", "GS"],
+  [SpartaModuleId.ENERGY, "AREA", "Area"],
+  [SpartaModuleId.ENERGY, "ADMIN", "Admin"],
+  [SpartaModuleId.MAINTENANCE, "BMS", "BMS"],
+  [SpartaModuleId.MAINTENANCE, "BMC", "BMC"],
+  [SpartaModuleId.MAINTENANCE, "BNM_MANAGER", "BnM Manager"],
+  [SpartaModuleId.MAINTENANCE, "BRANCH_ADMIN", "Admin cabang"],
+  [SpartaModuleId.MAINTENANCE, "ADMIN", "Admin"],
+  [SpartaModuleId.ENGINEERING, "ES", "ES"],
+  [SpartaModuleId.ENGINEERING, "COORD", "Koordinator"],
+  [SpartaModuleId.ENGINEERING, "MANAGER", "Manager"],
+  [SpartaModuleId.ENGINEERING, "REQUESTER", "Requester"],
+  [SpartaModuleId.ENGINEERING, "ADMIN_HO", "Admin HO"],
+  [SpartaModuleId.ENGINEERING, "SUPER_ADMIN", "Super admin"],
+  [SpartaModuleId.CARBONTRACK, "USER", "User"],
+]
+
+async function seedModuleRoles() {
+  const existingModules = new Set(
+    (await prisma.appModule.findMany({ select: { id: true } })).map(
+      (module) => module.id
+    )
+  )
+  // Urutan tampil per modul mengikuti urutan di daftar.
+  const sortOrder = new Map<SpartaModuleId, number>()
+
+  for (const [moduleId, code, label] of moduleRoleSeeds) {
+    const order = (sortOrder.get(moduleId) ?? 0) + 1
+    sortOrder.set(moduleId, order)
+    if (!existingModules.has(moduleId)) continue
+
+    await prisma.moduleRole.upsert({
+      where: { moduleId_code: { moduleId, code } },
+      update: {},
+      create: { moduleId, code, label, sortOrder: order },
+    })
+  }
+}
+
 async function seedModules() {
   for (const moduleSeed of moduleSeeds) {
     await prisma.appModule.upsert({
@@ -182,18 +228,21 @@ async function seedUsers(branchIdsByCode: Map<string, string>) {
 
 async function main() {
   await seedModules()
+  await seedModuleRoles()
   const branchIdsByCode = await seedBranches()
   await seedUsers(branchIdsByCode)
 
-  const [moduleCount, branchCount, userCount, accessCount] = await Promise.all([
-    prisma.appModule.count(),
-    prisma.branch.count(),
-    prisma.user.count(),
-    prisma.userModuleAccess.count(),
-  ])
+  const [moduleCount, branchCount, userCount, accessCount, roleCount] =
+    await Promise.all([
+      prisma.appModule.count(),
+      prisma.branch.count(),
+      prisma.user.count(),
+      prisma.userModuleAccess.count(),
+      prisma.moduleRole.count(),
+    ])
 
   console.log(
-    `Seeded SPARTA auth data: ${moduleCount} modules, ${branchCount} branches, ${userCount} users, ${accessCount} module access rows.`
+    `Seeded SPARTA auth data: ${moduleCount} modules, ${branchCount} branches, ${userCount} users, ${accessCount} module access rows, ${roleCount} module roles.`
   )
 }
 

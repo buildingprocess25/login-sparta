@@ -1,29 +1,29 @@
 # Graph Report - login-sparta  (2026-11-20)
 
 ## Corpus Check
-- 180 files · ~68,790 words
+- 178 files · ~69,316 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 12 file(s) not represented in the graph (top: (none) 5, .example 2, .toml 1)
 
 ## Summary
-- 1537 nodes · 3937 edges · 82 communities (66 shown, 16 thin omitted)
+- 1534 nodes · 3938 edges · 77 communities (64 shown, 13 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 58 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `02fe2e48`
+- Built from commit: `ff34f06c`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- seed.ts
+- email.service.ts
 - SPARTA Backend Monorepo Implementation Plan
 - About Page Components
 - Initial Auth Migration
 - users.test.ts
 - users.schemas.ts
 - Rate Limit & Session Middleware
-- user-management-page.tsx
+- user-form-dialog.tsx
 - app.ts
 - API Dev Dependencies
 - Docker CI Workflow
@@ -36,8 +36,8 @@
 - API Runtime Dependencies
 - SSO Repository
 - API TS Config
-- sparta.ts
-- data-master-page.tsx
+- module-launcher-page.tsx
+- user-management-page.tsx
 - password.service.ts
 - Web TS Node Config
 - Root Workspace Package
@@ -50,14 +50,14 @@
 - createMasterAdminRouter
 - Master Data Repository
 - App.tsx
-- user-form-dialog.tsx
+- Button
 - prisma.config.ts
 - Shared Package Manifest
 - Render Deploy Config
 - Theme Provider
 - public-auth-shell.tsx
 - API Scripts
-- AuthError
+- sparta-auth.ts
 - password.routes.ts
 - app-shell.tsx
 - InMemoryMasterAdminRepository
@@ -65,7 +65,7 @@
 - master-admin.schemas.ts
 - storefront-elevation.tsx
 - provisioning.repository.ts
-- src/shared-contract-check.ts
+- seed.ts
 - Vite Config
 - pnpm Workspace
 - Legacy User Merge Script
@@ -75,20 +75,15 @@
 - Web TS Root Config
 - InMemoryAuthRepository
 - master-admin.service.ts
-- modules.routes.ts
+- import-users.ts
 - SPARTA Login Portal README
 - POST /v1/sso/exchange
-- InMemoryAuthRepository
 - Prisma Schema Draft
 - table-pagination.tsx
-- validation.ts
 - mapUserRecord filter excluding MAINTENANCE for BRANCH_ADMIN
-- user-management.test.tsx
 - InMemoryModuleRepository
 - InMemoryPasswordRepository
-- check-users.ts
 - sparta-assets.ts
-- Badge
 - Server-side session with HttpOnly cookie
 - stat-card.tsx
 - SpartaSsoUserPayload (contract v2)
@@ -114,8 +109,8 @@
   docs/superpowers/plans/2026-06-17-sparta-backend-monorepo-spec.md → SETUP_GUIDE.md
 - `SPARTA Energy SSO Checklist` --semantically_similar_to--> `Replace local login with redirect to SPARTA Login Portal`  [INFERRED] [semantically similar]
   docs/integration/sparta-energy-sso-checklist.md → docs/integration/sparta-building-sso-checklist.md
-- `antislop Skill (Anti-slop UI filter)` --conceptually_related_to--> `AI Coding Rules (AI_RULES.md)`  [INFERRED]
-  .claude/skills/antislop/SKILL.md → AI_RULES.md
+- `SPARTA Backend Monorepo Implementation Plan` --references--> `SPARTA Login Portal README`  [EXTRACTED]
+  docs/superpowers/plans/2026-06-17-sparta-backend-monorepo-spec.md → README.md
 
 ## Import Cycles
 - None detected.
@@ -125,11 +120,11 @@
 - **SPARTA SSO launch-token exchange flow** — docs_integration_module_sso_contract_post_v1_modules_launch, docs_integration_module_sso_contract_launch_token, docs_integration_module_sso_contract_post_v1_sso_exchange, docs_integration_module_sso_contract_user_matching_order, docs_superpowers_plans_2026_06_17_sparta_backend_monorepo_spec_module_launch_model [EXTRACTED 1.00]
 - **BRANCH_ADMIN Maintenance login block mechanism** — docs_superpowers_specs_2026_09_09_block_branch_admin_login_design_branch_admin_email_only_rule, docs_superpowers_plans_2026_09_09_block_branch_admin_login_mapuserrecord_filter, docs_superpowers_plans_2026_09_09_block_branch_admin_login_no_ui_access_error, docs_superpowers_plans_2026_06_17_sparta_backend_monorepo_spec_user_module_access_model [INFERRED 0.85]
 
-## Communities (82 total, 16 thin omitted)
+## Communities (77 total, 13 thin omitted)
 
-### Community 0 - "seed.ts"
-Cohesion: 0.09
-Nodes (21): CSV_FILE_PATH, CsvRow, prisma, branchSeeds, env, legacySeedEmails, main(), moduleSeeds (+13 more)
+### Community 0 - "email.service.ts"
+Cohesion: 0.30
+Nodes (6): TestEmailProvider, ConsoleEmailProvider, createEmailProvider(), EmailMessage, EmailProvider, GmailEmailProvider
 
 ### Community 1 - "SPARTA Backend Monorepo Implementation Plan"
 Cohesion: 0.19
@@ -144,28 +139,28 @@ Cohesion: 0.08
 Nodes (44): "AppModule", AppModule_isActive_sortOrder_idx, "AuditEvent", AuditEvent_action_createdAt_idx, AuditEvent_actorUserId_createdAt_idx, AuditEvent_entityType_entityId_idx, "Branch", Branch_code_key (+36 more)
 
 ### Community 4 - "users.test.ts"
-Cohesion: 0.05
-Nodes (20): testEnv, envSchema, provisioningSecret, AuthSessionRecord, CreateSessionInput, InMemoryAuthRepository, testEnv, createAppWithFakes() (+12 more)
+Cohesion: 0.07
+Nodes (26): createApp(), testEnv, envSchema, loadEnv(), provisioningSecret, AuthSessionRecord, testEnv, createAppWithFakes() (+18 more)
 
 ### Community 5 - "users.schemas.ts"
-Cohesion: 0.14
-Nodes (13): AccessUpdateInput, accessUpdateSchema, ChangeEmailInput, changeEmailSchema, CreateUserInput, createUserSchema, SyncDeleteUserInput, syncDeleteUserSchema (+5 more)
+Cohesion: 0.13
+Nodes (19): requireAdmin(), createServices(), createUsersRouter(), invalidPayload(), parseBody(), AccessUpdateInput, accessUpdateSchema, ChangeEmailInput (+11 more)
 
 ### Community 6 - "Rate Limit & Session Middleware"
-Cohesion: 0.15
-Nodes (19): requireRoles(), CurrentSpartaSession, Express, Request, requireSession(), AuthRepository, cookieOptions(), createAuthRouter() (+11 more)
-
-### Community 7 - "user-management-page.tsx"
 Cohesion: 0.10
-Nodes (31): dateFormat, errorMessage(), EVENT_LABEL, EVENT_STATUS, EventsState, UserAccessDialogProps, AdminUser, canManageUsers() (+23 more)
+Nodes (28): CurrentSpartaSession, Express, Request, requireSession(), AuthRepository, cookieOptions(), createAuthRouter(), LoginInput (+20 more)
+
+### Community 7 - "user-form-dialog.tsx"
+Cohesion: 0.10
+Nodes (48): SpartaUserStatus, errorMessage(), MasterBranchDialog(), MasterBranchDialogProps, ModuleRoleSelect(), ModuleRoleSelectProps, FieldSeparator(), Input() (+40 more)
 
 ### Community 8 - "app.ts"
-Cohesion: 0.14
-Nodes (21): AppOptions, createApp(), createCorsOptions(), errorHandler(), notFoundHandler(), requestContext(), requireAdmin(), requireInternalApiKey() (+13 more)
+Cohesion: 0.12
+Nodes (18): AppOptions, createCorsOptions(), errorHandler(), notFoundHandler(), requestContext(), requireInternalApiKey(), requireRoles(), AuthRouterOptions (+10 more)
 
 ### Community 9 - "API Dev Dependencies"
 Cohesion: 0.10
-Nodes (28): devDependencies, csv-parser@^3.2.1, supertest@^7.1.4, tsx@^4.21.0, @types/cookie-parser@^1.4.10, @types/cors@^2.8.19, @types/express@^5.0.6, @types/node@^24.0.0 (+20 more)
+Nodes (26): devDependencies, supertest@^7.1.4, tsx@^4.21.0, @types/cookie-parser@^1.4.10, @types/cors@^2.8.19, @types/express@^5.0.6, @types/node@^24.0.0, @types/nodemailer@^8.0.1 (+18 more)
 
 ### Community 10 - "Docker CI Workflow"
 Cohesion: 0.08
@@ -176,12 +171,12 @@ Cohesion: 0.08
 Nodes (25): dependencies, class-variance-authority@^0.7.1, clsx@^2.1.1, cn@^0.5.2, @fontsource-variable/geist@^5.2.9, input-otp@^1.4.2, lucide-react@^1.17.0, next-themes@^0.4.6 (+17 more)
 
 ### Community 12 - "cn"
-Cohesion: 0.08
-Nodes (44): AlertAction(), AlertDialogMedia(), Avatar(), AvatarBadge(), AvatarFallback(), AvatarGroup(), AvatarGroupCount(), AvatarImage() (+36 more)
+Cohesion: 0.09
+Nodes (36): AlertAction(), AlertDialogMedia(), AvatarBadge(), AvatarGroup(), AvatarGroupCount(), AvatarImage(), badgeVariants, buttonVariants (+28 more)
 
 ### Community 13 - "mock-api.ts"
-Cohesion: 0.16
-Nodes (20): areas, branches, devRole, events, fail(), handleMaster(), handleUsers(), isRoleAllowed() (+12 more)
+Cohesion: 0.05
+Nodes (51): API_SHARED_MODULE_IDS, ApiSessionResponse, ApiError, ApiResult, ApiSuccess, AdminUserDto, MasterAreaAdminDto, MasterBranchAdminDto (+43 more)
 
 ### Community 15 - "shadcn Config"
 Cohesion: 0.09
@@ -196,24 +191,24 @@ Cohesion: 0.10
 Nodes (21): dependencies, cookie-parser@^1.4.7, cors@^2.8.5, express@^5.2.1, express-rate-limit@^8.2.1, helmet@^8.1.0, @node-rs/argon2@^2.0.2, nodemailer@^9.0.0 (+13 more)
 
 ### Community 18 - "SSO Repository"
-Cohesion: 0.24
-Nodes (10): AppEnv, PrismaSsoRepository, SsoRepository, createSsoRouter(), invalidPayload(), SsoRouterOptions, SsoExchangeInput, ssoExchangeSchema (+2 more)
+Cohesion: 0.27
+Nodes (9): AppEnv, PrismaSsoRepository, SsoRepository, createSsoRouter(), invalidPayload(), SsoExchangeInput, ssoExchangeSchema, SsoService (+1 more)
 
 ### Community 19 - "API TS Config"
 Cohesion: 0.11
 Nodes (18): compilerOptions, allowImportingTsExtensions, erasableSyntaxOnly, lib, module, moduleDetection, moduleResolution, noEmit (+10 more)
 
-### Community 20 - "sparta.ts"
-Cohesion: 0.12
-Nodes (15): AdminUserDto, MasterAreaAdminDto, MasterBranchAdminDto, MasterBranchAliasDto, ModuleRoleDto, ProvisioningEventDto, ProvisioningEventStatus, SPARTA_MASTER_DATA_ROLES (+7 more)
+### Community 20 - "module-launcher-page.tsx"
+Cohesion: 0.17
+Nodes (21): Item(), ItemActions(), ItemContent(), ItemDescription(), ItemFooter(), ItemGroup(), ItemHeader(), ItemMedia() (+13 more)
 
-### Community 21 - "data-master-page.tsx"
-Cohesion: 0.15
-Nodes (32): StatCard(), StatusBadge(), Alert(), AlertDescription(), AlertTitle(), alertVariants, Table(), TableBody() (+24 more)
+### Community 21 - "user-management-page.tsx"
+Cohesion: 0.09
+Nodes (61): StatCard(), DOT_CLASS, StatusBadge(), StatusBadgeProps, StatusTone, Alert(), AlertDescription(), AlertTitle() (+53 more)
 
 ### Community 22 - "password.service.ts"
-Cohesion: 0.13
-Nodes (16): AuthUserRecord, AuthError, appendLaunchToken(), OtpChallengeRecord, PasswordOtpPurpose, PasswordRepository, ChangePasswordConfirmInput, ForgotOtpRequestInput (+8 more)
+Cohesion: 0.11
+Nodes (16): AuthUserRecord, AuthError, OtpChallengeRecord, PasswordOtpPurpose, PasswordRepository, ChangePasswordConfirmInput, ForgotOtpRequestInput, ForgotOtpVerifyInput (+8 more)
 
 ### Community 23 - "Web TS Node Config"
 Cohesion: 0.11
@@ -236,7 +231,7 @@ Cohesion: 0.09
 Nodes (31): devDependencies, eslint@^10, @eslint/js@^10, eslint-plugin-react-hooks@^7.1.1, eslint-plugin-react-refresh@^0.5.2, globals@^17, prettier@^3.8.3, prettier-plugin-tailwindcss@^0.8.0 (+23 more)
 
 ### Community 28 - "index.ts"
-Cohesion: 0.09
+Cohesion: 0.07
 Nodes (30): globalForPrisma, prisma, AuthAccessModuleId, LaunchablePrismaModuleId, moduleIdMap, PrismaAuthSession, PrismaAuthUser, CreateAuditEventInput (+22 more)
 
 ### Community 30 - "PrismaAuthRepository"
@@ -255,9 +250,9 @@ Nodes (8): MasterAreaRecord, MasterBranchRecord, MasterListFilter, MasterReposit
 Cohesion: 0.32
 Nodes (10): App(), loadSession(), getCurrentSpartaSession(), isSpartaSsoEnabled(), logoutFromSparta(), AppRoute, getCurrentRoute(), getDefaultRoute() (+2 more)
 
-### Community 34 - "user-form-dialog.tsx"
-Cohesion: 0.05
-Nodes (125): ChangeEmailDialog(), ChangeEmailDialogProps, MODULE_NAMES, ChangePasswordDialog(), ChangePasswordDialogProps, ChangePasswordStatus, ChangePasswordStep, MasterAreaDialog() (+117 more)
+### Community 34 - "Button"
+Cohesion: 0.11
+Nodes (62): ChangeEmailDialog(), ChangeEmailDialogProps, MODULE_NAMES, ChangePasswordDialog(), ChangePasswordDialogProps, ChangePasswordStatus, ChangePasswordStep, MasterAreaDialog() (+54 more)
 
 ### Community 35 - "prisma.config.ts"
 Cohesion: 0.25
@@ -272,28 +267,28 @@ Cohesion: 0.15
 Nodes (12): key, sync, value, services, buildCommand, envVars, name, preDeployCommand (+4 more)
 
 ### Community 38 - "Theme Provider"
-Cohesion: 0.29
-Nodes (7): applyLightTheme(), ThemeProvider(), ThemeProviderContext, ThemeProviderProps, ThemeProviderState, useTheme(), Toaster()
+Cohesion: 0.23
+Nodes (9): react-dom@^19.2.6, applyLightTheme(), ThemeProvider(), ThemeProviderContext, ThemeProviderProps, ThemeProviderState, useTheme(), Toaster() (+1 more)
 
 ### Community 39 - "public-auth-shell.tsx"
 Cohesion: 0.13
-Nodes (16): FasciaStripe(), FasciaStripeProps, Logo(), LogoProps, acronym, appOrder, AuthBackdrop(), PublicAuthShell() (+8 more)
+Nodes (15): FasciaStripe(), FasciaStripeProps, Logo(), LogoProps, acronym, appOrder, AuthBackdrop(), PublicAuthShell() (+7 more)
 
 ### Community 40 - "API Scripts"
 Cohesion: 0.17
 Nodes (12): scripts, build, db:seed, dev, dev:uat, lint, prisma, prisma:generate (+4 more)
 
-### Community 41 - "AuthError"
-Cohesion: 0.11
-Nodes (9): CreateUserInput, UpdateUserInput, UsersRepository, IDENTITY_FIELDS, UsersProvisioning, UsersService, UsersServiceCreateInput, UsersServiceUpdateInput (+1 more)
+### Community 41 - "sparta-auth.ts"
+Cohesion: 0.14
+Nodes (14): ChangeEmailResult, ChangePasswordWithOtpInput, defaultModuleLoginUrls, getAccessibleApps(), LoginInput, LoginResult, mergeModule(), ModulesResponse (+6 more)
 
 ### Community 42 - "password.routes.ts"
-Cohesion: 0.27
-Nodes (12): createFirstPasswordRouter(), createPasswordRouter(), createServices(), invalidPayload(), parseBody(), PasswordRouterOptions, changePasswordConfirmSchema, forgotOtpRequestSchema (+4 more)
+Cohesion: 0.20
+Nodes (15): loginRateLimit, moduleLaunchRateLimit, otpRequestRateLimit, otpVerifyRateLimit, createFirstPasswordRouter(), createPasswordRouter(), createServices(), invalidPayload() (+7 more)
 
 ### Community 43 - "app-shell.tsx"
-Cohesion: 0.15
-Nodes (22): AppShell(), AppShellProps, getInitials(), getNavItems(), AlertDialog(), AlertDialogAction(), AlertDialogCancel(), AlertDialogContent() (+14 more)
+Cohesion: 0.19
+Nodes (19): AppShell(), AppShellProps, getInitials(), getNavItems(), AlertDialog(), AlertDialogAction(), AlertDialogCancel(), AlertDialogContent() (+11 more)
 
 ### Community 46 - "master-admin.schemas.ts"
 Cohesion: 0.18
@@ -307,9 +302,9 @@ Nodes (11): axes, Callout, callouts, circle(), delay(), line(), rect(), SketchAn
 Cohesion: 0.06
 Nodes (26): InMemoryProvisioningRepository, mapEvent(), ModuleRoleRecord, NewProvisioningEvent, PrismaEvent, PrismaProvisioningRepository, ProvisioningEventRecord, ProvisioningRepository (+18 more)
 
-### Community 49 - "src/shared-contract-check.ts"
-Cohesion: 0.20
-Nodes (9): API_SHARED_MODULE_IDS, ApiSessionResponse, ApiError, ApiResult, ApiSuccess, SPARTA_MODULE_IDS, SpartaSessionDto, WEB_SHARED_MODULE_IDS (+1 more)
+### Community 49 - "seed.ts"
+Cohesion: 0.21
+Nodes (12): branchSeeds, env, legacySeedEmails, main(), moduleRoleSeeds, moduleSeeds, prisma, seedBranches() (+4 more)
 
 ### Community 50 - "Vite Config"
 Cohesion: 0.25
@@ -320,8 +315,8 @@ Cohesion: 0.25
 Nodes (7): allowBuilds, esbuild, msw, prisma, @prisma/client, @prisma/engines, packages
 
 ### Community 52 - "Legacy User Merge Script"
-Cohesion: 0.19
-Nodes (10): pg@^8.23.0, main(), MergedUser, queryBuildingUsers(), queryEnergyUsers(), queryMaintenanceUsers(), ssoPrisma, c (+2 more)
+Cohesion: 0.29
+Nodes (9): pg@^8.23.0, main(), MergedUser, queryBuildingUsers(), queryEnergyUsers(), queryMaintenanceUsers(), requireEnv(), ssoPrisma (+1 more)
 
 ### Community 53 - "Web Scripts"
 Cohesion: 0.29
@@ -339,13 +334,17 @@ Nodes (14): Aturan kerja (berlaku untuk semua sesi), Catatan keamanan yang belum
 Cohesion: 0.40
 Nodes (4): compilerOptions, paths, files, references
 
+### Community 63 - "InMemoryAuthRepository"
+Cohesion: 0.06
+Nodes (6): CreateSessionInput, InMemoryAuthRepository, InMemoryAuthRepository, InMemoryAuthRepository, InMemoryAuthRepository, sync()
+
 ### Community 64 - "master-admin.service.ts"
 Cohesion: 0.40
 Nodes (7): AdminAreaRecord, AdminBranchRecord, AreaPatch, BranchPatch, MasterAdminRepository, run(), testEnv
 
-### Community 65 - "modules.routes.ts"
-Cohesion: 0.14
-Nodes (13): loginRateLimit, moduleLaunchRateLimit, otpRequestRateLimit, otpVerifyRateLimit, mapModule(), ModuleRepository, PrismaModuleRepository, createModulesRouter() (+5 more)
+### Community 65 - "import-users.ts"
+Cohesion: 0.25
+Nodes (5): csv-parser@^3.2.1, CSV_FILE_PATH, CsvRow, prisma, csv-parser
 
 ### Community 66 - "SPARTA Login Portal README"
 Cohesion: 0.20
@@ -363,25 +362,13 @@ Nodes (8): Energy role mapping (AUDITOR, ENGINEER, MANAGER, USER), Maintenance r
 Cohesion: 0.37
 Nodes (11): pageNumbers(), TablePagination(), TablePaginationProps, Pagination(), PaginationContent(), PaginationEllipsis(), PaginationItem(), PaginationLink() (+3 more)
 
-### Community 71 - "validation.ts"
-Cohesion: 0.33
-Nodes (3): SPARTA_LAUNCHABLE_MODULE_IDS, ValidationIssue, ValidationResult
-
 ### Community 72 - "mapUserRecord filter excluding MAINTENANCE for BRANCH_ADMIN"
 Cohesion: 0.48
 Nodes (5): P0 Authentication Core, Block BRANCH_ADMIN Login Implementation Plan, mapUserRecord filter excluding MAINTENANCE for BRANCH_ADMIN, NO_UI_ACCESS 403 AuthError on empty access, Block BRANCH_ADMIN Login Design
 
-### Community 73 - "user-management.test.tsx"
-Cohesion: 0.32
-Nodes (7): react-dom@^19.2.6, handleDevMockRequest(), Body, call(), renderNav(), sessionWithRole(), react-dom
-
 ### Community 75 - "InMemoryPasswordRepository"
 Cohesion: 0.22
 Nodes (3): CreateOtpChallengeInput, UpdateOtpChallengeInput, InMemoryPasswordRepository
-
-### Community 78 - "Badge"
-Cohesion: 0.38
-Nodes (5): DOT_CLASS, StatusBadgeProps, StatusTone, Badge(), badgeVariants
 
 ### Community 80 - "stat-card.tsx"
 Cohesion: 0.50
@@ -392,24 +379,24 @@ Cohesion: 0.50
 Nodes (4): POST /v1/admin/users/sync, SpartaSsoUserPayload (contract v2), Shared API contracts (SpartaModuleId, SpartaSessionDto, ApiSuccess/ApiError), @sparta/shared (apps/shared types & validation)
 
 ## Knowledge Gaps
-- **11 isolated node(s):** `POST /v1/admin/users/sync-delete`, `GET /v1/master/branches and /v1/master/areas (updatedSince sync)`, `Maintenance report/dashboard/PJUM authorization`, `Two Usage Modes (During / After audit)`, `Frontend stack: React 19 + Vite 8 + TS 6 + Tailwind v4 + shadcn/ui` (+6 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 516 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **16 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **11 isolated node(s):** `POST /v1/admin/users/sync-delete`, `GET /v1/master/branches and /v1/master/areas (updatedSince sync)`, `Maintenance report/dashboard/PJUM authorization`, `Admin user and access management API`, `Tanya ARTA frontend-only placeholder (non-goal)` (+6 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 513 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **13 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `cn()` connect `cn` to `About Page Components`, `user-form-dialog.tsx`, `public-auth-shell.tsx`, `app-shell.tsx`, `Badge`, `storefront-elevation.tsx`, `stat-card.tsx`, `data-master-page.tsx`, `Sisa Plan SPARTA (lanjut 2026-11-20)`?**
-  _High betweenness centrality (0.127) - this node is a cross-community bridge._
+- **Why does `cn()` connect `cn` to `About Page Components`, `Button`, `public-auth-shell.tsx`, `user-form-dialog.tsx`, `app-shell.tsx`, `storefront-elevation.tsx`, `stat-card.tsx`, `module-launcher-page.tsx`, `user-management-page.tsx`, `Sisa Plan SPARTA (lanjut 2026-11-20)`?**
+  _High betweenness centrality (0.121) - this node is a cross-community bridge._
 - **What connects `POST /v1/admin/users/sync-delete`, `GET /v1/master/branches and /v1/master/areas (updatedSince sync)`, `Maintenance report/dashboard/PJUM authorization` to the rest of the system?**
   _11 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `seed.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.09090909090909091 - nodes in this community are weakly interconnected._
-- **Why does `Sisa Plan SPARTA (diperbarui 2026-11-20)` connect `Sisa Plan SPARTA (lanjut 2026-11-20)` to `SPARTA Backend Monorepo Implementation Plan`?**
-  _High betweenness centrality (0.108) - this node is a cross-community bridge._
 - **Should `About Page Components` be split into smaller, more focused modules?**
   _Cohesion score 0.06298701298701298 - nodes in this community are weakly interconnected._
-- **Why does `Catatan keamanan yang belum dibereskan` connect `Sisa Plan SPARTA (lanjut 2026-11-20)` to `cn`?**
-  _High betweenness centrality (0.106) - this node is a cross-community bridge._
+- **Why does `Sisa Plan SPARTA (diperbarui 2026-11-20)` connect `Sisa Plan SPARTA (lanjut 2026-11-20)` to `SPARTA Backend Monorepo Implementation Plan`?**
+  _High betweenness centrality (0.101) - this node is a cross-community bridge._
 - **Should `Initial Auth Migration` be split into smaller, more focused modules?**
   _Cohesion score 0.07801418439716312 - nodes in this community are weakly interconnected._
+- **Why does `Catatan keamanan yang belum dibereskan` connect `Sisa Plan SPARTA (lanjut 2026-11-20)` to `cn`?**
+  _High betweenness centrality (0.100) - this node is a cross-community bridge._
+- **Should `users.test.ts` be split into smaller, more focused modules?**
+  _Cohesion score 0.06845513413506013 - nodes in this community are weakly interconnected._

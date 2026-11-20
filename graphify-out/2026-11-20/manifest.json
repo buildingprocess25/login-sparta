@@ -960,9 +960,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/pages/data-master-page.tsx": {
-    "mtime": 1795074452.9162986,
-    "seen": 1795074552.0674968,
-    "ast_hash": "8ed1ee4fbdce73d1a05267ce7db2e6c0",
+    "mtime": 1795139910.482481,
+    "seen": 1795139974.6954834,
+    "ast_hash": "170dad6e28325404eb369d27d1644b81",
     "semantic_hash": ""
   },
   "apps/web/public/team/akmal.webp": {
@@ -1236,9 +1236,9 @@
     "semantic_hash": ""
   },
   "docs/plan/sisa-plan-sparta.md": {
-    "mtime": 1795137074.8351004,
-    "seen": 1795137140.8994975,
-    "ast_hash": "c9c955a357e4bc1c6f46553112657b68",
+    "mtime": 1795139000.509907,
+    "seen": 1795139974.6954834,
+    "ast_hash": "ece73b5e76168f7c27b425fcbb955de3",
     "semantic_hash": ""
   },
   "apps/web/src/components/module-role-select.tsx": {
@@ -1266,15 +1266,45 @@
     "semantic_hash": ""
   },
   "apps/web/src/pages/user-management-page.tsx": {
-    "mtime": 1795136421.789915,
-    "seen": 1795136572.0257876,
-    "ast_hash": "bc130a871ffe7f6d070c1624646a8fd5",
+    "mtime": 1795139910.6057842,
+    "seen": 1795139974.6954834,
+    "ast_hash": "f7da1e7ac358e223dc0cc58d436e7861",
     "semantic_hash": ""
   },
   "apps/web/src/pages/user-management.test.tsx": {
     "mtime": 1795136466.3039806,
     "seen": 1795136572.0257876,
     "ast_hash": "cc9a14c45cf75f0fe22bd6eed864e946",
+    "semantic_hash": ""
+  },
+  "apps/web/src/components/stat-card.tsx": {
+    "mtime": 1795139771.853865,
+    "seen": 1795139974.6954834,
+    "ast_hash": "951d5705babfc6884947546653518c64",
+    "semantic_hash": ""
+  },
+  "apps/web/src/components/status-badge.tsx": {
+    "mtime": 1795139771.9024036,
+    "seen": 1795139974.6954834,
+    "ast_hash": "8bde6fc185560cc45f12d4875e42fecc",
+    "semantic_hash": ""
+  },
+  "apps/web/src/components/table-pagination.tsx": {
+    "mtime": 1795139910.667007,
+    "seen": 1795139974.6954834,
+    "ast_hash": "4955a0e0e2bc1586f064e475cc76b176",
+    "semantic_hash": ""
+  },
+  "apps/web/src/components/ui/pagination.tsx": {
+    "mtime": 1795139729.286963,
+    "seen": 1795139974.6954834,
+    "ast_hash": "715ac4e1d6ab8811b1b8fc414769ce10",
+    "semantic_hash": ""
+  },
+  "apps/web/src/lib/csv.ts": {
+    "mtime": 1795139952.2242768,
+    "seen": 1795139974.6954834,
+    "ast_hash": "daebdd8db8357971229650b5c455c41f",
     "semantic_hash": ""
   },
   "package-lock.json": {

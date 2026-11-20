@@ -46,7 +46,7 @@ Catatan sisa pekerjaan setelah sesi 2026-11-19. Rencana lengkap ada di dokumen "
 - [ ] Tabel `users` Energy juga dipakai smart-energy-monitoring, yang belum mengecek `is_active`. Apakah user nonaktif juga harus ditolak di sana?
 - [x] Energy membuat akun otomatis saat `access.granted` (diputuskan user 2026-11-19). CarbonTrack tidak membuat akun (balas `ignored`).
 - [ ] NIK wajib di `/sync` (ditunda atas permintaan user). Form Manajemen User sudah mewajibkan NIK.
-- [ ] **Standar kode cabang resmi portal.** CarbonTrack menemukan data Scope 2 sudah memakai kode cabang Alfamart (BZ01 = BANDUNG, JZ01 = CILEUNGSI2, KZ01 = CIKOKOL, 33 kode). Apakah kode Alfamart dipakai sebagai kode resmi master Cabang? Fase 2 di semua modul menunggu keputusan ini.
+- [x] (diputuskan user 2026-11-20: YA, kode cabang Alfamart jadi kode resmi master Cabang) **Standar kode cabang resmi portal.** CarbonTrack menemukan data Scope 2 sudah memakai kode cabang Alfamart (BZ01 = BANDUNG, JZ01 = CILEUNGSI2, KZ01 = CIKOKOL, 33 kode). Apakah kode Alfamart dipakai sebagai kode resmi master Cabang? Fase 2 di semua modul menunggu keputusan ini.
 
 ## Fase 2 di modul (belum mulai)
 
@@ -57,9 +57,20 @@ Catatan sisa pekerjaan setelah sesi 2026-11-19. Rencana lengkap ada di dokumen "
 
 ## Fase 3: master Toko
 
-- [ ] Portal: master Toko. Google Sheet tetap sumber baca saja (portal tidak pernah menulis ke Sheet), koreksi disimpan di DB portal, sync tiap malam.
+- [ ] Portal: master Toko, termasuk **sub-area toko** di dalam cabang (gaya Maintenance `Store.areaName`, mis. cabang CILEUNGSI: BEKASI, KARAWANG, CILEUNGSI 2, BOGOR). Berbeda dari Area portal (wilayah berisi cabang). Google Sheet tetap sumber baca saja (portal tidak pernah menulis ke Sheet), koreksi disimpan di DB portal, sync tiap malam.
 - [ ] Urutan pemakai: CarbonTrack, Maintenance, SIAGA, Audit, lalu Building (validasi kode toko). Building mengabari portal saat serah terima.
 - Syarat lanjut: jumlah toko aktif di portal sama dengan di Sheet.
+- Laporan data toko 2026-11-20 (baca saja dari produksi):
+
+  | Modul | Baris | Kode unik | Nama cabang unik | Cocok master cabang portal |
+  |---|---|---|---|---|
+  | Maintenance (`Store`) | 22.530 | 22.530 | 29 | 29 |
+  | Energy (`stores`) | 22.483 | 22.483 | 39 | 37 |
+  | SIAGA (`stores`) | 21.550 | 21.550 | 28 | 27 |
+  | CarbonTrack (`store_master`) | 21.550 | 21.550 | 28 | 27 |
+  | Building (`toko`) | 2.185 | 711 | 46 | 42 |
+
+  Gabungan 23.119 kode toko unik; 21.550 muncul di 4-5 modul. Maintenance memuat semua kode SIAGA dan CarbonTrack, 22.007 dari 22.483 kode Energy, dan 593 dari 711 kode Building, jadi Maintenance kandidat sumber awal yang paling lengkap. Nama cabang toko yang belum ada di master portal: `CILEUNGSI_2` (Energy, SIAGA, CarbonTrack), `HO` (Energy), `BINTAN`, `PALANGKARAYA`, `SIDOARJO BPN SMD`, `SIDOARJO BPN_SMD` (Building). Cukup diselesaikan dengan alias. Building punya kode toko berulang (2.185 baris, 711 kode): satu toko bisa punya beberapa proyek.
 
 ## Fase 4: master Fasilitas
 
@@ -74,14 +85,16 @@ Catatan sisa pekerjaan setelah sesi 2026-11-19. Rencana lengkap ada di dokumen "
 ## Temuan testing lokal (2026-11-20, Laragon)
 
 - Keputusan user 2026-11-20: deploy portal (migrasi, provisioningUrl, secret, worker) dilakukan setelah semua plan selesai.
-- [ ] Data Area belum ada di sistem mana pun. `Store.areaName` di Maintenance berisi nama cabang, bukan area (16.310 toko kosong). Daftar area dan pembagian cabang per area perlu datang dari user/bisnis, lalu diisi lewat tab Area.
+- [ ] Data Area: ada dua arti "area" di modul. (a) CarbonTrack `facility_master.region`: 9 wilayah yang mengelompokkan cabang/DC (Jabodetabek, Jawa Barat, Jawa Tengah, Jawa Timur, Banten, Bali & Nusra, Kalimantan, Sulawesi, Sumatera), sesuai model Area portal. (b) Maintenance `User.areaNames` / `Store.areaName`: pembagian toko DI DALAM cabang (cabang CILEUNGSI punya area BEKASI, KARAWANG, CILEUNGSI 2, BOGOR), kebalikan dari model portal. Diputuskan user 2026-11-20: pilihan C. (a) 9 wilayah CarbonTrack jadi Area portal (sudah diisi di lokal: 50 cabang dipasangkan otomatis karena namanya persis sama; Head Office Corporate, Tangerang 1, Tangerang 2, Cirebon dan BANDUNG RAYA belum dipasangkan karena tidak ada pasangan pasti). (b) sub-area toko gaya Maintenance masuk Fase 3. Catatan lama: `Store.areaName` di Maintenance berisi nama cabang, bukan area (16.310 toko kosong). Daftar area dan pembagian cabang per area perlu datang dari user/bisnis, lalu diisi lewat tab Area.
 - Building `alamat_cabang` (36 baris) berisi kode cabang resmi Alfamart (1AZ1 Pekanbaru, 1JZ1 Karawang, 2GZ1 Serang, dst.) dan alamatnya. Bahan untuk keputusan standar kode cabang dan untuk mengisi alamat master Cabang.
 
-- [ ] Di database baru, migrasi `20261119110000` tidak mengisi katalog role Energy dan Maintenance, karena `INSERT ... WHERE EXISTS AppModule` jalan sebelum seed membuat `AppModule`. Produksi aman karena modul sudah ada. Perbaikan yang disarankan: seed juga meng-upsert katalog role. Sementara ini katalog lokal diisi manual dengan menjalankan ulang INSERT tersebut.
+- [x] (diperbaiki lewat seed, lihat catatan keamanan) Di database baru, migrasi `20261119110000` tidak mengisi katalog role Energy dan Maintenance, karena `INSERT ... WHERE EXISTS AppModule` jalan sebelum seed membuat `AppModule`. Produksi aman karena modul sudah ada. Perbaikan yang disarankan: seed juga meng-upsert katalog role. Sementara ini katalog lokal diisi manual dengan menjalankan ulang INSERT tersebut.
 
 ## Catatan keamanan yang belum dibereskan
 
-- [ ] `get-modules.js` (sudah ter-commit) berisi kredensial DB untuk IP publik 103.127.99.241. Rotate password, lalu hapus file.
+- [ ] Rotate password DB `aku-sparta` (103.127.99.241). Password masih ada di riwayat git (`get-modules.js`, `check-users.ts`, `seed-users.ts` versi lama), jadi rotate wajib walau file sudah dibersihkan.
+- [x] (2026-11-20) `get-modules.js` dan `check-users.ts` dihapus. `seed-users.ts` membaca koneksi modul dari env (`SPARTA_BUILDING_DATABASE_URL`, `SPARTA_ENERGY_DATABASE_URL`, `SPARTA_MAINTENANCE_DATABASE_URL`) dan menolak jalan tanpa `SPARTA_SEED_USERS_CONFIRM=hapus-semua-user`.
+- [x] (2026-11-20) Seed mengisi katalog role modul, jadi database baru tidak lagi kosong (diuji di DB baru: 11 role).
 - [ ] `SPARTA_INTERNAL_API_KEY` punya nilai bawaan di `apps/api/src/config/env.ts`. Hapus nilai bawaan setelah semua server dipastikan mengisi env ini.
 - [ ] `changeEmailAndBroadcast` menulis langsung ke DB Building, Energy, dan Maintenance (lihat Fase 2B).
 - [ ] Dependensi npm `cn` yang tidak terpakai di `apps/web/package.json`.
